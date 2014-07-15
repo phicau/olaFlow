@@ -1,0 +1,7 @@
+$(OBJECTS_DIR)/waveFun.o: ../common/waveFun.dep
+../common/waveFun.dep: ../common/waveFun.C
+../common/waveFun.dep: ../common/waveFun.H
+$(OBJECTS_DIR)/waveFun.o: $(EXE_DEP)
+$(OBJECTS_DIR)/waveFun.o:
+	@SOURCE_DIR=../common
+	SOURCE=../common/waveFun.C ; $(Ctoo)

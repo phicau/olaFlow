@@ -1,0 +1,7 @@
+EXE_INC = \
+    -DOFVERSION=$(OF_VERSION) \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I../common
+
+LIB_LIBS = \
+    -lfiniteVolume

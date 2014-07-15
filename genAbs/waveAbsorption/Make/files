@@ -1,0 +1,4 @@
+IH_3D_2DAbsorption_InletVelocity/IH_3D_2DAbsorption_InletVelocityFvPatchVectorField.C
+IH_3D_3DAbsorption_InletVelocity/IH_3D_3DAbsorption_InletVelocityFvPatchVectorField.C
+
+LIB = $(FOAM_USER_LIBBIN)/libIHwaveAbsorption

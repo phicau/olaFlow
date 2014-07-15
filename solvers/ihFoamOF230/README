@@ -1,0 +1,7 @@
+Note that the boundary conditions compile and work in OpenFOAM 2.3.0. 
+
+However, no IHFOAM solver is included, as we are experiencing severe problems with pressure calculations (not linked in any way to IHFOAM implementation) in this version. We are preparing an extensive bug report for the OpenFOAM developers. 
+
+In the mean time we suggest you stay with prior OpenFOAM versions. 
+
+Should you want to use them in OpenFOAM 2.3.0, see below how to link the boundary conditions dynamically in controlDict. 

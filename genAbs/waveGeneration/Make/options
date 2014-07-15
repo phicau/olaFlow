@@ -1,0 +1,10 @@
+EXE_INC = \
+    -DOFVERSION=$(OF_VERSION) \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I./IH_Waves_InletVelocity/velProfiles \
+    -I../common \
+    -I../common/checks \
+    -I../common/calculateWaterLevel
+
+LIB_LIBS = \
+    -lfiniteVolume

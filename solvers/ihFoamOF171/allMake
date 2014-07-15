@@ -1,0 +1,23 @@
+#!/bin/bash
+
+wclean > /dev/null
+wclean ihDyMFoam > /dev/null
+
+wmake
+
+if (( $? )) ; then 
+    echo "ihFoam compilation failed"
+    exit; else
+    echo -e "\n\nihFoam compiled successfully for OpenFOAM 1.7.1\n\n\n";  
+fi
+
+wmake ihDyMFoam
+
+if (( $? )) ; then 
+    echo "ihDyMFoam compilation failed"
+    exit; else
+    echo -e "\n\nihDyMFoam compiled successfully for OpenFOAM 1.7.1\n\n\n";  
+fi
+
+wclean > /dev/null
+wclean ihDyMFoam > /dev/null

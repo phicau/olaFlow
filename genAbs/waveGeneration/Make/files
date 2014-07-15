@@ -1,0 +1,5 @@
+IH_Waves_InletAlpha/IH_Waves_InletAlphaFvPatchScalarField.C
+IH_Waves_InletVelocity/IH_Waves_InletVelocityFvPatchVectorField.C
+../common/waveFun.C
+
+LIB = $(FOAM_USER_LIBBIN)/libIHwaveGeneration

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+ofversion=`echo $WM_PROJECT_VERSION | sed -e 's/\./\n/g' -e 's/-/\n/' | grep "[0-9]" | tr -d '\n'`
+export OF_VERSION=$ofversion
+
+wclean
+
+wmake libso
+
+if (( $? )) ; then 
+    echo "\n\nWave absorption boundary conditions compilation failed"
+    exit; else
+    echo -e "\n\nWave absorption boundary conditions compiled successfully for OpenFOAM $ofversion\n\n\n";  
+fi
+
+wclean
