@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ofversion=`echo $WM_PROJECT_VERSION | sed -e 's/\./\n/g' -e 's/-/\n/' | grep "[0-9]" | tr -d '\n'`
+ofversion=`echo $WM_PROJECT_VERSION | sed -e 's/\./\n/g' -e 's/-/\n/' | sed -e 's/x/9/g' | grep "[0-9]" | tr -d '\n'`
 export OF_VERSION=$ofversion
 
 wclean
