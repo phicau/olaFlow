@@ -1641,11 +1641,19 @@ namespace secondOrderFun
 
     double C (double sigma1, double sigma2, double alphaSO1, double alphaSO2)
     {
-        double value = (  ( 2.0*sigma1*sigma2*(sigma1-sigma2)*(1.0+alphaSO1*alphaSO2) + pow(sigma1, 3)*(pow(alphaSO1, 2)-1.0) - pow(sigma2, 3)*(pow(alphaSO2, 2)-1.0) )*(sigma1-sigma2)*(alphaSO1*alphaSO2-1.0)  )
-                        /
-                        ( pow(sigma1, 2)*(pow(alphaSO1, 2)-1.0)-2.0*sigma1*sigma2*(alphaSO1*alphaSO2-1.0) + pow(sigma2, 2)*(pow(alphaSO2, 2)-1.0) )
-                        +
-                        pow(sigma1, 2) + pow(sigma2, 2) - sigma1*sigma2*(alphaSO1*alphaSO2+1.0);
+        double denom = pow(sigma1, 2)*(pow(alphaSO1, 2)-1.0)-2.0*sigma1*sigma2*(alphaSO1*alphaSO2-1.0) + pow(sigma2, 2)*(pow(alphaSO2, 2)-1.0);
+        
+        if(denom == 0.0)
+        {
+            // Both components with 1.0/tanh(kh) = 1, very deep water
+            return 0.0;
+        }
+        else
+        {
+            double value = (  ( 2.0*sigma1*sigma2*(sigma1-sigma2)*(1.0+alphaSO1*alphaSO2) + pow(sigma1, 3)*(pow(alphaSO1, 2)-1.0) - pow(sigma2, 3)*(pow(alphaSO2, 2)-1.0) )*(sigma1-sigma2)*(alphaSO1*alphaSO2-1.0)  )
+                / denom + pow(sigma1, 2) + pow(sigma2, 2) - sigma1*sigma2*(alphaSO1*alphaSO2+1.0);
+            return value;
+        }
 
 //( (2.0*sigma1*sigma2*(sigma1-sigma2)*(1.0+alphaSO1*alphaSO2) +
  //            pow(sigma1,3)*(pow(alphaSO1,2)-1.0)-pow(sigma2,3)*(pow(alphaSO2,2)-1.0) )*(sigma1-sigma2)*
@@ -1653,7 +1661,7 @@ namespace secondOrderFun
    //          (alphaSO1*alphaSO2-1.0)+pow(sigma2,2)*(pow(alphaSO2,2)-1.0)) + (pow(sigma1,2)+pow(sigma2,2))-
     //         sigma1*sigma2*(alphaSO1*alphaSO2+1.0);
 
-        return value;
+        return 0.0;
     }
 
     double E (double a1, double a2, double sigma1, double sigma2, double alphaSO1, double alphaSO2)
