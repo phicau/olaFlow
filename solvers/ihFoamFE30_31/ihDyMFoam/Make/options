@@ -22,5 +22,6 @@ EXE_LIBS = \
     -ltopoChangerFvMesh \
     -llduSolvers \
     -L$(MESQUITE_LIB_DIR) -lmesquite \
-    $(FOAM_USER_LIBBIN)/libIHwaveGeneration.so \
-    $(FOAM_USER_LIBBIN)/libIHwaveAbsorption.so
+    -L$(FOAM_USER_LIBBIN) \
+    -lIHwaveGeneration \
+    -lIHwaveAbsorption

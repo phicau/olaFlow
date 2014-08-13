@@ -12,5 +12,6 @@ EXE_LIBS = \
     -lincompressibleRASModels \
     -lincompressibleLESModels \
     -lfiniteVolume \
-    $(FOAM_USER_LIBBIN)/libIHwaveGeneration.so \
-    $(FOAM_USER_LIBBIN)/libIHwaveAbsorption.so
+    -L$(FOAM_USER_LIBBIN) \
+    -lIHwaveGeneration \
+    -lIHwaveAbsorption
