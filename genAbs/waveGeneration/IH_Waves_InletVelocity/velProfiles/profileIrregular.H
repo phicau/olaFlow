@@ -1,7 +1,3 @@
-    patchU[cellIndex] = 0;
-    patchV[cellIndex] = 0;
-    patchW[cellIndex] = 0;
-
         if (zSup[cellIndex] <= heights[cellGroup[cellIndex]-1]) 
         {// Full cell
             forAll(waveHeights_, ln2)

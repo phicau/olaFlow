@@ -15,6 +15,9 @@
                     patchHeight[cellIndex]
                 );
 
+            patchV[cellIndex] = patchU[cellIndex]*sin(waveAngle);
+            patchU[cellIndex] = patchU[cellIndex]*cos(waveAngle);
+
             patchW[cellIndex] =
                 stokesVFun::V
                 (
@@ -53,6 +56,9 @@
                     wavePhase_, 
                     patchHeight[cellIndex]
                 );
+
+            patchV[cellIndex] = patchU[cellIndex]*sin(waveAngle);
+            patchU[cellIndex] = patchU[cellIndex]*cos(waveAngle);
 
             patchW[cellIndex] = auxiliarTotal*
                 stokesVFun::V
