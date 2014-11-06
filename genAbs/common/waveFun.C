@@ -22,6 +22,7 @@
 
 #include "waveFun.H"
 #include <math.h>
+#include <limits>
 
 namespace otherFun
 {
@@ -262,7 +263,8 @@ namespace StokesIIFun
 namespace Elliptic
 {
     #define PII 3.1415926535897932384626433832795028
-    #define ITER 25
+    #define ITER 50
+    #define TOL std::numeric_limits<long double>::digits10
 
     void ellipticIntegralsKE (double m, double* K, double* E)
     {
@@ -280,7 +282,7 @@ namespace Elliptic
         aux = 1.0L;
         sum = 2.0L - m;
 
-        while (1) 
+        for (int n = 0; n < ITER; n++)
         {
             gOld = g;
             aOld = a;
@@ -289,7 +291,7 @@ namespace Elliptic
             aux += aux;
             sum -= aux * (a * a - g);
 
-            if ( fabs(aOld - gOld) <= (aOld * 1.e-22) )
+            if ( fabsl(aOld - gOld) <= (aOld * pow(10.,-TOL)) )
             { 
                 break;
             }
@@ -326,9 +328,9 @@ namespace Elliptic
 
         aux = 1.0L;
 
-        for (n = 0; n < ITER; n++) 
+        for (n = 0; n < ITER; n++)
         {
-            if ( fabsl(a[n] - g[n]) < (a[n] * 1.e-22) ) 
+            if ( fabsl(a[n] - g[n]) < (a[n] * pow(10.,-TOL)) ) 
             {
                 break;
             }

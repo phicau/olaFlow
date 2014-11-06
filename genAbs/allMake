@@ -27,3 +27,4 @@ if (( $? )) ; then
 fi
 
 wclean all > /dev/null
+rm -f common/waveFun.dep

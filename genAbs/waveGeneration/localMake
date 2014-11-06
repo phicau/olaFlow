@@ -19,3 +19,4 @@ if (( $? )) ; then
 fi
 
 wclean
+rm -f ../common/waveFun.dep
