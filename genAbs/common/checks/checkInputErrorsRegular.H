@@ -200,7 +200,7 @@
                 (
                     waveHeight_, 
                     mCnoidal_, 
-                    waveK, 
+                    waveLength_, 
                     0, 
                     wavePeriod_, 
                     0, 0, 
