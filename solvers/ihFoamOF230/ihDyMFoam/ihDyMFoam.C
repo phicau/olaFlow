@@ -179,6 +179,12 @@ int main(int argc, char *argv[])
         }
 
         runTime.write();
+        // Write Porous Variables
+        if( activePorosity && runTime.outputTime() ) 
+        {
+            porosity.write();
+            porosityIndex.write();
+        }
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"

@@ -28,6 +28,13 @@
 
     if (MULESCorr)
     {
+        if( activePorosity && runTime.outputTime() ) 
+        {
+            Info << "WARNING: This VOF equation in this loop"
+                 << " does not include porosity.\n"
+                 << "Set MULESCorr to 'no' in ./system/fvSolution.\n" << endl;
+        }
+
         fvScalarMatrix alpha1Eqn
         (
             #ifdef LTSSOLVE
@@ -126,7 +133,18 @@
             #ifdef LTSSOLVE
             MULES::explicitLTSSolve(alpha1, phi, tphiAlpha(), 1, 0);
             #else
-            MULES::explicitSolve(alpha1, phi, tphiAlpha(), 1, 0);
+            // MULES::explicitSolve(alpha1, phi, tphiAlpha(), 1, 0);
+	        MULES::explicitSolve
+	        (
+	            porosity, 
+	            alpha1, 
+	            phi, 
+	            tphiAlpha(), 
+	            zeroField(), 
+	            zeroField(), 
+	            1.0, 
+	            0.0
+	        );
             #endif
         }
 
@@ -144,6 +162,8 @@
 
     Info<< "Phase-1 volume fraction = "
         << alpha1.weightedAverage(mesh.Vsc()).value()
+        << "  Phase-1 total volume = "
+        << gSum(alpha1*porosity*mesh.Vsc())
         << "  Min(alpha1) = " << min(alpha1).value()
         << "  Max(alpha1) = " << max(alpha1).value()
         << endl;
