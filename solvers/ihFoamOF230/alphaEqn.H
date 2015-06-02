@@ -30,7 +30,7 @@
     {
         if( activePorosity && runTime.outputTime() ) 
         {
-            Info << "WARNING: This VOF equation in this loop"
+            Info << "WARNING: The VOF equation in this loop"
                  << " does not include porosity.\n"
                  << "Set MULESCorr to 'no' in ./system/fvSolution.\n" << endl;
         }
