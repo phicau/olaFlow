@@ -1,0 +1,12 @@
+#!/bin/bash
+shopt -s extglob
+
+directory=`pwd`
+
+cd ./constant/polyMesh
+rm -fr !(blockMeshDict)
+
+cd $directory
+rm -fr *[0-9].[0-9]* [0-9] [1-3]* gaugesVOF sensorsPres sets
+rm *.log
+rm system/sampleDict

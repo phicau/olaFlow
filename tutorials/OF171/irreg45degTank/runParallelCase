@@ -1,0 +1,21 @@
+#!/bin/bash
+
+mkdir 0
+
+echo blockMesh meshing...
+blockMesh > blockMesh.log
+
+echo Preparing 0 folder...
+rm -fr 0
+cp -r 0.org 0
+
+echo Setting the fields...
+setFields > setFields.log
+
+echo Decomposing case...
+decomposePar > decomposePar.log
+
+echo Running...
+mpirun -np 4 ihFoam -parallel > ihFoam.log
+
+echo Simulation complete.

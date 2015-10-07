@@ -1,0 +1,67 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    location    "0";
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    inlet
+    {
+        type            IH_Waves_InletVelocity;
+        waveDictName    IHWavesDict;
+        value           uniform (0 0 0);
+    }
+    outlet
+    {
+        type            IH_3D_3DAbsorption_InletVelocity;
+        nPaddles        25;
+        nEdgeMin        1;
+        nEdgeMax        1;
+        value           uniform (0 0 0);
+    }
+    bottom
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+    atmosphere
+    {
+        type            pressureInletOutletVelocity;
+        value           uniform (0 0 0);
+    }
+    front
+    {
+        type            IH_3D_3DAbsorption_InletVelocity;
+        nPaddles        25;
+        nEdgeMin        0;
+        nEdgeMax        1;
+        value           uniform (0 0 0);
+    }
+    back
+    {
+        type            IH_3D_3DAbsorption_InletVelocity;
+        nPaddles        25;
+        nEdgeMin        0;
+        nEdgeMax        1;
+        value           uniform (0 0 0);
+    }
+}
+
+
+// ************************************************************************* //
