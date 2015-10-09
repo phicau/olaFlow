@@ -54,7 +54,7 @@ SourceFiles
 | Work developed at IH Cantabria       IIIII H   H FFFFF OOOOO AAAAA M   M    |
 |                                        I   H   H F     O   O A   A MM MM    |
 |   Coder: Pablo Higuera Caubilla        I   HHHHH FFFF  O   O AAAAA M M M    |
-|   Bug reports: higuerap@unican.es      I   H   H F     O   O A   A M   M    |
+|   Bug reports: phicau@gmail.com        I   H   H F     O   O A   A M   M    |
 |                                      IIIII H   H F     OOOOO A   A M   M    |
 |   -----------------------------------------------------------------------   |
 | References:                                                                 |
