@@ -12,10 +12,6 @@ http://openfoamwiki.net/index.php/Contrib/IHFOAM
 
 # Download and compilation
 
-The detailed instructions on how to download, compile and run the code can be found at:
-
-https://openfoamwiki.net/index.php/Contrib/IHFOAM#Source_Download_and_Compilation
-
 ## Basic download guide
 
 To get a full copy of IHFOAM source and reference materials run in a terminal:
