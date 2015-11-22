@@ -1,0 +1,39 @@
+#!/bin/bash
+
+mkdir 0
+
+echo blockMesh meshing...
+blockMesh > blockMesh.log
+
+echo snappyHexMesh meshing...
+snappyHexMesh -overwrite > snappyHexMesh.log
+
+sed -i 's/caisson_diqueMixto/caisson/g' constant/polyMesh/boundary
+
+echo Preparing 0 folder...
+rm -fr 0
+cp -r 0.org 0
+
+echo Setting the fields...
+setFields > setFields.log
+
+echo Running...
+ihFoam > ihFoam.log
+
+echo Simulation complete
+
+echo Sampling free surface...
+cp system/sampleDictVOF system/sampleDict
+sample > sampleVOF.log
+python postSensVOF.py
+
+echo Sampling pressure...
+cp system/sampleDictPres system/sampleDict
+sample > samplePres.log
+python postSensPres.py
+
+echo Plotting variables
+
+python plotSensVOF.py
+python plotSensPres.py
+
