@@ -24,4 +24,7 @@ EXE_LIBS = \
     -ltopoChangerFvMesh \
     -lmeshTools \
     -lfvOptions \
-    -lsampling
+    -lsampling \
+    -L$(FOAM_USER_LIBBIN) \
+    -lIHwaveGeneration \
+    -lIHwaveAbsorption
