@@ -533,7 +533,7 @@ void IH_Waves_MultiPistonMovement::write(Ostream& os) const
 {
     fixedValuePointPatchField<vector>::write(os);
     os.writeKeyword("allCheck") << allCheck_ << token::END_STATEMENT << nl;
-    os.writeKeyword("multiPistonDict") << multiPistonDictName_ << token::END_STATEMENT << nl;
+    os.writeKeyword("multiPistonDictName") << multiPistonDictName_ << token::END_STATEMENT << nl;
 
     os.writeKeyword("nPaddles") << nPaddles_ << token::END_STATEMENT << nl;
     os.writeKeyword("initialWaterDepth") << initialWaterDepth_ << token::END_STATEMENT << nl;
