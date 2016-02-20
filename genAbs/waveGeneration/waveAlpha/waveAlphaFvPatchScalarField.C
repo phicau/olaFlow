@@ -51,7 +51,7 @@ License
 |                                                                             |
 \*---------------------------------------------------------------------------*/
 
-#include "IH_Waves_InletAlphaFvPatchScalarField.H"
+#include "waveAlphaFvPatchScalarField.H"
 #include "volFields.H"
 #include "addToRunTimeSelectionTable.H"
 #include "fvPatchFieldMapper.H"
@@ -63,8 +63,8 @@ License
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::
-IH_Waves_InletAlphaFvPatchScalarField::
-IH_Waves_InletAlphaFvPatchScalarField
+waveAlphaFvPatchScalarField::
+waveAlphaFvPatchScalarField
 (
     const fvPatch& p,
     const DimensionedField<scalar, volMesh>& iF
@@ -109,10 +109,10 @@ IH_Waves_InletAlphaFvPatchScalarField
 
 
 Foam::
-IH_Waves_InletAlphaFvPatchScalarField::
-IH_Waves_InletAlphaFvPatchScalarField
+waveAlphaFvPatchScalarField::
+waveAlphaFvPatchScalarField
 (
-    const IH_Waves_InletAlphaFvPatchScalarField& ptf,
+    const waveAlphaFvPatchScalarField& ptf,
     const fvPatch& p,
     const DimensionedField<scalar, volMesh>& iF,
     const fvPatchFieldMapper& mapper
@@ -157,8 +157,8 @@ IH_Waves_InletAlphaFvPatchScalarField
 
 
 Foam::
-IH_Waves_InletAlphaFvPatchScalarField::
-IH_Waves_InletAlphaFvPatchScalarField
+waveAlphaFvPatchScalarField::
+waveAlphaFvPatchScalarField
 (
     const fvPatch& p,
     const DimensionedField<scalar, volMesh>& iF,
@@ -215,10 +215,10 @@ IH_Waves_InletAlphaFvPatchScalarField
 
 
 Foam::
-IH_Waves_InletAlphaFvPatchScalarField::
-IH_Waves_InletAlphaFvPatchScalarField
+waveAlphaFvPatchScalarField::
+waveAlphaFvPatchScalarField
 (
-    const IH_Waves_InletAlphaFvPatchScalarField& ptf
+    const waveAlphaFvPatchScalarField& ptf
 )
 :
     fixedValueFvPatchField<scalar>(ptf),
@@ -260,10 +260,10 @@ IH_Waves_InletAlphaFvPatchScalarField
 
 
 Foam::
-IH_Waves_InletAlphaFvPatchScalarField::
-IH_Waves_InletAlphaFvPatchScalarField
+waveAlphaFvPatchScalarField::
+waveAlphaFvPatchScalarField
 (
-    const IH_Waves_InletAlphaFvPatchScalarField& ptf,
+    const waveAlphaFvPatchScalarField& ptf,
     const DimensionedField<scalar, volMesh>& iF
 )
 :
@@ -307,7 +307,7 @@ IH_Waves_InletAlphaFvPatchScalarField
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::IH_Waves_InletAlphaFvPatchScalarField::updateCoeffs()
+void Foam::waveAlphaFvPatchScalarField::updateCoeffs()
 {
     if (updated())
     {
@@ -661,7 +661,7 @@ void Foam::IH_Waves_InletAlphaFvPatchScalarField::updateCoeffs()
 }
 
 
-void Foam::IH_Waves_InletAlphaFvPatchScalarField::write(Ostream& os) const
+void Foam::waveAlphaFvPatchScalarField::write(Ostream& os) const
 {
     fvPatchField<scalar>::write(os);
     os.writeKeyword("waveType") << waveType_ << token::END_STATEMENT << nl;
@@ -782,7 +782,7 @@ namespace Foam
    makePatchTypeField
    (
        fvPatchScalarField,
-       IH_Waves_InletAlphaFvPatchScalarField
+       waveAlphaFvPatchScalarField
    );
 
 }

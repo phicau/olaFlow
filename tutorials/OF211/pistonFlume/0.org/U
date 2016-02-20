@@ -23,7 +23,7 @@ boundaryField
 {
     inlet
     {
-        type            IH_Waves_InletVelocity;
+        type            waveVelocity;
         waveDictName    IHWavesDict;
         value           uniform (0 0 0);
     }

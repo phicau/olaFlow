@@ -22,22 +22,22 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::IH_Waves_InletAlphaFvPatchScalarField
+    Foam::waveVelocityFvPatchVectorField
 
 Description
-    Describes a volumetric/mass flow normal Scalar boundary condition by its
+    Describes a volumetric/mass flow normal vector boundary condition by its
     magnitude as an integral over its area.
 
     The basis of the patch (volumetric or mass) is determined by the
     dimensions of the flux, phi.
-    The current density is used to correct the Alpha when applying the
+    The current density is used to correct the velocity when applying the
     mass basis.
 
     Example of the boundary condition specification:
     @verbatim
     inlet
     {
-        type            IH_Waves_InletAlpha;
+        type            waveVelocity;
         value           uniform (0 0 0); // placeholder
     }
     @endverbatim
@@ -48,7 +48,7 @@ Note
     - Strange behaviour with potentialFoam since the U equation is not solved
 
 SourceFiles
-    IH_Waves_InletAlphaFvPatchScalarField.C
+    waveVelocityFvPatchVectorField.C
 
 \*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*\
@@ -80,8 +80,8 @@ SourceFiles
 |                                                                             |
 \*---------------------------------------------------------------------------*/
 
-#ifndef IH_Waves_InletAlphaFvPatchScalarField_H
-#define IH_Waves_InletAlphaFvPatchScalarField_H
+#ifndef waveVelocityFvPatchVectorField_H
+#define waveVelocityFvPatchVectorField_H
 
 #include "fixedValueFvPatchFields.H"
 #include "mathematicalConstants.H"
@@ -91,12 +91,12 @@ SourceFiles
 namespace Foam
 {
 /*---------------------------------------------------------------------------*\
-               Class IH_Waves_InletAlphaFvPatch Declaration
+               Class waveVelocityFvPatch Declaration
 \*---------------------------------------------------------------------------*/
 
-class IH_Waves_InletAlphaFvPatchScalarField
+class waveVelocityFvPatchVectorField
 :
-    public fixedValueFvPatchScalarField
+    public fixedValueFvPatchVectorField
 {
     // Private data
 
@@ -147,6 +147,9 @@ class IH_Waves_InletAlphaFvPatchScalarField
 
         //- Stream function Bj coefficients
         scalarList Ejs_;
+
+        //- Current velocity vector
+        vector uCurrent_;
 
         //- Generation + Absorption at the same time
         bool genAbs_;
@@ -206,68 +209,68 @@ class IH_Waves_InletAlphaFvPatchScalarField
 public:
 
    //- Runtime type information
-   TypeName("IH_Waves_InletAlpha");
+   TypeName("waveVelocity");
 
 
    // Constructors
 
         //- Construct from patch and internal field
-        IH_Waves_InletAlphaFvPatchScalarField
+        waveVelocityFvPatchVectorField
         (
             const fvPatch&,
-            const DimensionedField<scalar, volMesh>&
+            const DimensionedField<vector, volMesh>&
         );
 
         //- Construct from patch, internal field and dictionary
-        IH_Waves_InletAlphaFvPatchScalarField
+        waveVelocityFvPatchVectorField
         (
             const fvPatch&,
-            const DimensionedField<scalar, volMesh>&,
+            const DimensionedField<vector, volMesh>&,
             const dictionary&
         );
 
         //- Construct by mapping given
-        //  IH_Waves_InletAlphaFvPatchScalarField
+        //  waveVelocityFvPatchVectorField
         //  onto a new patch
-        IH_Waves_InletAlphaFvPatchScalarField
+        waveVelocityFvPatchVectorField
         (
-            const IH_Waves_InletAlphaFvPatchScalarField&,
+            const waveVelocityFvPatchVectorField&,
             const fvPatch&,
-            const DimensionedField<scalar, volMesh>&,
+            const DimensionedField<vector, volMesh>&,
             const fvPatchFieldMapper&
         );
 
         //- Construct as copy
-        IH_Waves_InletAlphaFvPatchScalarField
+        waveVelocityFvPatchVectorField
         (
-            const IH_Waves_InletAlphaFvPatchScalarField&
+            const waveVelocityFvPatchVectorField&
         );
 
         //- Construct and return a clone
-        virtual tmp<fvPatchScalarField> clone() const
+        virtual tmp<fvPatchVectorField> clone() const
         {
-            return tmp<fvPatchScalarField>
+            return tmp<fvPatchVectorField>
             (
-                new IH_Waves_InletAlphaFvPatchScalarField(*this)
+                new waveVelocityFvPatchVectorField(*this)
             );
         }
 
         //- Construct as copy setting internal field reference
-        IH_Waves_InletAlphaFvPatchScalarField
+        waveVelocityFvPatchVectorField
         (
-            const IH_Waves_InletAlphaFvPatchScalarField&,
-            const DimensionedField<scalar, volMesh>&
+            const waveVelocityFvPatchVectorField&,
+            const DimensionedField<vector, volMesh>&
         );
 
         //- Construct and return a clone setting internal field reference
-        virtual tmp<fvPatchScalarField> clone
+        virtual tmp<fvPatchVectorField> clone
         (
-            const DimensionedField<scalar, volMesh>& iF
+            const DimensionedField<vector, volMesh>& iF
         ) const
         {
-            return tmp<fvPatchScalarField>
+            return tmp<fvPatchVectorField>
             (
-                new IH_Waves_InletAlphaFvPatchScalarField(*this, iF)
+                new waveVelocityFvPatchVectorField(*this, iF)
             );
         }
 

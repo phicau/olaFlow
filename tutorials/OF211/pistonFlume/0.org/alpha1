@@ -22,7 +22,7 @@ boundaryField
 {
     inlet
     {
-        type            IH_Waves_InletAlpha;
+        type            waveAlpha;
         waveDictName    IHWavesDict;
         value           uniform 0;
     }

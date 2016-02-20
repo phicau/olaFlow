@@ -77,7 +77,7 @@ SourceFiles
 namespace Foam
 {
 
-class IH_Waves_MultiPistonMovement
+class multiPistonMovement
 :
     public fixedValuePointPatchField<vector>
 {
@@ -143,20 +143,20 @@ class IH_Waves_MultiPistonMovement
 public:
 
     //- Runtime type information
-    TypeName("IH_Waves_MultiPistonMovement");
+    TypeName("multiPistonMovement");
 
 
     // Constructors
 
         //- Construct from patch and internal field
-        IH_Waves_MultiPistonMovement
+        multiPistonMovement
         (
             const pointPatch&,
             const DimensionedField<vector, pointMesh>&
         );
 
         //- Construct from patch, internal field and dictionary
-        IH_Waves_MultiPistonMovement
+        multiPistonMovement
         (
             const pointPatch&,
             const DimensionedField<vector, pointMesh>&,
@@ -165,18 +165,18 @@ public:
         );
 
         //- Construct by mapping a copy onto a new patch
-        IH_Waves_MultiPistonMovement
+        multiPistonMovement
         (
-            const IH_Waves_MultiPistonMovement&,
+            const multiPistonMovement&,
             const pointPatch&,
             const DimensionedField<vector, pointMesh>&,
             const pointPatchFieldMapper&
         );
 
         //- Construct as copy
-        IH_Waves_MultiPistonMovement
+        multiPistonMovement
         (
-            const IH_Waves_MultiPistonMovement&
+            const multiPistonMovement&
         );
 
         //- Construct and return a clone
@@ -184,14 +184,14 @@ public:
         {
             return autoPtr< pointPatchField<vector> >
             (
-                new IH_Waves_MultiPistonMovement(*this)
+                new multiPistonMovement(*this)
             );
         }
 
         //- Construct as copy setting internal field reference
-        IH_Waves_MultiPistonMovement
+        multiPistonMovement
         (
-            const IH_Waves_MultiPistonMovement&,
+            const multiPistonMovement&,
             const DimensionedField<vector, pointMesh>&
         );
 
@@ -203,13 +203,13 @@ public:
         {
             return autoPtr< pointPatchField<vector> >
             (
-                new IH_Waves_MultiPistonMovement(*this, iF)
+                new multiPistonMovement(*this, iF)
             );
         }
 
 
     //- Destructor
-    virtual ~IH_Waves_MultiPistonMovement();
+    virtual ~multiPistonMovement();
 
 
     // Member functions

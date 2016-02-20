@@ -51,7 +51,7 @@ License
 |                                                                             |
 \*---------------------------------------------------------------------------*/
 
-#include "IH_Waves_InletVelocityFvPatchVectorField.H"
+#include "waveVelocityFvPatchVectorField.H"
 #include "volFields.H"
 #include "addToRunTimeSelectionTable.H"
 #include "fvPatchFieldMapper.H"
@@ -62,8 +62,8 @@ License
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::
-IH_Waves_InletVelocityFvPatchVectorField::
-IH_Waves_InletVelocityFvPatchVectorField
+waveVelocityFvPatchVectorField::
+waveVelocityFvPatchVectorField
 (
     const fvPatch& p,
     const DimensionedField<vector, volMesh>& iF
@@ -109,10 +109,10 @@ IH_Waves_InletVelocityFvPatchVectorField
 
 
 Foam::
-IH_Waves_InletVelocityFvPatchVectorField::
-IH_Waves_InletVelocityFvPatchVectorField
+waveVelocityFvPatchVectorField::
+waveVelocityFvPatchVectorField
 (
-    const IH_Waves_InletVelocityFvPatchVectorField& ptf,
+    const waveVelocityFvPatchVectorField& ptf,
     const fvPatch& p,
     const DimensionedField<vector, volMesh>& iF,
     const fvPatchFieldMapper& mapper
@@ -158,8 +158,8 @@ IH_Waves_InletVelocityFvPatchVectorField
 
 
 Foam::
-IH_Waves_InletVelocityFvPatchVectorField::
-IH_Waves_InletVelocityFvPatchVectorField
+waveVelocityFvPatchVectorField::
+waveVelocityFvPatchVectorField
 (
     const fvPatch& p,
     const DimensionedField<vector, volMesh>& iF,
@@ -217,10 +217,10 @@ IH_Waves_InletVelocityFvPatchVectorField
 
 
 Foam::
-IH_Waves_InletVelocityFvPatchVectorField::
-IH_Waves_InletVelocityFvPatchVectorField
+waveVelocityFvPatchVectorField::
+waveVelocityFvPatchVectorField
 (
-    const IH_Waves_InletVelocityFvPatchVectorField& ptf
+    const waveVelocityFvPatchVectorField& ptf
 )
 :
     fixedValueFvPatchField<vector>(ptf),
@@ -263,10 +263,10 @@ IH_Waves_InletVelocityFvPatchVectorField
 
 
 Foam::
-IH_Waves_InletVelocityFvPatchVectorField::
-IH_Waves_InletVelocityFvPatchVectorField
+waveVelocityFvPatchVectorField::
+waveVelocityFvPatchVectorField
 (
-    const IH_Waves_InletVelocityFvPatchVectorField& ptf,
+    const waveVelocityFvPatchVectorField& ptf,
     const DimensionedField<vector, volMesh>& iF
 )
 :
@@ -311,7 +311,7 @@ IH_Waves_InletVelocityFvPatchVectorField
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::IH_Waves_InletVelocityFvPatchVectorField::updateCoeffs()
+void Foam::waveVelocityFvPatchVectorField::updateCoeffs()
 {
     if (updated())
     {
@@ -697,7 +697,7 @@ void Foam::IH_Waves_InletVelocityFvPatchVectorField::updateCoeffs()
 }
 
 
-void Foam::IH_Waves_InletVelocityFvPatchVectorField::write(Ostream& os) const
+void Foam::waveVelocityFvPatchVectorField::write(Ostream& os) const
 {
     fvPatchField<vector>::write(os);
     os.writeKeyword("waveType") << waveType_ << token::END_STATEMENT << nl;
@@ -825,7 +825,7 @@ namespace Foam
    makePatchTypeField
    (
        fvPatchVectorField,
-       IH_Waves_InletVelocityFvPatchVectorField
+       waveVelocityFvPatchVectorField
    );
 }
 

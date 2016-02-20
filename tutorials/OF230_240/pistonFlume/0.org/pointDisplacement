@@ -32,7 +32,7 @@ boundaryField
     }
     outlet
     {
-        type IH_Waves_MultiPistonMovement;
+        type            multiPistonMovement;
         multiPistonDictName IHMultiPistonABSMovementDict;
         value           uniform (0 0 0);
     }

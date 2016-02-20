@@ -23,7 +23,7 @@ boundaryField
 {
     inlet
     {
-        type IH_Waves_MultiPistonMovement; 
+        type            multiPistonMovement;
         value           uniform (0 0 0);
     }
     outlet

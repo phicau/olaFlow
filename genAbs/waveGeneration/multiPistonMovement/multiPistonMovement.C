@@ -75,13 +75,13 @@ namespace Foam
 makePointPatchTypeField
 (
     pointPatchVectorField,
-    IH_Waves_MultiPistonMovement
+    multiPistonMovement
 );
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-IH_Waves_MultiPistonMovement::
-IH_Waves_MultiPistonMovement
+multiPistonMovement::
+multiPistonMovement
 (
     const pointPatch& p,
     const DimensionedField<vector, pointMesh>& iF
@@ -110,10 +110,10 @@ IH_Waves_MultiPistonMovement
 {}
 
 
-IH_Waves_MultiPistonMovement::
-IH_Waves_MultiPistonMovement
+multiPistonMovement::
+multiPistonMovement
 (
-    const IH_Waves_MultiPistonMovement& ptf,
+    const multiPistonMovement& ptf,
     const pointPatch& p,
     const DimensionedField<vector, pointMesh>& iF,
     const pointPatchFieldMapper& mapper
@@ -142,8 +142,8 @@ IH_Waves_MultiPistonMovement
 {}
 
 
-IH_Waves_MultiPistonMovement::
-IH_Waves_MultiPistonMovement
+multiPistonMovement::
+multiPistonMovement
 (
     const pointPatch& p,
     const DimensionedField<vector, pointMesh>& iF,
@@ -174,10 +174,10 @@ IH_Waves_MultiPistonMovement
 {}
 
 
-IH_Waves_MultiPistonMovement::
-IH_Waves_MultiPistonMovement
+multiPistonMovement::
+multiPistonMovement
 (
-    const IH_Waves_MultiPistonMovement& ptf
+    const multiPistonMovement& ptf
 )
 :
     fixedValuePointPatchField<vector>(ptf),
@@ -203,10 +203,10 @@ IH_Waves_MultiPistonMovement
 {}
 
 
-IH_Waves_MultiPistonMovement::
-IH_Waves_MultiPistonMovement
+multiPistonMovement::
+multiPistonMovement
 (
-    const IH_Waves_MultiPistonMovement& ptf,
+    const multiPistonMovement& ptf,
     const DimensionedField<vector, pointMesh>& iF
 )
 :
@@ -235,14 +235,14 @@ IH_Waves_MultiPistonMovement
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-IH_Waves_MultiPistonMovement::
-~IH_Waves_MultiPistonMovement()
+multiPistonMovement::
+~multiPistonMovement()
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void IH_Waves_MultiPistonMovement::updateCoeffs()
+void multiPistonMovement::updateCoeffs()
 {
     if (this->updated())
     {
@@ -339,7 +339,7 @@ void IH_Waves_MultiPistonMovement::updateCoeffs()
         // Check paddleEta and nPaddles
         if ( genAbs_ && paddleEta_[0].size() == 1 )
         {
-            WarningIn("IH_Waves_MultiPistonMovement::updateCoeffs()")
+            WarningIn("multiPistonMovement::updateCoeffs()")
                 << "No paddleEta provided. Assuming: paddleEta = paddlePosition"
                 << endl;
 
@@ -536,7 +536,7 @@ void IH_Waves_MultiPistonMovement::updateCoeffs()
 
 }
 
-void IH_Waves_MultiPistonMovement::write(Ostream& os) const
+void multiPistonMovement::write(Ostream& os) const
 {
     fixedValuePointPatchField<vector>::write(os);
     os.writeKeyword("allCheck") << allCheck_ << token::END_STATEMENT << nl;
