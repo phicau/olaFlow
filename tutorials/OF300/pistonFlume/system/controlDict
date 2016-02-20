@@ -55,7 +55,7 @@ maxDeltaT       0.025;
 
 libs 
 (
-    "libIHMultiPistonMovement.so"
+    "libmultiPistonMovement.so"
 );
 
 // ************************************************************************* //

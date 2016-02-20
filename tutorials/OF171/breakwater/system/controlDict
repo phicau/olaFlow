@@ -55,7 +55,7 @@ maxDeltaT       0.05;
 
 libs
 (
-    "libIHwaveGeneration.so"
-    "libIHwaveAbsorption.so"
+    "libwaveGeneration.so"
+    "libwaveAbsorption.so"
 );
 // ************************************************************************* //
