@@ -1,3 +1,0 @@
-ihFoam.C
-
-EXE = $(FOAM_USER_APPBIN)/ihFoam
