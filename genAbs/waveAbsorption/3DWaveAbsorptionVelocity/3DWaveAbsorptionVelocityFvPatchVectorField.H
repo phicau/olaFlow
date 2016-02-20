@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::IH_3D_3DAbsorption_InletVelocityFvPatchVectorField
+    Foam::3DWaveAbsorptionVelocityFvPatchVectorField
 
 Description
     Wave absorption boundary condition based on shallow water theory and on a
@@ -33,7 +33,7 @@ Description
     @verbatim
     inlet
     {
-        type            IH_3D_3DAbsorption_InletVelocity;
+        type            3DWaveAbsorptionVelocity;
         nPaddles        1;
         nEdgeMin        0;
         nEdgeMax        0;
@@ -45,7 +45,7 @@ Note
     - The value is positive inwards
 
 SourceFiles
-    IH_3D_3DAbsorption_InletVelocityFvPatchVectorField.C
+    3DWaveAbsorptionVelocityFvPatchVectorField.C
 
 \*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*\
@@ -77,8 +77,8 @@ SourceFiles
 |                                                                             |
 \*---------------------------------------------------------------------------*/
 
-#ifndef IH_3D_3DAbsorption_InletVelocityFvPatchVectorField_H
-#define IH_3D_3DAbsorption_InletVelocityFvPatchVectorField_H
+#ifndef 3DWaveAbsorptionVelocityFvPatchVectorField_H
+#define 3DWaveAbsorptionVelocityFvPatchVectorField_H
 
 #include "fixedValueFvPatchFields.H"
 #include "mathematicalConstants.H"
@@ -88,10 +88,10 @@ SourceFiles
 namespace Foam
 {
 /*---------------------------------------------------------------------------*\
-               Class IH_3D_3DAbsorption_InletVelocityFvPatch Declaration
+               Class 3DWaveAbsorptionVelocityFvPatch Declaration
 \*---------------------------------------------------------------------------*/
 
-class IH_3D_3DAbsorption_InletVelocityFvPatchVectorField
+class 3DWaveAbsorptionVelocityFvPatchVectorField
 :
     public fixedValueFvPatchVectorField
 {
@@ -123,20 +123,20 @@ class IH_3D_3DAbsorption_InletVelocityFvPatchVectorField
 public:
 
    //- Runtime type information
-   TypeName("IH_3D_3DAbsorption_InletVelocity");
+   TypeName("3DWaveAbsorptionVelocity");
 
 
    // Constructors
 
         //- Construct from patch and internal field
-        IH_3D_3DAbsorption_InletVelocityFvPatchVectorField
+        3DWaveAbsorptionVelocityFvPatchVectorField
         (
             const fvPatch&,
             const DimensionedField<vector, volMesh>&
         );
 
         //- Construct from patch, internal field and dictionary
-        IH_3D_3DAbsorption_InletVelocityFvPatchVectorField
+        3DWaveAbsorptionVelocityFvPatchVectorField
         (
             const fvPatch&,
             const DimensionedField<vector, volMesh>&,
@@ -144,20 +144,20 @@ public:
         );
 
         //- Construct by mapping given
-        //  IH_3D_3DAbsorption_InletVelocityFvPatchVectorField
+        //  3DWaveAbsorptionVelocityFvPatchVectorField
         //  onto a new patch
-        IH_3D_3DAbsorption_InletVelocityFvPatchVectorField
+        3DWaveAbsorptionVelocityFvPatchVectorField
         (
-            const IH_3D_3DAbsorption_InletVelocityFvPatchVectorField&,
+            const 3DWaveAbsorptionVelocityFvPatchVectorField&,
             const fvPatch&,
             const DimensionedField<vector, volMesh>&,
             const fvPatchFieldMapper&
         );
 
         //- Construct as copy
-        IH_3D_3DAbsorption_InletVelocityFvPatchVectorField
+        3DWaveAbsorptionVelocityFvPatchVectorField
         (
-            const IH_3D_3DAbsorption_InletVelocityFvPatchVectorField&
+            const 3DWaveAbsorptionVelocityFvPatchVectorField&
         );
 
         //- Construct and return a clone
@@ -165,14 +165,14 @@ public:
         {
             return tmp<fvPatchVectorField>
             (
-                new IH_3D_3DAbsorption_InletVelocityFvPatchVectorField(*this)
+                new 3DWaveAbsorptionVelocityFvPatchVectorField(*this)
             );
         }
 
         //- Construct as copy setting internal field reference
-        IH_3D_3DAbsorption_InletVelocityFvPatchVectorField
+        3DWaveAbsorptionVelocityFvPatchVectorField
         (
-            const IH_3D_3DAbsorption_InletVelocityFvPatchVectorField&,
+            const 3DWaveAbsorptionVelocityFvPatchVectorField&,
             const DimensionedField<vector, volMesh>&
         );
 
@@ -184,7 +184,7 @@ public:
         {
             return tmp<fvPatchVectorField>
             (
-                new IH_3D_3DAbsorption_InletVelocityFvPatchVectorField
+                new 3DWaveAbsorptionVelocityFvPatchVectorField
                     (*this, iF)
             );
         }

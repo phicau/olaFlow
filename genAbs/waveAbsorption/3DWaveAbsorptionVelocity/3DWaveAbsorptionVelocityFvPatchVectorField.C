@@ -51,7 +51,7 @@ License
 |                                                                             |
 \*---------------------------------------------------------------------------*/
 
-#include "IH_3D_2DAbsorption_InletVelocityFvPatchVectorField.H"
+#include "3DWaveAbsorptionVelocityFvPatchVectorField.H"
 #include "volFields.H"
 #include "addToRunTimeSelectionTable.H"
 #include "fvPatchFieldMapper.H"
@@ -60,8 +60,8 @@ License
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::
-IH_3D_2DAbsorption_InletVelocityFvPatchVectorField::
-IH_3D_2DAbsorption_InletVelocityFvPatchVectorField
+3DWaveAbsorptionVelocityFvPatchVectorField::
+3DWaveAbsorptionVelocityFvPatchVectorField
 (
     const fvPatch& p,
     const DimensionedField<vector, volMesh>& iF
@@ -70,7 +70,6 @@ IH_3D_2DAbsorption_InletVelocityFvPatchVectorField
     fixedValueFvPatchField<vector>(p, iF),
     nPaddles_(1),
     initialWaterDepths_(List<scalar> (1, -1.0)),
-    absorptionDir_(400.0),
     meanAngles_(List<scalar> (1, -1.0)),
     zSpanL_(List<scalar> (1, -1.0)),
     nEdgeMin_(0),
@@ -80,10 +79,10 @@ IH_3D_2DAbsorption_InletVelocityFvPatchVectorField
 
 
 Foam::
-IH_3D_2DAbsorption_InletVelocityFvPatchVectorField::
-IH_3D_2DAbsorption_InletVelocityFvPatchVectorField
+3DWaveAbsorptionVelocityFvPatchVectorField::
+3DWaveAbsorptionVelocityFvPatchVectorField
 (
-    const IH_3D_2DAbsorption_InletVelocityFvPatchVectorField& ptf,
+    const 3DWaveAbsorptionVelocityFvPatchVectorField& ptf,
     const fvPatch& p,
     const DimensionedField<vector, volMesh>& iF,
     const fvPatchFieldMapper& mapper
@@ -92,7 +91,6 @@ IH_3D_2DAbsorption_InletVelocityFvPatchVectorField
     fixedValueFvPatchField<vector>(ptf, p, iF, mapper),
     nPaddles_(ptf.nPaddles_),
     initialWaterDepths_(ptf.initialWaterDepths_),
-    absorptionDir_(ptf.absorptionDir_),
     meanAngles_(ptf.meanAngles_),
     zSpanL_(ptf.zSpanL_),
     nEdgeMin_(ptf.nEdgeMin_),
@@ -102,8 +100,8 @@ IH_3D_2DAbsorption_InletVelocityFvPatchVectorField
 
 
 Foam::
-IH_3D_2DAbsorption_InletVelocityFvPatchVectorField::
-IH_3D_2DAbsorption_InletVelocityFvPatchVectorField
+3DWaveAbsorptionVelocityFvPatchVectorField::
+3DWaveAbsorptionVelocityFvPatchVectorField
 (
     const fvPatch& p,
     const DimensionedField<vector, volMesh>& iF,
@@ -113,8 +111,7 @@ IH_3D_2DAbsorption_InletVelocityFvPatchVectorField
     fixedValueFvPatchField<vector>(p, iF, dict),
     nPaddles_(dict.lookupOrDefault<label>("nPaddles", 1)),
     initialWaterDepths_( 
-    	dict.lookupOrDefault("initialWaterDepths", List<scalar> (1, -1.0)) ),
-    absorptionDir_(dict.lookupOrDefault<scalar>("absorptionDir", 400.0)),
+        dict.lookupOrDefault("initialWaterDepths", List<scalar> (1, -1.0)) ),
     meanAngles_( dict.lookupOrDefault("meanAngles", List<scalar> (1, -1.0)) ),
     zSpanL_( dict.lookupOrDefault("zSpanL", List<scalar> (1, -1.0)) ),
     nEdgeMin_(dict.lookupOrDefault<label>("nEdgeMin", 0)),
@@ -124,16 +121,15 @@ IH_3D_2DAbsorption_InletVelocityFvPatchVectorField
 
 
 Foam::
-IH_3D_2DAbsorption_InletVelocityFvPatchVectorField::
-IH_3D_2DAbsorption_InletVelocityFvPatchVectorField
+3DWaveAbsorptionVelocityFvPatchVectorField::
+3DWaveAbsorptionVelocityFvPatchVectorField
 (
-    const IH_3D_2DAbsorption_InletVelocityFvPatchVectorField& ptf
+    const 3DWaveAbsorptionVelocityFvPatchVectorField& ptf
 )
 :
     fixedValueFvPatchField<vector>(ptf),
     nPaddles_(ptf.nPaddles_),
     initialWaterDepths_(ptf.initialWaterDepths_),
-    absorptionDir_(ptf.absorptionDir_),
     meanAngles_(ptf.meanAngles_),
     zSpanL_(ptf.zSpanL_),
     nEdgeMin_(ptf.nEdgeMin_),
@@ -143,17 +139,16 @@ IH_3D_2DAbsorption_InletVelocityFvPatchVectorField
 
 
 Foam::
-IH_3D_2DAbsorption_InletVelocityFvPatchVectorField::
-IH_3D_2DAbsorption_InletVelocityFvPatchVectorField
+3DWaveAbsorptionVelocityFvPatchVectorField::
+3DWaveAbsorptionVelocityFvPatchVectorField
 (
-    const IH_3D_2DAbsorption_InletVelocityFvPatchVectorField& ptf,
+    const 3DWaveAbsorptionVelocityFvPatchVectorField& ptf,
     const DimensionedField<vector, volMesh>& iF
 )
 :
     fixedValueFvPatchField<vector>(ptf, iF),
     nPaddles_(ptf.nPaddles_),
     initialWaterDepths_(ptf.initialWaterDepths_),
-    absorptionDir_(ptf.absorptionDir_),
     meanAngles_(ptf.meanAngles_),
     zSpanL_(ptf.zSpanL_),
     nEdgeMin_(ptf.nEdgeMin_),
@@ -164,7 +159,7 @@ IH_3D_2DAbsorption_InletVelocityFvPatchVectorField
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::IH_3D_2DAbsorption_InletVelocityFvPatchVectorField::updateCoeffs()
+void Foam::3DWaveAbsorptionVelocityFvPatchVectorField::updateCoeffs()
 {
     if (updated())
     {
@@ -172,7 +167,7 @@ void Foam::IH_3D_2DAbsorption_InletVelocityFvPatchVectorField::updateCoeffs()
     }
 
     // PHC //
-    Info << "3D_2D Absorption BC on patch " << this->patch().name() << endl;
+    Info << "3D_3D Absorption BC on patch " << this->patch().name() << endl;
 
     // 3D Variables
     const vector cMin = gMin(patch().patch().localPoints());
@@ -190,16 +185,19 @@ void Foam::IH_3D_2DAbsorption_InletVelocityFvPatchVectorField::updateCoeffs()
     const label nF = patch().faceCells().size();
 
     const volScalarField& alpha = 
-    	db().lookupObject<volScalarField>(alphaName());
+        db().lookupObject<volScalarField>(alphaName());
     const volVectorField& U = db().lookupObject<volVectorField>("U");
 
     const scalarField alphaCell = 
-    	alpha.boundaryField()[patchID].patchInternalField();
+        alpha.boundaryField()[patchID].patchInternalField();
     const vectorField UCell = U.boundaryField()[patchID].patchInternalField();
-    scalarField UzCell = UCell.component(2);
 
     scalarField patchUc = Foam::scalarField(nF, 0.0); // Correction velocity
     scalarField patchVc = Foam::scalarField(nF, 0.0); // Correction velocity
+
+    const scalarField UxCell = UCell.component(0);
+    const scalarField UyCell = UCell.component(1);;
+    scalarField UzCell = UCell.component(2);
 
     const scalar g = 9.81;
 
@@ -244,7 +242,7 @@ void Foam::IH_3D_2DAbsorption_InletVelocityFvPatchVectorField::updateCoeffs()
 
     for (label i=0; i<nPaddles_; i++)
     {
-    	// Breakpoints, X & Y centre of the paddles
+        // Breakpoints, X & Y centre of the paddles
         dBreakPoints[i+1] = dMin + dSpan/(nPaddles_)*(i+1);
         xGroup[i] = cMin[0] + cSpan[0]/(2.0*nPaddles_) + cSpan[0]/(nPaddles_)*i;
         yGroup[i] = cMin[1] + cSpan[1]/(2.0*nPaddles_) + cSpan[1]/(nPaddles_)*i;
@@ -254,8 +252,8 @@ void Foam::IH_3D_2DAbsorption_InletVelocityFvPatchVectorField::updateCoeffs()
     {
         for (label i=0; i<nPaddles_; i++)
         {
-            if ( (patchD[patchCells]>=dBreakPoints[i]) && 
-            	(patchD[patchCells]<dBreakPoints[i+1]) )
+            if ( (patchD[patchCells]>=dBreakPoints[i]) &&
+                (patchD[patchCells]<dBreakPoints[i+1]) )
             {
                 faceGroup[patchCells] = i+1; // Group of each face
                 continue;
@@ -265,9 +263,9 @@ void Foam::IH_3D_2DAbsorption_InletVelocityFvPatchVectorField::updateCoeffs()
 
     if (!allCheck_)
     {
-	    // Calculate Z bounds of the faces
-	    scalarField zSup, zInf;
-		faceBoundsZ( &zSup, &zInf );
+        // Calculate Z bounds of the faces
+        scalarField zSup, zInf;
+        faceBoundsZ( &zSup, &zInf );
         // Z-span paddlewise
         zSpanL_ = zSpanList( faceGroup, zInf, zSup );
         //inlinePrint( "Z-span paddlewise", zSpanL_ );
@@ -277,22 +275,12 @@ void Foam::IH_3D_2DAbsorption_InletVelocityFvPatchVectorField::updateCoeffs()
         {
             initialWaterDepths_ = calcWL( alphaCell, faceGroup, zSpanL_ );
             inlinePrint( "Initial water depths for absorption", 
-            	initialWaterDepths_ );
+                initialWaterDepths_ );
         }
 
         // Absorption direction part
-        meanAngles_ = initialWaterDepths_;
-
-        // Check if absorption is directional
-        if ( absorptionDir_ > 360.0 ) // Automatic
-        {
-            meanAngles_ = meanPatchDirs( faceGroup );
-        }
-        else // Fixed
-        {
-            meanAngles_ = absorptionDir_*PI()/180.0;
-        }
-        //inlinePrint( "Paddle angles", meanAngles_ );
+        meanAngles_ = meanPatchDirs( faceGroup );
+        // Info << "Paddle angles " << meanAngles_ << endl;
 
         allCheck_ = true;
     }
@@ -300,51 +288,81 @@ void Foam::IH_3D_2DAbsorption_InletVelocityFvPatchVectorField::updateCoeffs()
     // Calculate water measured levels
     scalarList measuredLevels = calcWL( alphaCell, faceGroup, zSpanL_ );
 
-    // Correction velocity: U = -sqrt(g/h)*corrL
+    // Correction velocity: Ucalc = -sqrt(g/h)*corrL
     scalarList corrLevels = measuredLevels - initialWaterDepths_;
     inlinePrint( "Correction Levels", corrLevels );
 
-    scalarList Uc = -sqrt(g/max(initialWaterDepths_,0.1))*corrLevels;
+    scalarList Ucalc = -sqrt(g/max(initialWaterDepths_,0.1))*corrLevels;
+    scalarList signoU(nPaddles_, 0.0); // Sign of Ucalc
 
-    // Limit in-flux
-    for(label i=0; i<=nPaddles_-1; i++)
+    // Calculate mean velocities on each paddle
+    scalarList groupUx (nPaddles_,0.0);
+    scalarList groupUy (nPaddles_,0.0);
+    calcUV( alphaCell, faceGroup, UxCell, &groupUx, UyCell, &groupUy );
+
+    // Calculate the mean tangential velocity of water for each paddle
+    const scalarList meanTgAngle = meanAngles_ + PI()/2.0;
+    scalarList Utg (nPaddles_,0.0); // Tg velocity
+    scalarList Uc (nPaddles_,0.0); // Correction velocity
+
+    for (label i=0; i<=nPaddles_-1; i++)
     {
-        if( (i <= nEdgeMin_-1) || (i > nPaddles_-1-nEdgeMax_) )
+        Utg[i] = 
+            groupUy[i]*cos(meanAngles_[i]) - groupUx[i]*sin(meanAngles_[i]);
+        
+        Uc[i] = sqr(Ucalc[i]) - sqr(Utg[i]);
+        Uc[i] = sqrt( pos(Uc[i])*Uc[i] );
+
+        signoU[i] = sign(Ucalc[i]);
+
+        // Limit in-flux
+        if( i <= nEdgeMin_-1 || i > nPaddles_-1-nEdgeMax_ )
         {
+            Uc[i] = Ucalc[i];
+
             if( pos(Uc[i]) )
             {
-                Uc[i] = 0.0;
+                signoU[i] = 0.0;
+            }
+            else
+            {
+                signoU[i] = 1.0;
             }
         }
     }
 
+    // Info << "Ucalc " << Ucalc << endl;
+    // Info << "Utg " << Utg << endl;
+    // Info << "Uc " << Uc << endl;
+    // Info << "Signo " << signoU << endl;
+
     forAll(patchUc, cellIndex)    
     {
-        patchUc[cellIndex] = pos(alphaCell[cellIndex]-0.9)*
-        	Uc[faceGroup[cellIndex]-1]*cos(meanAngles_[faceGroup[cellIndex]-1]);
-        patchVc[cellIndex] = pos(alphaCell[cellIndex]-0.9)*
-        	Uc[faceGroup[cellIndex]-1]*sin(meanAngles_[faceGroup[cellIndex]-1]);
-        UzCell[cellIndex] = pos(alphaCell[cellIndex]-0.9)*UzCell[cellIndex];
+        patchUc[cellIndex] = signoU[faceGroup[cellIndex]-1]*
+            Uc[faceGroup[cellIndex]-1]*alphaCell[cellIndex]*
+            cos(meanAngles_[faceGroup[cellIndex]-1]);
+        patchVc[cellIndex] = signoU[faceGroup[cellIndex]-1]*
+            Uc[faceGroup[cellIndex]-1]*alphaCell[cellIndex]*
+            sin(meanAngles_[faceGroup[cellIndex]-1]);
+        UzCell[cellIndex] = (1.0-alphaCell[cellIndex])*UzCell[cellIndex];
     }
 
     const vectorField n1 = Foam::vectorField(nF, vector(1.0, 0.0, 0.0));
     const vectorField n2 = Foam::vectorField(nF, vector(0.0, 1.0, 0.0));
     const vectorField n3 = Foam::vectorField(nF, vector(0.0, 0.0, 1.0));
 
-    operator==(n1*patchUc + n2*patchVc + n3*UzCell); 
+    operator==(n1*patchUc + n2*patchVc + n3*UzCell);
 
     fixedValueFvPatchField<vector>::updateCoeffs();
 
 }
 
 
-void Foam::IH_3D_2DAbsorption_InletVelocityFvPatchVectorField::
+void Foam::3DWaveAbsorptionVelocityFvPatchVectorField::
 write(Ostream& os) const
 {
     fvPatchField<vector>::write(os);
 
-    os.writeKeyword("absorptionDir") << absorptionDir_ << 
-        token::END_STATEMENT << nl;
     os.writeKeyword("nPaddles") << nPaddles_ << token::END_STATEMENT << nl;
 
     initialWaterDepths_.writeEntry("initialWaterDepths", os);
@@ -358,6 +376,7 @@ write(Ostream& os) const
     writeEntry("value", os);
 }
 
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -365,7 +384,7 @@ namespace Foam
    makePatchTypeField
    (
        fvPatchVectorField,
-       IH_3D_2DAbsorption_InletVelocityFvPatchVectorField
+       3DWaveAbsorptionVelocityFvPatchVectorField
    );
 }
 

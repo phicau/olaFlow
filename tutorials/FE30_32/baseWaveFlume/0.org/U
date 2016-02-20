@@ -29,7 +29,7 @@ boundaryField
     }
     outlet
     {
-        type            IH_3D_2DAbsorption_InletVelocity;
+        type            2DWaveAbsorptionVelocity;
         value           uniform (0 0 0);
     }
     bottom
