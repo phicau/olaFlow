@@ -30,6 +30,39 @@ SourceFiles
     multiPistonMovement.C
 
 \*---------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------*\
+| olaFoam Project                                       ll                    |
+|                                                       l l                   |
+|   Coder: Pablo Higuera Caubilla                 ooo   l l     aa            |
+|   Bug reports: phicau@gmail.com                o   o  l l    a  a           |
+|                                                o   o  ll   l a  aa  aa      |
+|                                                 ooo    llll   aa  aa        |
+|                                                                             |
+|                                                FFFFF OOOOO AAAAA M   M      |
+|                                                F     O   O A   A MM MM      |
+|  Formerly IHFOAM Project                       FFFF  O   O AAAAA M M M      |
+|  Work initially developed at IH Cantabria      F     O   O A   A M   M      |
+|                                                F     OOOOO A   A M   M      |
+|   -----------------------------------------------------------------------   |
+| References:                                                                 |
+|                                                                             |
+| - Realistic wave generation and active wave absorption for Navier-Stokes    |
+|    models: Application to OpenFOAM.                                         |
+|    Higuera, P., Lara, J.L. and Losada, I.J. (2013)                          |
+|    Coastal Engineering, Vol. 71, 102-118.                                   |
+|    http://dx.doi.org/10.1016/j.coastaleng.2012.07.002                       |
+|                                                                             |
+| - Simulating coastal engineering processes with OpenFOAM                    |
+|    Higuera, P., Lara, J.L. and Losada, I.J. (2013)                          |
+|    Coastal Engineering, Vol. 71, 119-134.                                   |
+|    http://dx.doi.org/10.1016/j.coastaleng.2012.06.002                       |
+|                                                                             |
+| - Three-dimensional numerical wave generation with moving boundaries        |
+|    Higuera, P., Losada, I.J. and Lara, J.L. (2015)                          |
+|    Coastal Engineering, Vol. 101, 35-47.                                    |
+|    http://dx.doi.org/10.1016/j.coastaleng.2015.04.003                       |
+|                                                                             |
+\*---------------------------------------------------------------------------*/
 
 #ifndef fixedValuePointPatchTemplateVectorField_H
 #define fixedValuePointPatchTemplateVectorField_H
