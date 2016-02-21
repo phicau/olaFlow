@@ -1,18 +1,18 @@
     // Extracting values from dict
     waveHeights_ = 
-        (IHWavesDict.lookupOrDefault("waveHeights", List<scalar> (1, -1.0) ));
+        (waveDict.lookupOrDefault("waveHeights", List<scalar> (1, -1.0) ));
     wavePeriods_ = 
-        (IHWavesDict.lookupOrDefault("wavePeriods", List<scalar> (1, -1.0) ));
+        (waveDict.lookupOrDefault("wavePeriods", List<scalar> (1, -1.0) ));
     waveDirs_ = 
-        (IHWavesDict.lookupOrDefault("waveDirs", List<scalar> (1, -1.0) ));
+        (waveDict.lookupOrDefault("waveDirs", List<scalar> (1, -1.0) ));
     wavePhases_ = 
-        (IHWavesDict.lookupOrDefault("wavePhases", List<scalar> (1, -1.0) ));
+        (waveDict.lookupOrDefault("wavePhases", List<scalar> (1, -1.0) ));
 
-    genAbs_ = (IHWavesDict.lookupOrDefault<bool>("genAbs", false ));
-    nPaddles_ = (IHWavesDict.lookupOrDefault<label>("nPaddles", 1));
-    absDir_ = (IHWavesDict.lookupOrDefault<scalar>("absDir", 0));
+    genAbs_ = (waveDict.lookupOrDefault<bool>("genAbs", false ));
+    nPaddles_ = (waveDict.lookupOrDefault<label>("nPaddles", 1));
+    absDir_ = (waveDict.lookupOrDefault<scalar>("absDir", 0));
 
-    secondOrder_ = (IHWavesDict.lookupOrDefault<bool>("secondOrder", false ));
+    secondOrder_ = (waveDict.lookupOrDefault<bool>("secondOrder", false ));
 
     // Check if the value of nPaddles is correct for the number of columns
     if (nPaddles_ < 1)

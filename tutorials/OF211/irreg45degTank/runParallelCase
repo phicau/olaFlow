@@ -16,6 +16,6 @@ echo Decomposing case...
 decomposePar > decomposePar.log
 
 echo Running...
-mpirun -np 4 ihFoam -parallel > ihFoam.log
+mpirun -np 4 olaFoam -parallel > olaFoam.log
 
 echo Simulation complete.

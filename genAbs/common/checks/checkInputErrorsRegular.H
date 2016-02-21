@@ -1,13 +1,13 @@
     // Extracting values from dict
-    waveTheory_ = (IHWavesDict.lookupOrDefault<word>("waveTheory", "aaa"));
-    waveHeight_ = (IHWavesDict.lookupOrDefault<scalar>("waveHeight", -1));
-    wavePeriod_ = (IHWavesDict.lookupOrDefault<scalar>("wavePeriod", -1));
-    waveDir_ = (IHWavesDict.lookupOrDefault<scalar>("waveDir", 0));
-    genAbs_ = (IHWavesDict.lookupOrDefault<bool>("genAbs", false ));
+    waveTheory_ = (waveDict.lookupOrDefault<word>("waveTheory", "aaa"));
+    waveHeight_ = (waveDict.lookupOrDefault<scalar>("waveHeight", -1));
+    wavePeriod_ = (waveDict.lookupOrDefault<scalar>("wavePeriod", -1));
+    waveDir_ = (waveDict.lookupOrDefault<scalar>("waveDir", 0));
+    genAbs_ = (waveDict.lookupOrDefault<bool>("genAbs", false ));
     wavePhase_ = 
-        (IHWavesDict.lookupOrDefault<scalar>("wavePhase", 3.0*PI()/2.0 ));
-    nPaddles_ = (IHWavesDict.lookupOrDefault<label>("nPaddles", 1));
-    absDir_ = (IHWavesDict.lookupOrDefault<scalar>("absDir", 0));
+        (waveDict.lookupOrDefault<scalar>("wavePhase", 3.0*PI()/2.0 ));
+    nPaddles_ = (waveDict.lookupOrDefault<label>("nPaddles", 1));
+    absDir_ = (waveDict.lookupOrDefault<scalar>("absDir", 0));
 
     // Check if the value of nPaddles is correct for the number of columns
     if (nPaddles_ < 1)
@@ -219,7 +219,7 @@
     }
     else if ( waveTheory_ == "streamFunction" )
     {
-        waveLength_ = (IHWavesDict.lookupOrDefault<scalar>("waveLength", -1));
+        waveLength_ = (waveDict.lookupOrDefault<scalar>("waveLength", -1));
 
         if ( wavePeriod_ <= 0.0 )
         {
@@ -235,7 +235,7 @@
                 << exit(FatalError);
         }
 
-        uMean_ = (IHWavesDict.lookupOrDefault<scalar>("uMean", -1));
+        uMean_ = (waveDict.lookupOrDefault<scalar>("uMean", -1));
 
         if ( uMean_ <= 0.0 )
         {
@@ -244,8 +244,8 @@
                 << exit(FatalError);
         }
 
-        Bjs_ = (IHWavesDict.lookupOrDefault("Bj", List<scalar> (1, -1.0) ));
-        Ejs_ = (IHWavesDict.lookupOrDefault("Ej", List<scalar> (1, -1.0) ));
+        Bjs_ = (waveDict.lookupOrDefault("Bj", List<scalar> (1, -1.0) ));
+        Ejs_ = (waveDict.lookupOrDefault("Ej", List<scalar> (1, -1.0) ));
 
         if ( Bjs_.size() != Ejs_.size() || Bjs_.size() == 1 )
         {

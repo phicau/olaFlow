@@ -13,6 +13,6 @@ echo Setting the fields...
 setFields > setFields.log
 
 echo Running...
-ihDyMFoam > ihDyMFoam.log
+olaDyMFoam > olaDyMFoam.log
 
 echo Simulation complete.

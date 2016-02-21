@@ -93,7 +93,7 @@ waveVelocityFvPatchVectorField
     tSmooth_(-1),
     tuningFactor_(1),
     nComp_(1),
-    waveDictName_("IHWavesDict"),
+    waveDictName_("waveDict"),
     waveType_("aaa"),
     waveTheory_("aaa"),
     waveTheoryOrig_("aaa"),
@@ -190,7 +190,7 @@ waveVelocityFvPatchVectorField
     tSmooth_(dict.lookupOrDefault<scalar>("tSmooth", -1)),
     tuningFactor_(dict.lookupOrDefault<scalar>("tuningFactor", 1)),
     nComp_(dict.lookupOrDefault<label>("nComp", 1)),
-    waveDictName_(dict.lookupOrDefault<word>("waveDict", "IHWavesDict")),
+    waveDictName_(dict.lookupOrDefault<word>("waveDictName", "waveDict")),
     waveType_(dict.lookupOrDefault<word>("waveType", "aaa")),
     waveTheory_(dict.lookupOrDefault<word>("waveTheory", "aaa")),
     waveTheoryOrig_(dict.lookupOrDefault<word>("waveTheoryOrig", "aaa")),
@@ -211,7 +211,7 @@ waveVelocityFvPatchVectorField
         Warning << 
         "Keyword waveDict defined in boundary condition.\n" << 
         "The new expected keyword is: waveDictName\n" << 
-        "Using waveDictName = IHWavesDict by default.\n" << endl;
+        "Using waveDictName = waveDict by default.\n" << endl;
     }
 }
 
@@ -403,7 +403,7 @@ void Foam::waveVelocityFvPatchVectorField::updateCoeffs()
     scalarList waveKys;
 
     // Define dictionary
-    IOdictionary IHWavesDict
+    IOdictionary waveDict
     (
         IOobject
         (
@@ -418,14 +418,14 @@ void Foam::waveVelocityFvPatchVectorField::updateCoeffs()
     // Check for errors - Just the first time
     if (!allCheck_)
     {
-        waveType_ = (IHWavesDict.lookupOrDefault<word>("waveType", "aaa")); 
+        waveType_ = (waveDict.lookupOrDefault<word>("waveType", "aaa")); 
 
-        tSmooth_ = (IHWavesDict.lookupOrDefault<scalar>("tSmooth", -1.0 ));
+        tSmooth_ = (waveDict.lookupOrDefault<scalar>("tSmooth", -1.0 ));
         tuningFactor_ = 
-            (IHWavesDict.lookupOrDefault<scalar>("tuningFactor", 1.0 ));
+            (waveDict.lookupOrDefault<scalar>("tuningFactor", 1.0 ));
 
         uCurrent_ = 
-            (IHWavesDict.lookupOrDefault<vector>("uCurrent", vector(0,0,0) ));
+            (waveDict.lookupOrDefault<vector>("uCurrent", vector(0,0,0) ));
 
         if ( waveType_ == "aaa" )    // No target specified
         {

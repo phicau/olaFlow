@@ -33,7 +33,7 @@ boundaryField
     outlet
     {
         type            multiPistonMovement;
-        multiPistonDictName IHMultiPistonABSMovementDict;
+        multiPistonDictName multiPistonABSMovementDict;
         value           uniform (0 0 0);
     }
     bottom

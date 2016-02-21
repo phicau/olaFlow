@@ -1,17 +1,17 @@
     // Extracting values from dict
-    waveTheory_ = (IHWavesDict.lookupOrDefault<word>("waveTheory", "aaa"));
+    waveTheory_ = (waveDict.lookupOrDefault<word>("waveTheory", "aaa"));
     timeSeries_ = 
-        (IHWavesDict.lookupOrDefault("timeSeries", List<scalar> (1, -1.0) ));
+        (waveDict.lookupOrDefault("timeSeries", List<scalar> (1, -1.0) ));
     paddlePosition_ = 
-        (IHWavesDict.lookupOrDefault("paddlePosition", List<scalar> (1, -1.0)));
+        (waveDict.lookupOrDefault("paddlePosition", List<scalar> (1, -1.0)));
     paddleVelocity_ = 
-        (IHWavesDict.lookupOrDefault("paddleVelocity", List<scalar> (1, -1.0)));
+        (waveDict.lookupOrDefault("paddleVelocity", List<scalar> (1, -1.0)));
     paddleEta_ = 
-        (IHWavesDict.lookupOrDefault("paddleEta", List<scalar> (1, -1.0)));
+        (waveDict.lookupOrDefault("paddleEta", List<scalar> (1, -1.0)));
 
-    genAbs_ = (IHWavesDict.lookupOrDefault<bool>("genAbs", false ));
-    nPaddles_ = (IHWavesDict.lookupOrDefault<label>("nPaddles", 1));
-    absDir_ = (IHWavesDict.lookupOrDefault<scalar>("absDir", 0.0));
+    genAbs_ = (waveDict.lookupOrDefault<bool>("genAbs", false ));
+    nPaddles_ = (waveDict.lookupOrDefault<label>("nPaddles", 1));
+    absDir_ = (waveDict.lookupOrDefault<scalar>("absDir", 0.0));
 
     // Check if the value of nPaddles is correct for the number of columns
     if (nPaddles_ < 1)
@@ -67,12 +67,12 @@
         
         // Write & update results
         waveTheoryOrig_ = waveTheory_;
-        IHWavesDict.set("waveTheoryOrig", waveTheory_);
+        waveDict.set("waveTheoryOrig", waveTheory_);
         waveTheory_ = "tveta";
-        IHWavesDict.set("waveTheory", waveTheory_);
-        IHWavesDict.set("paddleVelocity", paddleVelocity_);
-        IHWavesDict.set("paddleEta", paddleEta_);
-        IHWavesDict.Foam::regIOobject::write();
+        waveDict.set("waveTheory", waveTheory_);
+        waveDict.set("paddleVelocity", paddleVelocity_);
+        waveDict.set("paddleEta", paddleEta_);
+        waveDict.Foam::regIOobject::write();
 
     }
     else if( waveTheory_ == "tv" )
@@ -100,11 +100,11 @@
 
         // Write & update results
         waveTheoryOrig_ = waveTheory_;
-        IHWavesDict.set("waveTheoryOrig", waveTheory_);
+        waveDict.set("waveTheoryOrig", waveTheory_);
         waveTheory_ = "tveta";
-        IHWavesDict.set("waveTheory", waveTheory_);
-        IHWavesDict.set("paddleEta", paddleEta_);
-        IHWavesDict.Foam::regIOobject::write();
+        waveDict.set("waveTheory", waveTheory_);
+        waveDict.set("paddleEta", paddleEta_);
+        waveDict.Foam::regIOobject::write();
 
     }
     else if( waveTheory_ == "txeta" )
@@ -133,11 +133,11 @@
 
         // Write & update results
         waveTheoryOrig_ = waveTheory_;
-        IHWavesDict.set("waveTheoryOrig", waveTheory_);
+        waveDict.set("waveTheoryOrig", waveTheory_);
         waveTheory_ = "tveta";
-        IHWavesDict.set("waveTheory", waveTheory_);
-        IHWavesDict.set("paddleVelocity", paddleVelocity_);
-        IHWavesDict.Foam::regIOobject::write();
+        waveDict.set("waveTheory", waveTheory_);
+        waveDict.set("paddleVelocity", paddleVelocity_);
+        waveDict.Foam::regIOobject::write();
 
     }
     else if( waveTheory_ == "tveta" )
@@ -154,5 +154,5 @@
         }
         // All set, just interpolate
         waveTheoryOrig_ = 
-            (IHWavesDict.lookupOrDefault<word>("waveTheoryOrig", "aaa"));
+            (waveDict.lookupOrDefault<word>("waveTheoryOrig", "aaa"));
     }

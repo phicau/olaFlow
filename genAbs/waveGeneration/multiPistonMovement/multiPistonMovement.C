@@ -88,7 +88,7 @@ multiPistonMovement
 )
 :
     fixedValuePointPatchField<vector>(p, iF),
-    multiPistonDictName_("IHMultiPistonMovementDict"),
+    multiPistonDictName_("multiPistonMovementDict"),
     timeSeries_( List<scalar> (1, -1.0) ),
     nPaddles_(1),
     paddlePosition_( List<List<scalar> > (1,List<scalar> (1, -1.0)) ),
@@ -152,7 +152,7 @@ multiPistonMovement
 )
 :
     fixedValuePointPatchField<vector>(p, iF, dict, valueRequired),
-    multiPistonDictName_(dict.lookupOrDefault<word>("multiPistonDictName", "IHMultiPistonMovementDict")),
+    multiPistonDictName_(dict.lookupOrDefault<word>("multiPistonDictName", "multiPistonMovementDict")),
     timeSeries_( dict.lookupOrDefault("timeSeries", List<scalar> (1, -1.0)) ),
     nPaddles_(dict.lookupOrDefault<label>("nPaddles", 1)),
     paddlePosition_( dict.lookupOrDefault("paddlePosition", List<List<scalar> > (1,List<scalar> (1, -1.0)) )),
@@ -276,7 +276,7 @@ void multiPistonMovement::updateCoeffs()
     const scalar zSpan = zMax-zMin;
 
     // Define dictionary
-    IOdictionary IHMultiPistonMovementDict
+    IOdictionary multiPistonMovementDict
     (
         IOobject
         (
@@ -303,18 +303,18 @@ void multiPistonMovement::updateCoeffs()
         }
 
         // Extracting values from dict
-        timeSeries_ = (IHMultiPistonMovementDict.lookupOrDefault("timeSeries", List<scalar> (1, -1.0) ));
+        timeSeries_ = (multiPistonMovementDict.lookupOrDefault("timeSeries", List<scalar> (1, -1.0) ));
 
-        paddlePosition_ = (IHMultiPistonMovementDict.lookupOrDefault("paddlePosition", List<List<scalar> > (1,List<scalar> (1, -1.0)) ));
-        paddleEta_ = (IHMultiPistonMovementDict.lookupOrDefault("paddleEta", List<List<scalar> > (1,List<scalar> (1, -1.0)) ));
+        paddlePosition_ = (multiPistonMovementDict.lookupOrDefault("paddlePosition", List<List<scalar> > (1,List<scalar> (1, -1.0)) ));
+        paddleEta_ = (multiPistonMovementDict.lookupOrDefault("paddleEta", List<List<scalar> > (1,List<scalar> (1, -1.0)) ));
 
-        genAbs_ = (IHMultiPistonMovementDict.lookupOrDefault<bool>("genAbs", false ));
+        genAbs_ = (multiPistonMovementDict.lookupOrDefault<bool>("genAbs", false ));
 
-        tSmooth_ = (IHMultiPistonMovementDict.lookupOrDefault<scalar>("tSmooth", -1.0 ));
-        tuningFactor_ = (IHMultiPistonMovementDict.lookupOrDefault<scalar>("tuningFactor", 1.0 ));
+        tSmooth_ = (multiPistonMovementDict.lookupOrDefault<scalar>("tSmooth", -1.0 ));
+        tuningFactor_ = (multiPistonMovementDict.lookupOrDefault<scalar>("tuningFactor", 1.0 ));
 
-        maxStroke_ = (IHMultiPistonMovementDict.lookupOrDefault<scalar>("maxStroke", 999.0 ));
-        DPST_ = (IHMultiPistonMovementDict.lookupOrDefault<scalar>("DPST", 25 ));
+        maxStroke_ = (multiPistonMovementDict.lookupOrDefault<scalar>("maxStroke", 999.0 ));
+        DPST_ = (multiPistonMovementDict.lookupOrDefault<scalar>("DPST", 25 ));
 
         nPaddles_ = paddlePosition_.size();
 

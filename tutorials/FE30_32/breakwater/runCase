@@ -18,7 +18,7 @@ echo Setting the fields...
 setFields > setFields.log
 
 echo Running...
-ihFoam > ihFoam.log
+olaFoam > olaFoam.log
 
 echo Simulation complete
 

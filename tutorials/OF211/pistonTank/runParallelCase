@@ -16,6 +16,6 @@ echo Decomposing case...
 decomposePar > decomposePar.log
 
 echo Running...
-mpirun -np 4 ihDyMFoam -parallel > ihDyMFoam.log
+mpirun -np 4 olaDyMFoam -parallel > olaDyMFoam.log
 
 echo Simulation complete.

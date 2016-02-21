@@ -16,7 +16,7 @@ FoamFile
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application interFoam;
+application     olaDyMFoam;
 
 startFrom       latestTime;
 

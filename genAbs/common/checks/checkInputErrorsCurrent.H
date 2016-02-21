@@ -1,7 +1,7 @@
     // Extracting values from dict
-    genAbs_ = (IHWavesDict.lookupOrDefault<bool>("genAbs", false ));
-    nPaddles_ = (IHWavesDict.lookupOrDefault<label>("nPaddles", 1));
-    absDir_ = (IHWavesDict.lookupOrDefault<scalar>("absDir", 0));
+    genAbs_ = (waveDict.lookupOrDefault<bool>("genAbs", false ));
+    nPaddles_ = (waveDict.lookupOrDefault<label>("nPaddles", 1));
+    absDir_ = (waveDict.lookupOrDefault<scalar>("absDir", 0));
 
     // Check if the value of nPaddles is correct for the number of columns
     if (nPaddles_ < 1)

@@ -24,7 +24,7 @@ boundaryField
     inlet
     {
         type            waveVelocity;
-        waveDictName    IHWavesDict;
+        waveDictName    waveDict;
         value           uniform (0 0 0);
     }
     atmosphere

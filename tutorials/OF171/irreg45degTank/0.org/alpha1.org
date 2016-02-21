@@ -23,7 +23,7 @@ boundaryField
     inlet
     {
         type            waveAlpha;
-        waveDictName    IHWavesDict;
+        waveDictName    waveDict;
         value           uniform 0;
     }
     front
