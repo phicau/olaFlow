@@ -1,25 +1,27 @@
-IHFOAM
+OLAFOAM
 ======
 
 # Description
 
-IHFOAM is a set of solvers and boundary conditions to generate and absorb water waves actively at the boundaries and to simulate their interaction with porous coastal structures.
+OLAFOAM is a new numerical model from the creator and developer of IHFOAM. This free and open source project is committed to bringing the latest advances in the simulation of wave dynamics to the OpenFOAM and FOAM-extend communities.
+
+OLAFOAM is a set of solvers and boundary conditions to generate and absorb water waves actively at the boundaries and to simulate their interaction with porous coastal structures.
 
 You can find all the information regarding the model at its web site and wiki:
 
-http://ihfoam.ihcantabria.com/
+https://sites.google.com/site/olafoamcfd/
 
-http://openfoamwiki.net/index.php/Contrib/IHFOAM
+https://openfoamwiki.net/index.php/Contrib/OLAFOAM
 
 # Download and compilation
 
 ## Basic download guide
 
-To get a full copy of IHFOAM source and reference materials run in a terminal:
+To get a full copy of OLAFOAM source and reference materials run in a terminal:
 
-`git clone git://github.com/phicau/IHFOAM.git`
+`git clone git://github.com/phicau/OLAFOAM.git`
 
-Code updates can be downloaded in the future from the IHFOAM folder as follows:
+Code updates can be downloaded in the future from the OLAFOAM folder as follows:
 
 `git checkout`
 
@@ -33,15 +35,14 @@ First compile the boundary conditions:
 
 `./allMake`
 
-Second compile the solvers (ihFoam and ihDyMFoam), selecting the correct version:
+Second compile the solvers (olaFoam and olaDyMFoam), selecting the correct folder for your preferred OpenFOAM/FOAM-extend version:
 
-`cd solvers/ihFoamXXXXX`
+`cd solvers/olaFoamXXXXX`
 
 `./allMake`
 
 # Reference materials and tutorials
 
-Reference materials and test cases are included in the IHFOAM download. Check the *reference.zip* file and the *tutorials* folder. For a full description on these materials see:
+Reference materials and test cases are included in the OLAFOAM download. Check the *reference.zip* file and the *tutorials* folder. For a full description on these materials see:
 
-http://openfoamwiki.net/index.php/Contrib/IHFOAM#IHFOAM_Documentation_and_Tutorials
-
+https://openfoamwiki.net/index.php/Contrib/OLAFOAM#OLAFOAM_Documentation_and_Tutorials
