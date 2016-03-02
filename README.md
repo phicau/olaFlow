@@ -35,7 +35,15 @@ First compile the boundary conditions:
 
 `./allMake`
 
-Second compile the solvers (olaFoam and olaDyMFoam), selecting the correct folder for your preferred OpenFOAM/FOAM-extend version:
+
+Second compile the dynamic boundary conditions (currently it does not support all the versions):
+
+`cd genAbs/waveGeneration/multiPistonMovement`
+
+`./localMake`
+
+
+Third compile the solvers (olaFoam and olaDyMFoam), selecting the correct folder for your preferred OpenFOAM/FOAM-extend version:
 
 `cd solvers/olaFoamXXXXX`
 
