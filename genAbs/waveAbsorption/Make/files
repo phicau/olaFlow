@@ -1,0 +1,4 @@
+2DWaveAbsorptionVelocity/2DWaveAbsorptionVelocityFvPatchVectorField.C
+3DWaveAbsorptionVelocity/3DWaveAbsorptionVelocityFvPatchVectorField.C
+
+LIB = $(FOAM_USER_LIBBIN)/libwaveAbsorption

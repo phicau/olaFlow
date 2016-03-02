@@ -1,0 +1,5 @@
+waveAlpha/waveAlphaFvPatchScalarField.C
+waveVelocity/waveVelocityFvPatchVectorField.C
+../common/waveFun.C
+
+LIB = $(FOAM_USER_LIBBIN)/libwaveGeneration

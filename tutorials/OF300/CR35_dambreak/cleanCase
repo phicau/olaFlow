@@ -1,0 +1,11 @@
+#!/bin/bash
+shopt -s extglob
+
+directory=`pwd`
+
+cd ./constant/polyMesh
+rm -fr !(blockMeshDict)
+
+cd $directory
+rm -fr *[0-9].[0-9]* [0-9] postProcessing
+rm *.log

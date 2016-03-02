@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [ $WM_PROJECT == "foam" ]; then
+    ofversion=`echo $WM_PROJECT_VERSION | sed -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -2 | tr -d '\n'`
+else
+    ofversion=`echo $WM_PROJECT_VERSION"-0" | sed -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -3 | tr -d '\n'`
+fi
+
+export OF_VERSION=$ofversion
+
+wclean
+
+wmake libso
+
+if (( $? )) ; then 
+    echo "\n\nWave absorption boundary conditions compilation failed"
+    exit; else
+    echo -e "\n\nWave absorption boundary conditions compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";  
+fi
+
+wclean

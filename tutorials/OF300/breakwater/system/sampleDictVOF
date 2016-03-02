@@ -1,0 +1,68 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      sampleDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+interpolationScheme cellPoint;
+
+setFormat       raw;
+
+surfaceFormat   raw;
+
+sets
+(
+    GaugeVOF01
+    {
+        type    midPointAndFace;
+        axis    xyz;
+        start   ( 0.5 0.001 0 );
+        end     ( 0.5 0.001 1.2 );
+    } 
+    GaugeVOF02
+    {
+        type    midPointAndFace;
+        axis    xyz;
+        start   ( 9.25 0.001 0 );
+        end     ( 9.25 0.001 1.2 );
+    } 
+    GaugeVOF03
+    {
+        type    midPointAndFace;
+        axis    xyz;
+        start   ( 15.75 0.001 0 );
+        end     ( 15.75 0.001 1.2 );
+    } 
+    GaugeVOF04
+    {
+        type    midPointAndFace;
+        axis    xyz;
+        start   ( 17.75 0.001 0 );
+        end     ( 17.75 0.001 1.2 );
+    } 
+    GaugeVOF05
+    {
+        type    midPointAndFace;
+        axis    xyz;
+        start   ( 21.1 0.001 0 );
+        end     ( 21.1 0.001 1.2 );
+    } 
+);
+
+surfaces        ();
+
+fields          ( alpha.water );
+
+
+// ************************************************************************* //
