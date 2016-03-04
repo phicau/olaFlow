@@ -28,7 +28,7 @@ boundaryField
     }
     outlet
     {
-        type            2DWaveAbsorptionVelocity;
+        type            waveAbsorption2DVelocity;
         absorptionDir   180;
         nPaddles        10;
         value           uniform (0 0 0);
