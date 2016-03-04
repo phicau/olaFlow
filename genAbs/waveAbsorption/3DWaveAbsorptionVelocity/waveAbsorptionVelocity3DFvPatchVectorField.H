@@ -22,32 +22,30 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::2DWaveAbsorptionVelocityFvPatchVectorField
+    Foam::waveAbsorptionVelocity3DFvPatchVectorField
 
 Description
     Wave absorption boundary condition based on shallow water theory and on a
-    2D approach. Works both in 2D and 3D and for waves out of the shallow water
+    3D approach. Works both in 2D and 3D and for waves out of the shallow water
     regime.
 
     Example of the boundary condition specification:
     @verbatim
     inlet
     {
-        type            2DWaveAbsorptionVelocity;
+        type            waveAbsorption3DVelocity;
         nPaddles        1;
         nEdgeMin        0;
         nEdgeMax        0;
-        absorptionDir   400; //I.e. calculate perpendicular to boundary
         value           uniform (0 0 0); // placeholder
     }
     @endverbatim
 
 Note
     - The value is positive inwards
-    - absorptionDir in degrees, and should point inside the domain
 
 SourceFiles
-    2DWaveAbsorptionVelocityFvPatchVectorField.C
+    waveAbsorptionVelocity3DFvPatchVectorField.C
 
 \*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*\
@@ -79,8 +77,8 @@ SourceFiles
 |                                                                             |
 \*---------------------------------------------------------------------------*/
 
-#ifndef 2DWaveAbsorptionVelocityFvPatchVectorField_H
-#define 2DWaveAbsorptionVelocityFvPatchVectorField_H
+#ifndef waveAbsorptionVelocity3DFvPatchVectorField_H
+#define waveAbsorptionVelocity3DFvPatchVectorField_H
 
 #include "fixedValueFvPatchFields.H"
 #include "mathematicalConstants.H"
@@ -90,10 +88,10 @@ SourceFiles
 namespace Foam
 {
 /*---------------------------------------------------------------------------*\
-               Class 2DWaveAbsorptionVelocityFvPatch Declaration
+               Class 3DWaveAbsorptionVelocityFvPatch Declaration
 \*---------------------------------------------------------------------------*/
 
-class 2DWaveAbsorptionVelocityFvPatchVectorField
+class waveAbsorptionVelocity3DFvPatchVectorField
 :
     public fixedValueFvPatchVectorField
 {
@@ -102,18 +100,15 @@ class 2DWaveAbsorptionVelocityFvPatchVectorField
         //- Number of paddles
         label nPaddles_;
 
-        //- Initial water depths (referece)
+        //- Initial water depth (referece)
         scalarList initialWaterDepths_;
-
-        //- Direction of absorption (perpendicular to the wall, inward)
-        scalar absorptionDir_;
 
         //- Absorption angle for each paddle
         scalarList meanAngles_;
 
         //- Z-Span for each paddle
         scalarList zSpanL_;
-
+        
         //- Number of paddles in the starting part of the domain with 2D
         // version of absorption and out flux only
         label nEdgeMin_;
@@ -128,20 +123,20 @@ class 2DWaveAbsorptionVelocityFvPatchVectorField
 public:
 
    //- Runtime type information
-   TypeName("2DWaveAbsorptionVelocity");
+   TypeName("waveAbsorption3DVelocity");
 
 
    // Constructors
 
         //- Construct from patch and internal field
-        2DWaveAbsorptionVelocityFvPatchVectorField
+        waveAbsorptionVelocity3DFvPatchVectorField
         (
             const fvPatch&,
             const DimensionedField<vector, volMesh>&
         );
 
         //- Construct from patch, internal field and dictionary
-        2DWaveAbsorptionVelocityFvPatchVectorField
+        waveAbsorptionVelocity3DFvPatchVectorField
         (
             const fvPatch&,
             const DimensionedField<vector, volMesh>&,
@@ -149,20 +144,20 @@ public:
         );
 
         //- Construct by mapping given
-        //  2DWaveAbsorptionVelocityFvPatchVectorField
+        //  waveAbsorptionVelocity3DFvPatchVectorField
         //  onto a new patch
-        2DWaveAbsorptionVelocityFvPatchVectorField
+        waveAbsorptionVelocity3DFvPatchVectorField
         (
-            const 2DWaveAbsorptionVelocityFvPatchVectorField&,
+            const waveAbsorptionVelocity3DFvPatchVectorField&,
             const fvPatch&,
             const DimensionedField<vector, volMesh>&,
             const fvPatchFieldMapper&
         );
 
         //- Construct as copy
-        2DWaveAbsorptionVelocityFvPatchVectorField
+        waveAbsorptionVelocity3DFvPatchVectorField
         (
-            const 2DWaveAbsorptionVelocityFvPatchVectorField&
+            const waveAbsorptionVelocity3DFvPatchVectorField&
         );
 
         //- Construct and return a clone
@@ -170,14 +165,14 @@ public:
         {
             return tmp<fvPatchVectorField>
             (
-                new 2DWaveAbsorptionVelocityFvPatchVectorField(*this)
+                new waveAbsorptionVelocity3DFvPatchVectorField(*this)
             );
         }
 
         //- Construct as copy setting internal field reference
-        2DWaveAbsorptionVelocityFvPatchVectorField
+        waveAbsorptionVelocity3DFvPatchVectorField
         (
-            const 2DWaveAbsorptionVelocityFvPatchVectorField&,
+            const waveAbsorptionVelocity3DFvPatchVectorField&,
             const DimensionedField<vector, volMesh>&
         );
 
@@ -189,7 +184,7 @@ public:
         {
             return tmp<fvPatchVectorField>
             (
-                new 2DWaveAbsorptionVelocityFvPatchVectorField
+                new waveAbsorptionVelocity3DFvPatchVectorField
                     (*this, iF)
             );
         }

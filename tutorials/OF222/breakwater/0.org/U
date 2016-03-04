@@ -48,7 +48,7 @@ boundaryField
     }
     outlet
     {
-        type            2DWaveAbsorptionVelocity;
+        type            waveAbsorption2DVelocity;
         absorptionDir   666.0;
         value           uniform (0 0 0);
     }

@@ -29,7 +29,7 @@ boundaryField
     }
     outlet
     {
-        type            3DWaveAbsorptionVelocity;
+        type            waveAbsorption3DVelocity;
         nPaddles        25;
         nEdgeMin        1;
         nEdgeMax        1;
@@ -47,7 +47,7 @@ boundaryField
     }
     front
     {
-        type            3DWaveAbsorptionVelocity;
+        type            waveAbsorption3DVelocity;
         nPaddles        25;
         nEdgeMin        0;
         nEdgeMax        1;
@@ -55,7 +55,7 @@ boundaryField
     }
     back
     {
-        type            3DWaveAbsorptionVelocity;
+        type            waveAbsorption3DVelocity;
         nPaddles        25;
         nEdgeMin        0;
         nEdgeMax        1;

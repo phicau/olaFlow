@@ -51,7 +51,7 @@ License
 |                                                                             |
 \*---------------------------------------------------------------------------*/
 
-#include "2DWaveAbsorptionVelocityFvPatchVectorField.H"
+#include "waveAbsorptionVelocity2DFvPatchVectorField.H"
 #include "volFields.H"
 #include "addToRunTimeSelectionTable.H"
 #include "fvPatchFieldMapper.H"
@@ -60,8 +60,8 @@ License
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::
-2DWaveAbsorptionVelocityFvPatchVectorField::
-2DWaveAbsorptionVelocityFvPatchVectorField
+waveAbsorptionVelocity2DFvPatchVectorField::
+waveAbsorptionVelocity2DFvPatchVectorField
 (
     const fvPatch& p,
     const DimensionedField<vector, volMesh>& iF
@@ -80,10 +80,10 @@ Foam::
 
 
 Foam::
-2DWaveAbsorptionVelocityFvPatchVectorField::
-2DWaveAbsorptionVelocityFvPatchVectorField
+waveAbsorptionVelocity2DFvPatchVectorField::
+waveAbsorptionVelocity2DFvPatchVectorField
 (
-    const 2DWaveAbsorptionVelocityFvPatchVectorField& ptf,
+    const waveAbsorptionVelocity2DFvPatchVectorField& ptf,
     const fvPatch& p,
     const DimensionedField<vector, volMesh>& iF,
     const fvPatchFieldMapper& mapper
@@ -102,8 +102,8 @@ Foam::
 
 
 Foam::
-2DWaveAbsorptionVelocityFvPatchVectorField::
-2DWaveAbsorptionVelocityFvPatchVectorField
+waveAbsorptionVelocity2DFvPatchVectorField::
+waveAbsorptionVelocity2DFvPatchVectorField
 (
     const fvPatch& p,
     const DimensionedField<vector, volMesh>& iF,
@@ -124,10 +124,10 @@ Foam::
 
 
 Foam::
-2DWaveAbsorptionVelocityFvPatchVectorField::
-2DWaveAbsorptionVelocityFvPatchVectorField
+waveAbsorptionVelocity2DFvPatchVectorField::
+waveAbsorptionVelocity2DFvPatchVectorField
 (
-    const 2DWaveAbsorptionVelocityFvPatchVectorField& ptf
+    const waveAbsorptionVelocity2DFvPatchVectorField& ptf
 )
 :
     fixedValueFvPatchField<vector>(ptf),
@@ -143,10 +143,10 @@ Foam::
 
 
 Foam::
-2DWaveAbsorptionVelocityFvPatchVectorField::
-2DWaveAbsorptionVelocityFvPatchVectorField
+waveAbsorptionVelocity2DFvPatchVectorField::
+waveAbsorptionVelocity2DFvPatchVectorField
 (
-    const 2DWaveAbsorptionVelocityFvPatchVectorField& ptf,
+    const waveAbsorptionVelocity2DFvPatchVectorField& ptf,
     const DimensionedField<vector, volMesh>& iF
 )
 :
@@ -164,7 +164,7 @@ Foam::
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::2DWaveAbsorptionVelocityFvPatchVectorField::updateCoeffs()
+void Foam::waveAbsorptionVelocity2DFvPatchVectorField::updateCoeffs()
 {
     if (updated())
     {
@@ -338,7 +338,7 @@ void Foam::2DWaveAbsorptionVelocityFvPatchVectorField::updateCoeffs()
 }
 
 
-void Foam::2DWaveAbsorptionVelocityFvPatchVectorField::
+void Foam::waveAbsorptionVelocity2DFvPatchVectorField::
 write(Ostream& os) const
 {
     fvPatchField<vector>::write(os);
@@ -365,7 +365,7 @@ namespace Foam
    makePatchTypeField
    (
        fvPatchVectorField,
-       2DWaveAbsorptionVelocityFvPatchVectorField
+       waveAbsorptionVelocity2DFvPatchVectorField
    );
 }
 
