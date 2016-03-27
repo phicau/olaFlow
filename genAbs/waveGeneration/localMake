@@ -1,14 +1,14 @@
 #!/bin/bash
 
 if [ $WM_PROJECT == "foam" ]; then
-    ofversion=`echo $WM_PROJECT_VERSION | sed -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -2 | tr -d '\n'`
+    export OF_VERSION=`echo $WM_PROJECT_VERSION | sed -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -2 | tr -d '\n'`
+    export OF_FLAVOUR=1
 else
-    ofversion=`echo $WM_PROJECT_VERSION"-0" | sed -e 's/v//' -e 's/+//' -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -3 | tr -d '\n'`
+    export OF_VERSION=`echo $WM_PROJECT_VERSION"-0" | sed -e 's/v//' -e 's/+//' -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -3 | tr -d '\n'`
+    export OF_FLAVOUR=2
 fi
 
-export OF_VERSION=$ofversion
-
-wclean
+wclean > /dev/null
 
 wmake libso
 
@@ -18,5 +18,9 @@ if (( $? )) ; then
     echo -e "\n\nWave generation boundary conditions compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";  
 fi
 
-wclean
+wclean > /dev/null
 rm -f ../common/waveFun.dep
+
+if [ $WM_PROJECT == "foam" ]; then
+    rm -fr lnInclude
+fi

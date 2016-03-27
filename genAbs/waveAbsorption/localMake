@@ -8,7 +8,7 @@ fi
 
 export OF_VERSION=$ofversion
 
-wclean
+wclean > /dev/null
 
 wmake libso
 
@@ -18,4 +18,8 @@ if (( $? )) ; then
     echo -e "\n\nWave absorption boundary conditions compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";  
 fi
 
-wclean
+wclean > /dev/null
+
+if [ $WM_PROJECT == "foam" ]; then
+    rm -fr lnInclude
+fi

@@ -1,3 +1,0 @@
-multiPistonMovement.C
-
-LIB = $(FOAM_USER_LIBBIN)/libmultiPistonMovement
