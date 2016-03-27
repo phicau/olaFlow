@@ -58,12 +58,19 @@ License
 
 #include "multiPistonMovement.H"
 #include "addToRunTimeSelectionTable.H"
-#include "pointPatchFieldMapper.H"
+
 #include "pointFields.H"
+#include "unitConversion.H"
 
 #include "fvPatchFieldMapper.H"
 #include "surfaceFields.H"
 #include "volFields.H"
+
+#if OFFLAVOUR == 1
+    #include "PointPatchFieldMapper.H"
+#else
+    #include "pointPatchFieldMapper.H"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -87,7 +94,11 @@ multiPistonMovement
     const DimensionedField<vector, pointMesh>& iF
 )
 :
-    fixedValuePointPatchField<vector>(p, iF),
+    #if OFFLAVOUR == 1
+        fixedValuePointPatchVectorField(p, iF),
+    #else
+        fixedValuePointPatchField<vector>(p, iF),
+    #endif
     multiPistonDictName_("multiPistonMovementDict"),
     timeSeries_( List<scalar> (1, -1.0) ),
     nPaddles_(1),
@@ -116,10 +127,18 @@ multiPistonMovement
     const multiPistonMovement& ptf,
     const pointPatch& p,
     const DimensionedField<vector, pointMesh>& iF,
-    const pointPatchFieldMapper& mapper
+    #if OFFLAVOUR == 1
+        const PointPatchFieldMapper& mapper
+    #else
+        const pointPatchFieldMapper& mapper
+    #endif
 )
 :
-    fixedValuePointPatchField<vector>(ptf, p, iF, mapper),
+    #if OFFLAVOUR == 1
+        fixedValuePointPatchVectorField(ptf, p, iF, mapper),
+    #else
+        fixedValuePointPatchField<vector>(ptf, p, iF, mapper),
+    #endif
     multiPistonDictName_(ptf.multiPistonDictName_),
     timeSeries_(ptf.timeSeries_),
     nPaddles_(ptf.nPaddles_),
@@ -151,7 +170,11 @@ multiPistonMovement
     const bool valueRequired
 )
 :
-    fixedValuePointPatchField<vector>(p, iF, dict, valueRequired),
+    #if OFFLAVOUR == 1
+        fixedValuePointPatchVectorField(p, iF, dict),
+    #else
+        fixedValuePointPatchField<vector>(p, iF, dict, valueRequired),
+    #endif
     multiPistonDictName_(dict.lookupOrDefault<word>("multiPistonDictName", "multiPistonMovementDict")),
     timeSeries_( dict.lookupOrDefault("timeSeries", List<scalar> (1, -1.0)) ),
     nPaddles_(dict.lookupOrDefault<label>("nPaddles", 1)),
@@ -180,7 +203,11 @@ multiPistonMovement
     const multiPistonMovement& ptf
 )
 :
-    fixedValuePointPatchField<vector>(ptf),
+    #if OFFLAVOUR == 1
+        fixedValuePointPatchVectorField(ptf),
+    #else
+        fixedValuePointPatchField<vector>(ptf),
+    #endif
     multiPistonDictName_(ptf.multiPistonDictName_),
     timeSeries_(ptf.timeSeries_),
     nPaddles_(ptf.nPaddles_),
@@ -210,7 +237,11 @@ multiPistonMovement
     const DimensionedField<vector, pointMesh>& iF
 )
 :
-    fixedValuePointPatchField<vector>(ptf, iF),
+    #if OFFLAVOUR == 1
+        fixedValuePointPatchVectorField(ptf, iF),
+    #else
+        fixedValuePointPatchField<vector>(ptf, iF),
+    #endif
     multiPistonDictName_(ptf.multiPistonDictName_),
     timeSeries_(ptf.timeSeries_),
     nPaddles_(ptf.nPaddles_),
@@ -530,15 +561,23 @@ void multiPistonMovement::updateCoeffs()
         auxPoints[point] = pDisp * meanAngle_;
     }
 
-    (*this) == (auxPoints);
-
-    this->fixedValuePointPatchField<vector>::updateCoeffs();
-
+    #if OFFLAVOUR == 1
+        Field<vector>::operator=(auxPoints);
+        fixedValuePointPatchVectorField::updateCoeffs();
+    #else
+        (*this) == (auxPoints);
+        this->fixedValuePointPatchField<vector>::updateCoeffs();
+    #endif
 }
 
 void multiPistonMovement::write(Ostream& os) const
 {
-    fixedValuePointPatchField<vector>::write(os);
+    #if OFFLAVOUR == 1
+        fixedValuePointPatchVectorField::write(os);
+    #else
+        fixedValuePointPatchField<vector>::write(os);
+    #endif
+    
     os.writeKeyword("allCheck") << allCheck_ << token::END_STATEMENT << nl;
     os.writeKeyword("multiPistonDictName") << multiPistonDictName_ << token::END_STATEMENT << nl;
 

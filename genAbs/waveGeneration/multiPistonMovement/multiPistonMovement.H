@@ -79,7 +79,18 @@ namespace Foam
 
 class multiPistonMovement
 :
-    public fixedValuePointPatchField<vector>
+    #if OFFLAVOUR == 1
+        public FixedValuePointPatchField
+        <
+            pointPatchField,
+            pointMesh,
+            pointPatch,
+            DummyMatrix,
+            vector
+        >
+    #else
+        public fixedValuePointPatchField<vector>
+    #endif
 {
     // Private data
 
@@ -170,7 +181,11 @@ public:
             const multiPistonMovement&,
             const pointPatch&,
             const DimensionedField<vector, pointMesh>&,
-            const pointPatchFieldMapper&
+            #if OFFLAVOUR == 1
+                const PointPatchFieldMapper&
+            #else
+                const pointPatchFieldMapper&
+            #endif
         );
 
         //- Construct as copy

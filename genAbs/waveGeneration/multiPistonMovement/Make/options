@@ -1,8 +1,0 @@
-EXE_INC = -g \
-    -DOFVERSION=$(OF_VERSION) \
-    -I$(LIB_SRC)/finiteVolume/lnInclude
-
-LIB_LIBS = \
-    -lOpenFOAM \
-    -lfiniteVolume \
-

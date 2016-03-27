@@ -1,5 +1,6 @@
 EXE_INC = \
     -DOFVERSION=$(OF_VERSION) \
+    -DOFFLAVOUR=$(OF_FLAVOUR) \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I./waveVelocity/velProfiles \
     -I../common \
