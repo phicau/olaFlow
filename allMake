@@ -1,0 +1,70 @@
+#!/bin/bash
+
+if [ $WM_PROJECT == "foam" ]; then
+    export OF_VERSION=`echo $WM_PROJECT_VERSION | sed -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -2 | tr -d '\n'`
+    export OF_FLAVOUR=1
+    export OF_SOLVER=olaFoamFE30_32
+else
+    export OF_VERSION=`echo $WM_PROJECT_VERSION"-0" | sed -e 's/v//' -e 's/+//' -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -3 | tr -d '\n'`
+    export OF_FLAVOUR=2
+
+    if [ $OF_VERSION -lt 170 ]; then
+        export OF_SOLVER=olaFoamOF16ext
+    elif [ $OF_VERSION -lt 180 ]; then
+        export OF_SOLVER=olaFoamOF171
+    elif [ $OF_VERSION -lt 220 ]; then
+        export OF_SOLVER=olaFoamOF211
+    elif [ $OF_VERSION -lt 230 ]; then
+        export OF_SOLVER=olaFoamOF222
+    elif [ $OF_VERSION -lt 240 ]; then
+        export OF_SOLVER=olaFoamOF230
+    elif [ $OF_VERSION -lt 250 ]; then
+        export OF_SOLVER=olaFoamOF240
+    elif [ $OF_VERSION -lt 400 ]; then
+        export OF_SOLVER=olaFoamOF300
+    fi
+fi
+
+wclean all > /dev/null
+
+wmake libso genAbs/waveGeneration
+
+if (( $? )) ; then 
+    echo "\n\nWave generation boundary conditions compilation failed"
+    exit; else
+    echo -e "\n\nWave generation boundary conditions compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";  
+fi
+
+wmake libso genAbs/waveAbsorption
+
+if (( $? )) ; then 
+    echo "\n\nWave absorption boundary conditions compilation failed"
+    exit; else
+    echo -e "\n\nWave absorption boundary conditions compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";  
+fi
+
+
+wmake solvers/$OF_SOLVER
+
+if (( $? )) ; then 
+    echo "olaFoam compilation failed"
+    exit; else
+    echo -e "\n\nolaFoam compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n"; 
+fi
+
+wmake solvers/$OF_SOLVER/olaDyMFoam
+
+if (( $? )) ; then 
+    echo "olaDyMFoam compilation failed"
+    exit; else
+    echo -e "\n\nolaDyMFoam compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";   
+fi
+
+
+wclean all > /dev/null
+rm -f genAbs/common/waveFun.dep
+
+if [ $WM_PROJECT == "foam" ]; then
+    rm -fr genAbs/*/lnInclude
+fi
+

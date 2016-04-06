@@ -29,18 +29,21 @@ Code updates can be downloaded in the future from the OLAFOAM folder as follows:
 
 ## Basic compilation guide
 
-First compile the boundary conditions:
+Compilation has been simplified, simply run the following script from the OLAFOAM base folder:
+
+`./allMake`
+
+You can also compile the boundary conditions or the solvers (olaFoam and olaDyMFoam) independently:
 
 `cd genAbs`
 
 `./allMake`
 
-
-Second compile the solvers (olaFoam and olaDyMFoam), selecting the correct folder for your preferred OpenFOAM/FOAM-extend version:
-
 `cd solvers/olaFoamXXXXX`
 
 `./allMake`
+
+In this case be sure to select the correct folder for your preferred OpenFOAM/FOAM-extend (OF/FE) version.
 
 # Reference materials and tutorials
 
