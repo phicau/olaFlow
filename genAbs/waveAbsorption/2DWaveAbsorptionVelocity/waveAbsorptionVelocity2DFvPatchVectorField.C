@@ -71,6 +71,7 @@ waveAbsorptionVelocity2DFvPatchVectorField
     nPaddles_(1),
     initialWaterDepths_(List<scalar> (1, -1.0)),
     absorptionDir_(400.0),
+    uCurrent_( vector(0., 0., 0.) ),
     meanAngles_(List<scalar> (1, -1.0)),
     zSpanL_(List<scalar> (1, -1.0)),
     nEdgeMin_(0),
@@ -93,6 +94,7 @@ waveAbsorptionVelocity2DFvPatchVectorField
     nPaddles_(ptf.nPaddles_),
     initialWaterDepths_(ptf.initialWaterDepths_),
     absorptionDir_(ptf.absorptionDir_),
+    uCurrent_(ptf.uCurrent_),
     meanAngles_(ptf.meanAngles_),
     zSpanL_(ptf.zSpanL_),
     nEdgeMin_(ptf.nEdgeMin_),
@@ -115,6 +117,7 @@ waveAbsorptionVelocity2DFvPatchVectorField
     initialWaterDepths_( 
     	dict.lookupOrDefault("initialWaterDepths", List<scalar> (1, -1.0)) ),
     absorptionDir_(dict.lookupOrDefault<scalar>("absorptionDir", 400.0)),
+    uCurrent_(dict.lookupOrDefault("uCurrent", vector(0., 0., 0.))),
     meanAngles_( dict.lookupOrDefault("meanAngles", List<scalar> (1, -1.0)) ),
     zSpanL_( dict.lookupOrDefault("zSpanL", List<scalar> (1, -1.0)) ),
     nEdgeMin_(dict.lookupOrDefault<label>("nEdgeMin", 0)),
@@ -134,6 +137,7 @@ waveAbsorptionVelocity2DFvPatchVectorField
     nPaddles_(ptf.nPaddles_),
     initialWaterDepths_(ptf.initialWaterDepths_),
     absorptionDir_(ptf.absorptionDir_),
+    uCurrent_(ptf.uCurrent_),
     meanAngles_(ptf.meanAngles_),
     zSpanL_(ptf.zSpanL_),
     nEdgeMin_(ptf.nEdgeMin_),
@@ -154,6 +158,7 @@ waveAbsorptionVelocity2DFvPatchVectorField
     nPaddles_(ptf.nPaddles_),
     initialWaterDepths_(ptf.initialWaterDepths_),
     absorptionDir_(ptf.absorptionDir_),
+    uCurrent_(ptf.uCurrent_),
     meanAngles_(ptf.meanAngles_),
     zSpanL_(ptf.zSpanL_),
     nEdgeMin_(ptf.nEdgeMin_),
@@ -200,7 +205,9 @@ void Foam::waveAbsorptionVelocity2DFvPatchVectorField::updateCoeffs()
 
     scalarField patchUc = Foam::scalarField(nF, 0.0); // Correction velocity
     scalarField patchVc = Foam::scalarField(nF, 0.0); // Correction velocity
-
+    
+    const scalarField patchHeight = patch().Cf().component(2)-cMin[2];
+    
     const scalar g = 9.81;
 
     // Check for errors - Just the first time
@@ -331,7 +338,9 @@ void Foam::waveAbsorptionVelocity2DFvPatchVectorField::updateCoeffs()
     const vectorField n2 = Foam::vectorField(nF, vector(0.0, 1.0, 0.0));
     const vectorField n3 = Foam::vectorField(nF, vector(0.0, 0.0, 1.0));
 
-    operator==(n1*patchUc + n2*patchVc + n3*UzCell); 
+    operator==
+        (n1*patchUc + n2*patchVc + n3*UzCell
+        + uCurrent_*pos(alphaCell-0.5)*neg(patchHeight - min(measuredLevels))); 
 
     fixedValueFvPatchField<vector>::updateCoeffs();
 
@@ -351,8 +360,10 @@ write(Ostream& os) const
     meanAngles_.writeEntry("meanAngles", os);
     zSpanL_.writeEntry("zSpanL", os);
 
-    os.writeKeyword("nEdgeMin") << nEdgeMin_ << token::END_STATEMENT << nl;
-    os.writeKeyword("nEdgeMax") << nEdgeMax_ << token::END_STATEMENT << nl;
+    writeEntryIfDifferent<vector>(os, "uCurrent", vector::zero, uCurrent_);
+    writeEntryIfDifferent<label>(os, "nEdgeMin", 0, nEdgeMin_);
+    writeEntryIfDifferent<label>(os, "nEdgeMax", 0, nEdgeMax_);
+
     os.writeKeyword("allCheck") << allCheck_ << token::END_STATEMENT << nl;
 
     writeEntry("value", os);

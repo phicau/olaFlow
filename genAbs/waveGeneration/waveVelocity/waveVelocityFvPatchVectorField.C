@@ -690,7 +690,7 @@ void Foam::waveVelocityFvPatchVectorField::updateCoeffs()
         (n1*patchU*timeMult*pos(alphaCell-0.9) + n1*patchUABS*timeMult
         + n2*patchV*timeMult*pos(alphaCell-0.9) + n2*patchVABS*timeMult
         + n3*patchW*timeMult 
-        + uCurrent_*pos(alphaCell-0.9)*neg(patchHeight - min(measuredLevels))
+        + uCurrent_*pos(alphaCell-0.5)*neg(patchHeight - min(measuredLevels))
         *timeMult);
 
     fixedValueFvPatchField<vector>::updateCoeffs();
@@ -706,18 +706,10 @@ void Foam::waveVelocityFvPatchVectorField::write(Ostream& os) const
     os.writeKeyword("nPaddles") << nPaddles_ << token::END_STATEMENT << nl; 
     os.writeKeyword("allCheck") << allCheck_ << token::END_STATEMENT << nl;
     os.writeKeyword("waveDictName") << waveDictName_ << token::END_STATEMENT << nl;
-    os.writeKeyword("uCurrent") << uCurrent_ << token::END_STATEMENT << nl;
 
-    if ( tSmooth_ != -1.0 )
-    {
-        os.writeKeyword("tSmooth") << tSmooth_ << token::END_STATEMENT << nl;
-    }
-
-    if ( tuningFactor_ != 1.0 )
-    {
-        os.writeKeyword("tuningFactor") << 
-            tuningFactor_ << token::END_STATEMENT << nl;
-    }
+    writeEntryIfDifferent<vector>(os, "uCurrent", vector::zero, uCurrent_);
+    writeEntryIfDifferent<scalar>(os, "tSmooth", -1.0, tSmooth_);
+    writeEntryIfDifferent<scalar>(os, "tuningFactor", 1.0, tuningFactor_);
 
     if (genAbs_)
     {
@@ -733,14 +725,9 @@ void Foam::waveVelocityFvPatchVectorField::write(Ostream& os) const
         waveDirs_.writeEntry("waveDirs", os);
         timeLags_.writeEntry("timeLags", os);
 
-        os.writeKeyword("nComp") << nComp_ << token::END_STATEMENT << nl; 
+        os.writeKeyword("nComp") << nComp_ << token::END_STATEMENT << nl;
 
-        if ( secondOrder_ )
-        {
-            os.writeKeyword("secondOrder") << 
-                secondOrder_ << token::END_STATEMENT << nl; 
-        }
-
+        writeEntryIfDifferent<bool>(os, "secondOrder", false, secondOrder_);
     }
     else if ( waveType_ == "regular" )
     {
@@ -750,7 +737,6 @@ void Foam::waveVelocityFvPatchVectorField::write(Ostream& os) const
             waveHeight_ << token::END_STATEMENT << nl;
         os.writeKeyword("waveDir") << waveDir_ << token::END_STATEMENT << nl;
         os.writeKeyword("timeLag") << timeLag_ << token::END_STATEMENT << nl;
-
 
         if ( waveTheory_ == "StokesI" || waveTheory_ == "StokesII" )
         {
@@ -789,7 +775,6 @@ void Foam::waveVelocityFvPatchVectorField::write(Ostream& os) const
             Bjs_.writeEntry("Bjs", os);
             Ejs_.writeEntry("Ejs", os);
         }
-
     }
     else if ( waveType_ == "wavemaker" )
     {
@@ -799,11 +784,7 @@ void Foam::waveVelocityFvPatchVectorField::write(Ostream& os) const
         paddleVelocity_.writeEntry("paddleVelocity", os);
         paddleEta_.writeEntry("paddleEta", os);
 
-        if ( waveTheoryOrig_ != "aaa" )
-        {
-            os.writeKeyword("waveTheoryOrig") << 
-                waveTheoryOrig_ << token::END_STATEMENT << nl;
-        }
+        writeEntryIfDifferent<word>(os, "waveTheoryOrig", "aaa", waveTheoryOrig_);
     }
     else if ( waveType_ == "solitary" )
     {

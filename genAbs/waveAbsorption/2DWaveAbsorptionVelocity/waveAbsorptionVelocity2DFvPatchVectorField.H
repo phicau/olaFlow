@@ -108,6 +108,9 @@ class waveAbsorptionVelocity2DFvPatchVectorField
         //- Direction of absorption (perpendicular to the wall, inward)
         scalar absorptionDir_;
 
+        //- Current velocity vector
+        vector uCurrent_;
+        
         //- Absorption angle for each paddle
         scalarList meanAngles_;
 
