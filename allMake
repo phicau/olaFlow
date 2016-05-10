@@ -21,7 +21,12 @@ else
     elif [ $OF_VERSION -lt 250 ]; then
         export OF_SOLVER=olaFoamOF240
     elif [ $OF_VERSION -lt 400 ]; then
-        export OF_SOLVER=olaFoamOF300
+        if [[ $WM_PROJECT_VERSION == *"+"* ]]
+        then
+            export OF_SOLVER=olaFoamOF300+
+        else
+            export OF_SOLVER=olaFoamOF300
+        fi
     fi
 fi
 
