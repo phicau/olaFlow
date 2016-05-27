@@ -11,7 +11,7 @@
             IOobject::NO_WRITE
         ),
         mesh,
-        0.0
+        dimensionedScalar( "porosityIndex", dimless, 0.0 )
     );
 
     scalar nPor = gMax(porosityIndex); // Number of porous media
@@ -28,7 +28,7 @@
             IOobject::NO_WRITE
         ),
         mesh,
-        1.0
+        dimensionedScalar( "porosity", dimless, 1.0 )
     );
 
     surfaceScalarField porosityF = fvc::interpolate(porosity);
