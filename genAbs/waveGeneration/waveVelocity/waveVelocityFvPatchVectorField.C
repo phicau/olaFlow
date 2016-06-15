@@ -625,10 +625,11 @@ void Foam::waveVelocityFvPatchVectorField::updateCoeffs()
                 calculatedLevel[cellGroup[cellIndex]-1]
                 - measuredLevels[cellGroup[cellIndex]-1];
 
-            if (waveType_ == "irregular")
-            {
-                corrLevel = pos(corrLevel)*corrLevel;
-            }
+            // No longer needed?
+            //if (waveType_ == "irregular")
+            //{
+            //    corrLevel = pos(corrLevel)*corrLevel;
+            //}
 
             scalar corrABSfactor = 1.0;
             if(corrLevel > 0.0) // Theoretical > Measured == Inflow
