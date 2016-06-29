@@ -1,0 +1,47 @@
+#!/bin/bash
+
+mkdir 0
+
+echo blockMesh meshing...
+blockMesh > blockMesh.log
+
+echo snappyHexMesh meshing...
+snappyHexMesh -overwrite > snappyHexMesh.log
+
+sed -i 's/caisson_diqueMixto/caisson/g' constant/polyMesh/boundary
+
+echo Preparing 0 folder...
+rm -fr 0
+cp -r 0.org 0
+
+echo Setting the fields...
+setFields > setFields.log
+
+echo Running...
+olaFoam > olaFoam.log
+
+echo Simulation complete
+
+export OF_VERSION=`echo $WM_PROJECT_VERSION"-0" | sed -e 's/v//' -e 's/+//' -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -3 | tr -d '\n'`
+
+
+if [ $OF_VERSION -lt 400 ]; then
+    echo Sampling free surface...
+    sample -dict system/sampleDictVOF > sampleVOF.log
+
+    echo Sampling pressure...
+    sample -dict system/sampleDictPres > samplePres.log
+else
+    echo Sampling free surface...
+    postProcess -func sampleDictVOF > sampleVOF.log
+
+    echo Sampling pressure...
+    postProcess -func sampleDictPres > samplePres.log
+fi
+
+echo Processing and plotting variables
+python postSensVOF.py
+python postSensPres.py
+python plotSensVOF.py
+python plotSensPres.py
+

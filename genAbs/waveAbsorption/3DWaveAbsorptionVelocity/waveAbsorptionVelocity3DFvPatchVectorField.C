@@ -179,14 +179,14 @@ void Foam::waveAbsorptionVelocity3DFvPatchVectorField::updateCoeffs()
     const scalarField patchD = patchDirection( cSpan, &dMin, &dSpan );
 
     // Variables & constants
-    const fvMesh& mesh = dimensionedInternalField().mesh();
-	const word& patchName = this->patch().name();
-	const label patchID = mesh.boundaryMesh().findPatchID(patchName);
-    const label nF = patch().faceCells().size();
-
     const volScalarField& alpha = 
         db().lookupObject<volScalarField>(alphaName());
     const volVectorField& U = db().lookupObject<volVectorField>("U");
+
+    const fvMesh& mesh = alpha.mesh();
+	const word& patchName = this->patch().name();
+	const label patchID = mesh.boundaryMesh().findPatchID(patchName);
+    const label nF = patch().faceCells().size();
 
     const scalarField alphaCell = 
         alpha.boundaryField()[patchID].patchInternalField();

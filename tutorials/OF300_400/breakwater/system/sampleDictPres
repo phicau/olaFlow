@@ -44,4 +44,8 @@ surfaces        ();
 
 fields          ( p );
 
+// For OpenFOAM 4.0.0
+type sets;
+libs ("libsampling.so");
+
 // ************************************************************************* //
