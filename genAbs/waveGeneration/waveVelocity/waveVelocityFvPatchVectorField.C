@@ -355,15 +355,15 @@ void Foam::waveVelocityFvPatchVectorField::updateCoeffs()
     const scalarField patchD = patchDirection( cSpan, &dMin, &dSpan );
 
     // Variables & constants
-    const fvMesh& mesh = dimensionedInternalField().mesh();
+    const volScalarField& alpha = 
+        db().lookupObject<volScalarField>(alphaName());
+    const volVectorField& U = db().lookupObject<volVectorField>("U");
+
+    const fvMesh& mesh = alpha.mesh();
 	const word& patchName = this->patch().name();
 	const label patchID = mesh.boundaryMesh().findPatchID(patchName);
     const label nF = patch().faceCells().size();
     labelList cellGroup = Foam::labelList(nF, 1);
-
-    const volScalarField& alpha = 
-        db().lookupObject<volScalarField>(alphaName());
-    const volVectorField& U = db().lookupObject<volVectorField>("U");
 
     const scalarField alphaCell = 
         alpha.boundaryField()[patchID].patchInternalField();

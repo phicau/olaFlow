@@ -27,6 +27,8 @@ else
         else
             export OF_SOLVER=olaFoamOF300
         fi
+    else
+        export OF_SOLVER=olaFoamOF400
     fi
 fi
 
