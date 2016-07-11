@@ -1,34 +1,44 @@
 #!/bin/bash
 
 if [ $WM_PROJECT == "foam" ]; then
+    # FOAM-Extend
     export OF_VERSION=`echo $WM_PROJECT_VERSION | sed -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -2 | tr -d '\n'`
     export OF_FLAVOUR=1
     export OF_SOLVER=olaFoamFE30_32
 else
-    export OF_VERSION=`echo $WM_PROJECT_VERSION"-0" | sed -e 's/v//' -e 's/+//' -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -3 | tr -d '\n'`
-    export OF_FLAVOUR=2
-
-    if [ $OF_VERSION -lt 170 ]; then
-        export OF_SOLVER=olaFoamOF16ext
-    elif [ $OF_VERSION -lt 180 ]; then
-        export OF_SOLVER=olaFoamOF171
-    elif [ $OF_VERSION -lt 220 ]; then
-        export OF_SOLVER=olaFoamOF211
-    elif [ $OF_VERSION -lt 230 ]; then
-        export OF_SOLVER=olaFoamOF222
-    elif [ $OF_VERSION -lt 240 ]; then
-        export OF_SOLVER=olaFoamOF230
-    elif [ $OF_VERSION -lt 250 ]; then
-        export OF_SOLVER=olaFoamOF240
-    elif [ $OF_VERSION -lt 400 ]; then
-        if [[ $WM_PROJECT_VERSION == *"+"* ]]
-        then
+    if [[ $WM_PROJECT_VERSION == *"+"* ]]
+    then
+        # OpenFOAM +
+        export OF_VERSION=`echo $WM_PROJECT_VERSION"-0" | sed -e 's/v//' -e 's/+//' -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -3 | tr -d '\n' | head -c4`
+        export OF_FLAVOUR=2
+        
+        if [ $OF_VERSION -lt 400 ]; then
             export OF_SOLVER=olaFoamOF300+
-        else
-            export OF_SOLVER=olaFoamOF300
+        elif [ $OF_VERSION -lt 1700 ]; then
+            export OF_SOLVER=olaFoamOF1606+
         fi
     else
-        export OF_SOLVER=olaFoamOF400
+        # OpenFOAM
+        export OF_VERSION=`echo $WM_PROJECT_VERSION"-0" | sed -e 's/v//' -e 's/+//' -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -3 | tr -d '\n'`
+        export OF_FLAVOUR=3
+
+        if [ $OF_VERSION -lt 170 ]; then
+            export OF_SOLVER=olaFoamOF16ext
+        elif [ $OF_VERSION -lt 180 ]; then
+            export OF_SOLVER=olaFoamOF171
+        elif [ $OF_VERSION -lt 220 ]; then
+            export OF_SOLVER=olaFoamOF211
+        elif [ $OF_VERSION -lt 230 ]; then
+            export OF_SOLVER=olaFoamOF222
+        elif [ $OF_VERSION -lt 240 ]; then
+            export OF_SOLVER=olaFoamOF230
+        elif [ $OF_VERSION -lt 250 ]; then
+            export OF_SOLVER=olaFoamOF240
+        elif [ $OF_VERSION -lt 400 ]; then
+            export OF_SOLVER=olaFoamOF300
+        else
+            export OF_SOLVER=olaFoamOF400
+        fi
     fi
 fi
 

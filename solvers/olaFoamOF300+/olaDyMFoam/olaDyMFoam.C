@@ -46,8 +46,8 @@ Description
 |                                                                             |
 |                                                FFFFF OOOOO AAAAA M   M      |
 |                                                F     O   O A   A MM MM      |
-|  Formerly IHFOAM Project                       FFFF  O   O AAAAA M M M      |
-|  Work initially developed at IH Cantabria      F     O   O A   A M   M      |
+|                                                FFFF  O   O AAAAA M M M      |
+|                                                F     O   O A   A M   M      |
 |                                                F     OOOOO A   A M   M      |
 |   -----------------------------------------------------------------------   |
 | References:                                                                 |
