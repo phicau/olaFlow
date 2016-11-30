@@ -1,0 +1,28 @@
+#!/bin/bash
+
+mkdir 0
+
+echo blockMesh meshing...
+blockMesh > blockMesh.log
+
+echo Preparing 0 folder...
+rm -fr 0
+cp -r 0.org 0
+rm 0/pointDisplacement_flap
+mv 0/pointDisplacement_piston 0/pointDisplacement
+
+echo Setting the fields...
+setFields > setFields.log
+
+echo Creating piston wavemaker movement...
+cd constant
+python pistonWaveGen.py
+cd ..
+
+echo Decomposing case...
+decomposePar > decomposePar.log
+
+echo Running...
+mpirun -np 4 olaDyMFoam -parallel > olaDyMFoam.log
+
+echo Simulation complete.

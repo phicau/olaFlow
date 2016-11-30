@@ -11,58 +11,40 @@ FoamFile
     format          ascii;
     location        "system";
     class           dictionary;
-    object          controlDict;
+    object          decomposeParDict;
 }
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     olaFoam;
+numberOfSubdomains 2;
 
-startFrom       latestTime;
+method          scotch;
 
-startTime       0;
-
-stopAt          endTime;
-
-endTime         200;
-
-deltaT          0.001;
-
-writeControl    adjustableRunTime;
-
-writeInterval   0.05;
-
-purgeWrite      0;
-
-writeFormat     ascii;
-
-writePrecision  6;
-
-writeCompression uncompressed;
-
-timeFormat      general;
-
-timePrecision   6;
-
-runTimeModifiable yes;
-
-adjustTimeStep  yes;
-
-maxCo           0.3;
-maxAlphaCo	    0.3;
-
-maxDeltaT       0.01;
-
-OptimisationSwitches
+simpleCoeffs
 {
-    commsType       nonBlocking;
+    n               ( 2 2 1 );
+    delta           0.001;
 }
 
-// Needed to decompose case
-libs
-(
-    "libwaveGeneration.so"
-    "libwaveAbsorption.so"
-);
+hierarchicalCoeffs
+{
+    n               ( 1 1 1 );
+    delta           0.001;
+    order           xyz;
+}
+
+metisCoeffs
+{
+    processorWeights ( 1 1 1 1 );
+}
+
+manualCoeffs
+{
+    dataFile        "";
+}
+
+distributed     no;
+
+roots     ();
+
 
 // ************************************************************************* //

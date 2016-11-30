@@ -16,7 +16,7 @@ FoamFile
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     olaFoam;
+application     olaDyMFoam;
 
 startFrom       latestTime;
 
@@ -24,7 +24,7 @@ startTime       0;
 
 stopAt          endTime;
 
-endTime         200;
+endTime         30;
 
 deltaT          0.001;
 
@@ -48,10 +48,10 @@ runTimeModifiable yes;
 
 adjustTimeStep  yes;
 
-maxCo           0.3;
-maxAlphaCo	    0.3;
+maxCo           0.5;
+maxAlphaCo	    0.5;
 
-maxDeltaT       0.01;
+maxDeltaT       0.025;
 
 OptimisationSwitches
 {
