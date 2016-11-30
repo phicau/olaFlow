@@ -85,4 +85,11 @@ OptimisationSwitches
     commsType       nonBlocking;
 }
 
+// Needed to decompose case
+libs
+(
+    "libwaveGeneration.so"
+    "libwaveAbsorption.so"
+);
+
 // ************************************************************************* //
