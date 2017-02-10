@@ -40,7 +40,7 @@
     }
     else if ( waveTheory_ == "Boussinesq" )
     {
-        Info << "\nIH Wave Generation BC" << endl;
+        Info << "\nWave Generation BC" << endl;
         Info << "Wave theory: " << waveTheory_ << endl;
         Info << "H: " << waveHeight_ << endl;
         Info << "h: " << waterDepth_ << endl;

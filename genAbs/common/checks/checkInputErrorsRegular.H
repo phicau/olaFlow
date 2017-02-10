@@ -71,7 +71,7 @@
                 generation = "Intermediate";
             }
 
-            Info << "\nIH Wave Generation BC" << endl;
+            Info << "\nWave Generation BC" << endl;
             Info << "Wave theory: " << waveTheory_ << endl;
             Info << "H: " << waveHeight_ << endl;
             Info << "T: " << wavePeriod_ << endl;
@@ -162,7 +162,7 @@
                 generation = "Intermediate";
             }
 
-            Info << "\nIH Wave Generation BC" << endl;
+            Info << "\nWave Generation BC" << endl;
             Info << "Wave theory: " << waveTheory_ << endl;
             Info << "H: " << waveHeight_ << endl;
             Info << "T: " << wavePeriod_ << endl;
@@ -207,7 +207,7 @@
                     wavePhase_
                 );
 
-            Info << "\nIH Wave Generation BC" << endl;
+            Info << "\nWave Generation BC" << endl;
             Info << "Wave theory: " << waveTheory_ << endl;
             Info << "H: " << waveHeight_ << endl;
             Info << "T: " << wavePeriod_ << endl;
@@ -254,7 +254,7 @@
                 << exit(FatalError);
         }
 
-        Info << "\nIH Wave Generation BC" << endl;
+        Info << "\nWave Generation BC" << endl;
         Info << "Wave theory: " << waveTheory_ << endl;
         Info << "H: " << waveHeight_ << endl;
         Info << "T: " << wavePeriod_ << endl;
