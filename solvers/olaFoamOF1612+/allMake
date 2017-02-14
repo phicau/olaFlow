@@ -1,0 +1,23 @@
+#!/bin/bash
+
+wclean > /dev/null
+wclean olaDyMFoam > /dev/null
+
+wmake
+
+if (( $? )) ; then 
+    echo "olaFoam compilation failed"
+    exit; else
+    echo -e "\n\nolaFoam compiled successfully for OpenFOAM v1606+\n\n\n";
+fi
+
+wmake olaDyMFoam
+
+if (( $? )) ; then 
+    echo "olaDyMFoam compilation failed"
+    exit; else
+    echo -e "\n\nolaDyMFoam compiled successfully for OpenFOAM v1606+\n\n\n";   
+fi
+
+wclean > /dev/null
+wclean olaDyMFoam > /dev/null
