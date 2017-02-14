@@ -14,8 +14,10 @@ else
         
         if [ $OF_VERSION -lt 400 ]; then
             export OF_SOLVER=olaFoamOF300+
-        elif [ $OF_VERSION -lt 1700 ]; then
+        elif [ $OF_VERSION -lt 1610 ]; then
             export OF_SOLVER=olaFoamOF1606+
+        else
+            export OF_SOLVER=olaFoamOF1612+
         fi
     else
         # OpenFOAM
