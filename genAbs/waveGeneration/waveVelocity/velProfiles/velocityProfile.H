@@ -32,7 +32,14 @@
     }
     else if ( waveType_ == "solitary" )
     {
-        #include "profileBoussinesq.H"
+        if ( waveTheory_ == "Boussinesq" )
+        {
+            #include "profileBoussinesq.H"
+        }
+        else if ( waveTheory_ == "Grimshaw" )
+        {
+            #include "profileGrimshaw.H"
+        }
     }
     else if ( waveType_ == "irregular" )
     {
