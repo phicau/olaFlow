@@ -38,7 +38,7 @@
             << "Wave theory not specified."
             << exit(FatalError);
     }
-    else if ( waveTheory_ == "Boussinesq" )
+    else if ( waveTheory_ == "Boussinesq" || waveTheory_ == "Grimshaw")
     {
         Info << "\nWave Generation BC" << endl;
         Info << "Wave theory: " << waveTheory_ << endl;
@@ -50,6 +50,6 @@
     {
         FatalError
             << "Wave theory not supported, use:\n"
-            << "Boussinesq"
+            << "Boussinesq, Grimshaw"
             << exit(FatalError);
     }

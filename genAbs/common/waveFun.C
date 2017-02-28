@@ -1744,16 +1744,21 @@ namespace secondOrderFun
 namespace BoussinesqFun
 {
     #define PII 3.1415926535897932384626433832795028
-    #define G 9.81 
+    #define G 9.81
+
+    double sech (double a)
+    {
+        return 1.0/cosh(a);
+    }
     
     double eta (double H, double h, double x, double y, double theta, double t, double X0)
     {
         double C = sqrt(G*(H+h));
         double ts = 3.5*h/sqrt(H/h);
-        double aux = sqrt(3.0*H/(4.0*h))/h;
         double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
+        double aux = sqrt(3.0*H/(4.0*h))*Xa/h;
 
-        double sup = H * 1.0/pow(cosh( aux * Xa ),2);
+        double sup = H * pow(sech(aux),2);
 
         return sup;
     }
@@ -1762,11 +1767,10 @@ namespace BoussinesqFun
     {
         double C = sqrt(G*(H+h));
         double ts = 3.5*h/sqrt(H/h);
-        double aux = sqrt(3.0*H/(4.0*h))/h;
         double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
+        double aux = sqrt(3.0*H/(4.0*h))*Xa/h;
 
-        double deta = 8.0*aux*h * exp(2.0*aux*Xa) * (1.0-exp(2.0*aux*Xa)) 
-                        / pow(1.0+exp(2.0*aux*Xa),3);
+        double deta = -sqrt(3.0)*H/h*sqrt(H/h)*tanh(aux)*pow(sech(aux),2);
 
         return deta;
     }
@@ -1775,26 +1779,26 @@ namespace BoussinesqFun
     {
         double C = sqrt(G*(H+h));
         double ts = 3.5*h/sqrt(H/h);
-        double aux = sqrt(3.0*H/(4.0*h))/h;
         double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
+        double aux = sqrt(3.0*H/(4.0*h))*Xa/h;
 
-        double deta = 16.0*pow(aux,2)*h * exp(2.0*aux*Xa) * (exp(4.0*aux*Xa)
-                        - 4.0*exp(2.0*aux*Xa)+1.0) / pow(1.0+exp(2.0*aux*Xa),4);
+        double deta = -3.0*H*pow(sech(aux),4)/(2.0*pow(h,3))
+            + 3.0*H*pow(sech(aux),2)*pow(tanh(aux),2)/pow(h,3);
 
-        return deta;
+        return H*deta;
     }
 
     double Deta3 (double H, double h, double x, double y, double theta, double t, double X0)
     {
         double C = sqrt(G*(H+h));
         double ts = 3.5*h/sqrt(H/h);
-        double aux = sqrt(3.0*H/(4.0*h))/h;
         double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
+        double aux = sqrt(3.0*H/(4.0*h))*Xa/h;
 
-        double deta = -32.0*pow(aux,3)*h * exp(2.0*aux*Xa) * (exp(6.0*aux*Xa)
-                        - 11.0*exp(4.0*aux*Xa) + 11.0*exp(2.0*aux*Xa)-1.0) / pow(1.0+exp(2.0*aux*Xa),5);
+        double deta = 6.0*sqrt(3.0)*H*sqrt(H/h)*pow(sech(aux),4)*tanh(aux)/pow(h,4)
+            - 3.0*sqrt(3.0)*H*sqrt(H/h)*pow(sech(aux),2)*pow(tanh(aux),3)/pow(h,4);
 
-        return deta;
+        return H*deta;
     }
 
     double U (double H, double h, double x, double y, double theta, double t, double X0, double z)
@@ -1829,3 +1833,75 @@ namespace BoussinesqFun
     }
 }
 
+namespace GrimshawFun
+{
+    #define PII 3.1415926535897932384626433832795028
+    #define G 9.81 
+    
+    double eta (double H, double h, double x, double y, double theta, double t, double X0)
+    {
+        double epsilon = H/h;
+        double beta = sqrt(3.0*epsilon/4.0)*( 1.0 - 5.0/8.0*epsilon
+            + 71.0/128.0*pow(epsilon,2) );
+        double C =  sqrt(G*h)*sqrt(1.0 + epsilon - 1.0/20.0*pow(epsilon,2) - 3.0/70.0*pow(epsilon,3));
+
+        double ts = 4.0*h/sqrt(epsilon);
+        double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
+
+        double s = 1.0/cosh(beta/h*Xa);
+        double q = tanh(beta/h*Xa);
+
+        double sup = pow(s,2) - 3.0/4.0*epsilon*pow(s,2)*pow(q,2)
+            + pow(epsilon,2)*( 5.0/8.0*pow(s,2)*pow(q,2) - 101.0/80.0*pow(s,4)*pow(q,2) );
+
+        return H*sup;
+    }
+
+    double U (double H, double h, double x, double y, double theta, double t, double X0, double z)
+    {
+        double epsilon = H/h;
+        double beta = sqrt(3.0*epsilon/4.0)*( 1.0 - 5.0/8.0*epsilon
+            + 71.0/128.0*pow(epsilon,2) );
+        double C = sqrt(G*h)*sqrt(1.0 + epsilon - 1.0/20.0*pow(epsilon,2) - 3.0/70.0*pow(epsilon,3));
+
+        double ts = 4.0*h/sqrt(epsilon);
+        double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
+
+        double s = 1.0/cosh(beta/h*Xa);
+        // double q = tanh(beta/h*Xa);
+
+        double vel = pow(s,2)*epsilon
+            - pow(epsilon,2)*( -1.0/4.0*pow(s,2) + pow(s,4)
+                + pow(z/h,2)*(3.0/2.0*pow(s,2)-9.0/4.0*pow(s,4)) )
+            - pow(epsilon,3)*( 19.0/40.0*pow(s,2) + 1.0/5.0*pow(s,4) - 6.0/5.0*pow(s,6)
+            + pow(z/h,2)*( -3.0/2.0*pow(s,2)-15.0/4.0*pow(s,4)+15.0/2.0*pow(s,6) )
+            + pow(z/h,4)*( -3.0/8.0*pow(s,2)+45.0/16.0*pow(s,4)-45.0/16.0*pow(s,6) ) );
+
+        return sqrt(G*h)*vel;
+    }
+
+    double W (double H, double h, double x, double y, double theta, double t, double X0, double z)
+    {
+        double epsilon = H/h;
+        double beta = sqrt(3.0*epsilon/4.0)*( 1.0 - 5.0/8.0*epsilon
+            + 71.0/128.0*pow(epsilon,2) );
+        double C = sqrt(G*h)*sqrt(1.0 + epsilon - 1.0/20.0*pow(epsilon,2) - 3.0/70.0*pow(epsilon,3));
+
+        double ts = 4.0*h/sqrt(epsilon);
+        double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
+
+        double s = 1.0/cosh(beta/h*Xa);
+        double q = tanh(beta/h*Xa);
+
+        double vel = sqrt(3.0*epsilon)*(z/h)*q*(
+            - epsilon*pow(s,2)
+            + pow(epsilon,2)*( 3.0/8.0*pow(s,2) + 2.0*pow(s,4) 
+                + pow(z/h,2)*(1.0/2.0*pow(s,2) - 3.0/2.0*pow(s,4) ) )
+            + pow(epsilon,3)*( 49.0/640.0*pow(s,2) - 17.0/20.0*pow(s,4)
+                - 18.0/5.0*pow(s,6) + pow(z/h,2)*(-13.0/16.0*pow(s,2)
+                - 25.0/16.0*pow(s,4) + 15.0/2.0*pow(s,6) )
+                + pow(z/h,4)*(-3.0/40.0*pow(s,2)+9.0/8.0*pow(s,4)-27.0/16.0*pow(s,6) ) ) );
+
+        return -sqrt(G*h)*vel;
+    }
+}
