@@ -31,7 +31,7 @@ wavePeriod      3;
 
 waveDir         0.0;
 
-wavePhase       4.71238898;
+wavePhase       1.57079633;
 
 uCurrent        (0.75 0. 0.);
 
