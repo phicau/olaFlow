@@ -31,7 +31,7 @@ waveHeight      0.25;
 
 waveDir         0.0;
 
-wavePhase       4.71238898;
+wavePhase       1.57079633;
 
 tSmooth         0.0;
 

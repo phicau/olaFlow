@@ -30,6 +30,7 @@
 #include "waveFun.H"
 #include <math.h>
 #include <limits>
+#include <iostream>
 
 namespace otherFun
 {
@@ -133,134 +134,80 @@ namespace StokesIIFun
     {
         double omega = 2.0*PII/T;
         
-        double startTime = 0;
         double lagIncrement = 0.001;
 
         double lag = 0;
-        double lag0 = 0; // phase = 0
-        double lag1 = 0; // phase = PI/2
-        double lag2 = 0; // phase = PI
-        double lag3 = 0; // phase = 3*PI/2
-        double lag4 = 0; // phase = 2*PI
+        double lags[5];
 
-        double oldEta = 0;
-        double newEta = 0;
-        
-        while (phase >= 2.0*PII)
+        int n = int(T/lagIncrement);
+        double freeSurface[n];
+        double maxVal = 0.0;
+        int maxInd = 0;
+
+        // Calculate free surface elevation over a period
+        for( int i=0; i<n; i++ )
         {
-            phase -= 2.0*PII;
-        }
+            freeSurface[i] = eta(H, h, Kx, x, Ky, y, omega, i*lagIncrement, phase);
 
-        // Calculate time lag to start at phase = 0 (max)
-        startTime = -T/4.0;
-        while (true)
-        {
-            oldEta = eta(H, h, Kx, x, Ky, y, omega, startTime, phase);
-
-            startTime += lagIncrement;
-
-            newEta = eta(H, h, Kx, x, Ky, y, omega, startTime, phase);
-
-            if ( oldEta > newEta )
+            if( freeSurface[i]>maxVal )
             {
-                lag0 = startTime;
-                break;
+                maxVal = freeSurface[i];
+                maxInd = i;
             }
         }
 
-        // Calculate time lag to start at phase = PI/2
-        startTime = lag0;
-        while (true)
+        lags[4] = maxInd*lagIncrement; // phase = 0, Crest
+
+        // Calculate time lag to start at phase = PI/2, SWL ascending (trough-crest)
+        for( int i=0; i<n-1; i++ )
         {
-            oldEta = eta(H, h, Kx, x, Ky, y, omega, startTime, phase);
-
-            startTime += lagIncrement;
-
-            newEta = eta(H, h, Kx, x, Ky, y, omega, startTime, phase);
-
-            if ( oldEta == 0.0 && newEta < oldEta )
+            if ( freeSurface[i] <= 0.0 && freeSurface[i+1] > 0.0 )
             {
-                lag1 = startTime - lagIncrement;
-                break;
-            }
-            else if ( oldEta > 0.0 && newEta < 0.0 )
-            {
-                lag1 = startTime;
+                lags[1] = i*lagIncrement;
                 break;
             }
         }
 
-        // Calculate time lag to start at phase = PI
-        startTime = lag1;
-        while (true)
+        // Calculate time lag to start at phase = 3PI/2, SWL descending (crest-trough)
+        for( int i=0; i<n-1; i++ )
         {
-            oldEta = eta(H, h, Kx, x, Ky, y, omega, startTime, phase);
-
-            startTime += lagIncrement;
-
-            newEta = eta(H, h, Kx, x, Ky, y, omega, startTime, phase);
-
-            if ( oldEta < newEta )
+            if ( freeSurface[i] >= 0.0 && freeSurface[i+1] < 0.0 )
             {
-                lag2 = startTime;
+                lags[3] = i*lagIncrement;
                 break;
             }
         }
 
-        // Calculate time lag to start at phase = 3*PI/2
-        startTime = lag2;
-        while (true)
+        // Reset values
+        lags[0] = lags[4] + T; // phase = 2PI, Crest
+        lags[2] = lags[4] + T/2.0; // phase = PI, Trough
+
+        lag = lags[4];
+
+        for( int i=0; i<5; i++ )
         {
-            oldEta = eta(H, h, Kx, x, Ky, y, omega, startTime, phase);
-
-            startTime += lagIncrement;
-
-            newEta = eta(H, h, Kx, x, Ky, y, omega, startTime, phase);
-
-            if ( oldEta == 0.0 && newEta > oldEta )
+            lags[i] -= lag;
+            while( lags[i]<0.0 )
             {
-                lag3 = startTime - lagIncrement;
-                break;
-            }
-            else if ( oldEta < 0.0 && newEta > 0.0 )
-            {
-                lag3 = startTime;
-                break;
-            }
-        }
-
-        // Calculate time lag to start at phase = 2*PI
-        startTime = lag3;
-        while (true)
-        {
-            oldEta = eta(H, h, Kx, x, Ky, y, omega, startTime, phase);
-
-            startTime += lagIncrement;
-
-            newEta = eta(H, h, Kx, x, Ky, y, omega, startTime, phase);
-
-            if ( oldEta > newEta )
-            {
-                lag4 = startTime;
-                break;
+                lags[i] += T;
             }
         }
 
         if ( phase >= 0.0 && phase < PII/2.0 )
         {
-            lag = otherFun::interpolation(0.0, PII/2.0, lag0, lag1, phase);
+            lag += otherFun::interpolation(0.0, PII/2.0, lags[0], lags[1], phase);
         }
         else if ( phase >= PII/2.0 && phase < PII )
         {
-            lag = otherFun::interpolation(PII/2.0, PII, lag1, lag2, phase);
+            lag += otherFun::interpolation(PII/2.0, PII, lags[1], lags[2], phase);
         }
         else if ( phase >= PII && phase < 3.0*PII/2.0 )
         {
-            lag = otherFun::interpolation(PII, 3.0*PII/2.0, lag2, lag3, phase);
+            lag += otherFun::interpolation(PII, 3.0*PII/2.0, lags[2], lags[3], phase);
         }
         else if ( phase >= 3.0*PII/2.0 && phase < 2.0*PII )
         {
-            lag = otherFun::interpolation(3.0*PII/2.0, 2.0*PII, lag3, lag4, phase);
+            lag += otherFun::interpolation(3.0*PII/2.0, 2.0*PII, lags[3], lags[4], phase);
         }
 
         return lag;
@@ -470,134 +417,82 @@ namespace cnoidalFun
 
     double timeLag (double H, double m, double kx, double ky, double T, double x, double y, double phase)
     {
-        double startTime = 0;
+        double omega = 2.0*PII/T;
+        
         double lagIncrement = 0.001;
 
         double lag = 0;
-        double lag0 = 0; // phase = 0
-        double lag1 = 0; // phase = PI/2
-        double lag2 = 0; // phase = PI
-        double lag3 = 0; // phase = 3*PI/2
-        double lag4 = 0; // phase = 2*PI
+        double lags[5];
 
-        double oldEta = 0;
-        double newEta = 0;
-        
-        while (phase >= 2.0*PII)
+        int n = int(T/lagIncrement);
+        double freeSurface[n];
+        double maxVal = 0.0;
+        int maxInd = 0;
+
+        // Calculate free surface elevation over a period
+        for( int i=0; i<n; i++ )
         {
-            phase -= 2.0*PII;
-        }
+            freeSurface[i] = eta(H, m, kx, ky, T, x, y, i*lagIncrement);
 
-        // Calculate time lag to start at phase = 0 (max)
-        startTime = -T/4.0;
-        while (true)
-        {
-            oldEta = eta(H, m, kx, ky, T, x, y, startTime);
-
-            startTime += lagIncrement;
-
-            newEta = eta(H, m, kx, ky, T, x, y, startTime);
-
-            if ( oldEta > newEta )
+            if( freeSurface[i]>maxVal )
             {
-                lag0 = startTime;
-                break;
+                maxVal = freeSurface[i];
+                maxInd = i;
             }
         }
 
-        // Calculate time lag to start at phase = PI/2
-        startTime = lag0;
-        while (true)
+        lags[4] = maxInd*lagIncrement; // phase = 0, Crest
+
+        // Calculate time lag to start at phase = PI/2, SWL ascending (trough-crest)
+        for( int i=0; i<n-1; i++ )
         {
-            oldEta = eta(H, m, kx, ky, T, x, y, startTime);
-
-            startTime += lagIncrement;
-
-            newEta = eta(H, m, kx, ky, T, x, y, startTime);
-
-            if ( oldEta == 0.0 && newEta < oldEta )
+            if ( freeSurface[i] <= 0.0 && freeSurface[i+1] > 0.0 )
             {
-                lag1 = startTime - lagIncrement;
-                break;
-            }
-            else if ( oldEta > 0.0 && newEta < 0.0 )
-            {
-                lag1 = startTime;
+                lags[1] = i*lagIncrement;
                 break;
             }
         }
 
-        // Calculate time lag to start at phase = PI
-        startTime = lag1;
-        while (true)
+        // Calculate time lag to start at phase = 3PI/2, SWL descending (crest-trough)
+        for( int i=0; i<n-1; i++ )
         {
-            oldEta = eta(H, m, kx, ky, T, x, y, startTime);
-
-            startTime += lagIncrement;
-
-            newEta = eta(H, m, kx, ky, T, x, y, startTime);
-
-            if ( oldEta < newEta )
+            if ( freeSurface[i] >= 0.0 && freeSurface[i+1] < 0.0 )
             {
-                lag2 = startTime;
+                lags[3] = i*lagIncrement;
                 break;
             }
         }
 
-        // Calculate time lag to start at phase = 3*PI/2
-        startTime = lag2;
-        while (true)
+        // Reset values
+        lags[0] = lags[4] + T; // phase = 2PI, Crest
+        lags[2] = lags[4] + T/2.0; // phase = PI, Trough
+
+        lag = lags[4];
+
+        for( int i=0; i<5; i++ )
         {
-            oldEta = eta(H, m, kx, ky, T, x, y, startTime);
-
-            startTime += lagIncrement;
-
-            newEta = eta(H, m, kx, ky, T, x, y, startTime);
-
-            if ( oldEta == 0.0 && newEta > oldEta )
+            lags[i] -= lag;
+            while( lags[i]<0.0 )
             {
-                lag3 = startTime - lagIncrement;
-                break;
-            }
-            else if ( oldEta < 0.0 && newEta > 0.0 )
-            {
-                lag3 = startTime;
-                break;
-            }
-        }
-
-        // Calculate time lag to start at phase = 2*PI
-        startTime = lag3;
-        while (true)
-        {
-            oldEta = eta(H, m, kx, ky, T, x, y, startTime);
-
-            startTime += lagIncrement;
-
-            newEta = eta(H, m, kx, ky, T, x, y, startTime);
-
-            if ( oldEta > newEta )
-            {
-                lag4 = startTime;
-                break;
+                lags[i] += T;
             }
         }
 
         if ( phase >= 0.0 && phase < PII/2.0 )
         {
-            lag = otherFun::interpolation(0.0, PII/2.0, lag0, lag1, phase);
+            lag += otherFun::interpolation(0.0, PII/2.0, lags[0], lags[1], phase);
         }
         else if ( phase >= PII/2.0 && phase < PII )
         {
-            lag = otherFun::interpolation(PII/2.0, PII, lag1, lag2, phase);
+            lag += otherFun::interpolation(PII/2.0, PII, lags[1], lags[2], phase);
         }
         else if ( phase >= PII && phase < 3.0*PII/2.0 )
         {
-            lag = otherFun::interpolation(PII, 3.0*PII/2.0, lag2, lag3, phase);
+            lag += otherFun::interpolation(PII, 3.0*PII/2.0, lags[2], lags[3], phase);
         }
         else if ( phase >= 3.0*PII/2.0 && phase < 2.0*PII )
         {
-            lag = otherFun::interpolation(3.0*PII/2.0, 2.0*PII, lag3, lag4, phase);
+            lag += otherFun::interpolation(3.0*PII/2.0, 2.0*PII, lags[3], lags[4], phase);
         }
 
         return lag;
@@ -1212,134 +1107,82 @@ namespace stokesVFun
     
     double timeLag (double h, double kx, double ky, double lambda, double T, double x, double y, double phase)
     {
-        double startTime = 0;
+        double omega = 2.0*PII/T;
+        
         double lagIncrement = 0.001;
 
         double lag = 0;
-        double lag0 = 0; // phase = 0
-        double lag1 = 0; // phase = PI/2
-        double lag2 = 0; // phase = PI
-        double lag3 = 0; // phase = 3*PI/2
-        double lag4 = 0; // phase = 2*PI
+        double lags[5];
 
-        double oldEta = 0;
-        double newEta = 0;
-        
-        while (phase >= 2.0*PII)
+        int n = int(T/lagIncrement);
+        double freeSurface[n];
+        double maxVal = 0.0;
+        int maxInd = 0;
+
+        // Calculate free surface elevation over a period
+        for( int i=0; i<n; i++ )
         {
-            phase -= 2.0*PII;
-        }
+            freeSurface[i] = eta(h, kx, ky, lambda, T, x, y, i*lagIncrement, phase);
 
-        // Calculate time lag to start at phase = 0 (max)
-        startTime = -T/4.0;
-        while (true)
-        {
-            oldEta = eta(h, kx, ky, lambda, T, x, y, startTime, phase);
-
-            startTime += lagIncrement;
-
-            newEta = eta(h, kx, ky, lambda, T, x, y, startTime, phase);
-
-            if ( oldEta > newEta )
+            if( freeSurface[i]>maxVal )
             {
-                lag0 = startTime;
-                break;
+                maxVal = freeSurface[i];
+                maxInd = i;
             }
         }
 
-        // Calculate time lag to start at phase = PI/2
-        startTime = lag0;
-        while (true)
+        lags[4] = maxInd*lagIncrement; // phase = 0, Crest
+
+        // Calculate time lag to start at phase = PI/2, SWL ascending (trough-crest)
+        for( int i=0; i<n-1; i++ )
         {
-            oldEta = eta(h, kx, ky, lambda, T, x, y, startTime, phase);
-
-            startTime += lagIncrement;
-
-            newEta = eta(h, kx, ky, lambda, T, x, y, startTime, phase);
-
-            if ( oldEta == 0.0 && newEta < oldEta )
+            if ( freeSurface[i] <= 0.0 && freeSurface[i+1] > 0.0 )
             {
-                lag1 = startTime - lagIncrement;
-                break;
-            }
-            else if ( oldEta > 0.0 && newEta < 0.0 )
-            {
-                lag1 = startTime;
+                lags[1] = i*lagIncrement;
                 break;
             }
         }
 
-        // Calculate time lag to start at phase = PI
-        startTime = lag1;
-        while (true)
+        // Calculate time lag to start at phase = 3PI/2, SWL descending (crest-trough)
+        for( int i=0; i<n-1; i++ )
         {
-            oldEta = eta(h, kx, ky, lambda, T, x, y, startTime, phase);
-
-            startTime += lagIncrement;
-
-            newEta = eta(h, kx, ky, lambda, T, x, y, startTime, phase);
-
-            if ( oldEta < newEta )
+            if ( freeSurface[i] >= 0.0 && freeSurface[i+1] < 0.0 )
             {
-                lag2 = startTime;
+                lags[3] = i*lagIncrement;
                 break;
             }
         }
 
-        // Calculate time lag to start at phase = 3*PI/2
-        startTime = lag2;
-        while (true)
+        // Reset values
+        lags[0] = lags[4] + T; // phase = 2PI, Crest
+        lags[2] = lags[4] + T/2.0; // phase = PI, Trough
+
+        lag = lags[4];
+
+        for( int i=0; i<5; i++ )
         {
-            oldEta = eta(h, kx, ky, lambda, T, x, y, startTime, phase);
-
-            startTime += lagIncrement;
-
-            newEta = eta(h, kx, ky, lambda, T, x, y, startTime, phase);
-
-            if ( oldEta == 0.0 && newEta > oldEta )
+            lags[i] -= lag;
+            while( lags[i]<0.0 )
             {
-                lag3 = startTime - lagIncrement;
-                break;
-            }
-            else if ( oldEta < 0.0 && newEta > 0.0 )
-            {
-                lag3 = startTime;
-                break;
-            }
-        }
-
-        // Calculate time lag to start at phase = 2*PI
-        startTime = lag3;
-        while (true)
-        {
-            oldEta = eta(h, kx, ky, lambda, T, x, y, startTime, phase);
-
-            startTime += lagIncrement;
-
-            newEta = eta(h, kx, ky, lambda, T, x, y, startTime, phase);
-
-            if ( oldEta > newEta )
-            {
-                lag4 = startTime;
-                break;
+                lags[i] += T;
             }
         }
 
         if ( phase >= 0.0 && phase < PII/2.0 )
         {
-            lag = otherFun::interpolation(0.0, PII/2.0, lag0, lag1, phase);
+            lag += otherFun::interpolation(0.0, PII/2.0, lags[0], lags[1], phase);
         }
         else if ( phase >= PII/2.0 && phase < PII )
         {
-            lag = otherFun::interpolation(PII/2.0, PII, lag1, lag2, phase);
+            lag += otherFun::interpolation(PII/2.0, PII, lags[1], lags[2], phase);
         }
         else if ( phase >= PII && phase < 3.0*PII/2.0 )
         {
-            lag = otherFun::interpolation(PII, 3.0*PII/2.0, lag2, lag3, phase);
+            lag += otherFun::interpolation(PII, 3.0*PII/2.0, lags[2], lags[3], phase);
         }
         else if ( phase >= 3.0*PII/2.0 && phase < 2.0*PII )
         {
-            lag = otherFun::interpolation(3.0*PII/2.0, 2.0*PII, lag3, lag4, phase);
+            lag += otherFun::interpolation(3.0*PII/2.0, 2.0*PII, lags[3], lags[4], phase);
         }
 
         return lag;
@@ -1363,11 +1206,7 @@ namespace stokesVFun
 
             newEta = eta(d, k, 0, lambda, T, 0.0, 0.0, 0.0, phase);
 
-            if ( oldEta == 0.0 && newEta>oldEta )
-            {
-                break;
-            }
-            else if ( oldEta<0.0 && newEta>0.0 )
+            if ( oldEta <= 0.0 && newEta>0.0 )
             {
                 break;
             }
