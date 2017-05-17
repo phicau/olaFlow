@@ -1,0 +1,46 @@
+IHFOAM Case - Height/Depth: 0.375  Dimensionless Period:  14.86
+Current criterion: 2  Magnitude: 0.00
+
+Fourier Approximation: 10 terms in series
+
+Solution, non-dimensionalised by wavenumber
+
+Water depth                      	 0.4107
+Wave height                      	 0.1540
+Wave period                      	 9.5214
+Wave speed                       	 0.6599
+Mean Eulerian fluid velocity     	-0.0089
+Mean mass transport velocity     	 0.0000
+Mean fluid speed relative to wave	 0.6688
+Volume flux due to waves         	 0.0037
+Bernoulli constant               	 0.2257
+
+Coefficients in Fourier series
+Potential	Surface elevations
+
+1	 0.0881	 0.0573
+2	 0.0250	 0.0320
+3	 0.0077	 0.0154
+4	 0.0023	 0.0071
+5	 0.0006	 0.0033
+6	 0.0001	 0.0016
+7	 0.0000	 0.0008
+8	 0.0000	 0.0004
+9	 0.0000	 0.0003
+10	 0.0000	 0.0002
+
+Integral quantities
+
+Impulse (I)                    0.000000
+Kinetic energy (T)             0.001212
+Potential energy (V)           0.001151
+Mean square of bed velocity    0.015931
+Radiation stress (Sxx)         0.003090
+Wave power (F)                 0.001439
+
+Invariants for finite depth
+
+Volume flux (Q)        	 0.2710
+Bernoulli constant (R) 	 0.6364
+Momentum flux (S)      	 0.2663
+

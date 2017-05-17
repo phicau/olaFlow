@@ -1,0 +1,47 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      sampleDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+interpolationScheme cellPointFace;
+
+setFormat       raw;
+
+surfaceFormat   raw;
+
+sets
+(
+    GaugesP
+    {
+        type    patchCloud;
+        axis    xyz;
+        patches 1(wallName);
+        points  ((0.83 0.026 0.025) 
+                (0.83 0.026 0.063)
+                (0.83 0.026 0.099)
+                (0.83 0.026 0.136)
+                (0.806 0.026 0.16)
+                (0.769 0.026 0.16)
+                (0.733 0.026 0.16)
+                (0.696 0.026 0.16));
+        maxDistance 100;
+    }
+);
+
+surfaces        ();
+
+fields          ( p );
+
+// ************************************************************************* //
