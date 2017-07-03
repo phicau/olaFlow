@@ -16,15 +16,20 @@ else
             export OF_SOLVER=olaFoamOF300+
         elif [ $OF_VERSION -lt 1610 ]; then
             export OF_SOLVER=olaFoamOF1606+
-        else
+        elif [ $OF_VERSION -lt 1700 ]; then
             export OF_SOLVER=olaFoamOF1612+
+        else
+            export OF_SOLVER=olaFoamOF1706+
         fi
     else
         # OpenFOAM
         export OF_VERSION=`echo $WM_PROJECT_VERSION"-0" | sed -e 's/v//' -e 's/+//' -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -3 | tr -d '\n'`
         export OF_FLAVOUR=3
 
-        if [ $OF_VERSION -lt 170 ]; then
+        if [ $OF_VERSION -gt 1700 ]; then
+            # OpenFOAM + decided to drop the + ...
+            export OF_SOLVER=olaFoamOF1706+
+        elif [ $OF_VERSION -lt 170 ]; then
             export OF_SOLVER=olaFoamOF16ext
         elif [ $OF_VERSION -lt 180 ]; then
             export OF_SOLVER=olaFoamOF171
