@@ -40,6 +40,35 @@ Description
     For a two-fluid approach see twoPhaseEulerFoam.
 
 \*---------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------*\
+| olaFoam Project                                       ll                    |
+|                                                       l l                   |
+|   Coder: Pablo Higuera Caubilla                 ooo   l l     aa            |
+|   Bug reports: phicau@gmail.com                o   o  l l    a  a           |
+|                                                o   o  ll   l a  aa  aa      |
+|                                                 ooo    llll   aa  aa        |
+|                                                                             |
+|                                                FFFFF OOOOO AAAAA M   M      |
+|                                                F     O   O A   A MM MM      |
+|                                                FFFF  O   O AAAAA M M M      |
+|                                                F     O   O A   A M   M      |
+|                                                F     OOOOO A   A M   M      |
+|   -----------------------------------------------------------------------   |
+| References:                                                                 |
+|                                                                             |
+| - Three-dimensional interaction of waves and porous coastal structures      |
+|    using OpenFOAM. Part I: Formulation and validation.                      |
+|    Higuera, P., Lara, J.L. and Losada, I.J. (2014)                          |
+|    Coastal Engineering, Vol. 83, 243-258.                                   |
+|    http://dx.doi.org/10.1016/j.coastaleng.2013.08.010                       |
+|                                                                             |
+| - Three-dimensional interaction of waves and porous coastal structures      |
+|    using OpenFOAM. Part II: Application.                                    |
+|    Higuera, P., Lara, J.L. and Losada, I.J. (2014)                          |
+|    Coastal Engineering, Vol. 83, 259–270.                                   |
+|    http://dx.doi.org/10.1016/j.coastaleng.2013.09.002                       |
+|                                                                             |
+\*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
 #include "CMULES.H"

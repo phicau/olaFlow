@@ -81,7 +81,6 @@ Description
 #include "pimpleControl.H"
 #include "fvOptions.H"
 #include "CorrectPhi.H"
-#include "localEulerDdtScheme.H"
 #include "fvcSmooth.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -97,6 +96,7 @@ int main(int argc, char *argv[])
     #include "createTimeControls.H"
     #include "initContinuityErrs.H"
     #include "createFields.H"
+    #include "createAlphaFluxes.H"
     #include "createFvOptions.H"
     #include "correctPhi.H"
 
@@ -139,6 +139,11 @@ int main(int argc, char *argv[])
             #include "alphaEqnSubCycle.H"
 
             mixture.correct();
+
+            if (pimple.frozenFlow())
+            {
+                continue;
+            }
 
             #include "UEqn.H"
 
