@@ -43,8 +43,10 @@ else
             export OF_SOLVER=olaFoamOF240
         elif [ $OF_VERSION -lt 400 ]; then
             export OF_SOLVER=olaFoamOF300
-        else
+        elif [ $OF_VERSION -lt 500 ]; then
             export OF_SOLVER=olaFoamOF400
+        else
+            export OF_SOLVER=olaFoamOF500
         fi
     fi
 fi
