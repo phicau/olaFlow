@@ -207,6 +207,9 @@ waveVelocityFvPatchVectorField
         "The new expected keyword is: waveDictName\n" << 
         "Using waveDictName = waveDict by default.\n" << endl;
     }
+    
+    fixedValueFvPatchField<vector>::operator==(this->patchInternalField());
+    fixedValueFvPatchField<vector>::updateCoeffs();
 }
 
 

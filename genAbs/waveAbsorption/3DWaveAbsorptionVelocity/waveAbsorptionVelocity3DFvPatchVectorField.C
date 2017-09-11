@@ -111,7 +111,11 @@ waveAbsorptionVelocity3DFvPatchVectorField
     nEdgeMin_(dict.lookupOrDefault<label>("nEdgeMin", 0)),
     nEdgeMax_(dict.lookupOrDefault<label>("nEdgeMax", 0)),
     allCheck_(dict.lookupOrDefault<bool>("allCheck", false ))
-{}
+{
+    
+    fixedValueFvPatchField<vector>::operator==(this->patchInternalField());
+    fixedValueFvPatchField<vector>::updateCoeffs();
+}
 
 
 Foam::
