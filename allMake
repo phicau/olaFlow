@@ -4,7 +4,12 @@ if [ $WM_PROJECT == "foam" ]; then
     # FOAM-Extend
     export OF_VERSION=`echo $WM_PROJECT_VERSION | sed -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -2 | tr -d '\n'`
     export OF_FLAVOUR=1
-    export OF_SOLVER=olaFoamFE30_32
+
+    if [ $OF_VERSION -ge 40 ]; then
+        export OF_SOLVER=olaFoamFE40
+    else
+        export OF_SOLVER=olaFoamFE30_32
+    fi
 else
     if [[ $WM_PROJECT_VERSION == *"+"* ]]
     then

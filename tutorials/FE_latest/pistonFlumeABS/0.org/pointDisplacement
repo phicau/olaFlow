@@ -38,8 +38,8 @@ boundaryField
     }
     bottom
     {
-        type            fixedNormalSlip;
-        n               (0 0 1);
+        type            slip; // fixedNormalSlip;
+        // n               (0 0 1);
         value           uniform (0 0 0);
     }
     atmosphere
