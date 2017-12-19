@@ -1,16 +1,16 @@
 /*---------------------------------------------------------------------------*\
-| olaFoam Project                                       ll                    |
+| olaFlow Project                                       ll                    |
 |                                                       l l                   |
 |   Coder: Pablo Higuera Caubilla                 ooo   l l     aa            |
-|   Bug reports: phicau@gmail.com                o   o  l l    a  a           |
+|   Bug reports: olaFlowCFD@gmail.com            o   o  l l    a  a           |
 |                                                o   o  ll   l a  aa  aa      |
 |                                                 ooo    llll   aa  aa        |
 |                                                                             |
-|                                                FFFFF OOOOO AAAAA M   M      |
-|                                                F     O   O A   A MM MM      |
-|  Formerly IHFOAM Project                       FFFF  O   O AAAAA M M M      |
-|  Work initially developed at IH Cantabria      F     O   O A   A M   M      |
-|                                                F     OOOOO A   A M   M      |
+|                                                FFFFF L     OOOOO W   W      |
+|                                                F     L     O   O W   W      |
+|                                                FFFF  L     O   O W W W      |
+|                                                F     L     O   O WW WW      |
+|                                                F     LLLLL OOOOO W   W      |
 |   -----------------------------------------------------------------------   |
 | References:                                                                 |
 |                                                                             |

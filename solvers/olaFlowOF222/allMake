@@ -1,0 +1,23 @@
+#!/bin/bash
+
+wclean > /dev/null
+wclean olaDyMFlow > /dev/null
+
+wmake
+
+if (( $? )) ; then 
+    echo "olaFlow compilation failed"
+    exit; else
+    echo -e "\n\nolaFlow compiled successfully for OpenFOAM 2.2.2\n\n\n";  
+fi
+
+wmake olaDyMFlow
+
+if (( $? )) ; then 
+    echo "olaDyMFlow compilation failed"
+    exit; else
+    echo -e "\n\nolaDyMFlow compiled successfully for OpenFOAM 2.2.2\n\n\n";  
+fi
+
+wclean > /dev/null
+wclean olaDyMFlow > /dev/null

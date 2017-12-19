@@ -21,6 +21,6 @@ echo Decomposing case...
 decomposePar > decomposePar.log
 
 echo Running...
-mpirun -np 4 olaDyMFoam -parallel > olaDyMFoam.log
+mpirun -np 4 olaDyMFlow -parallel > olaDyMFlow.log
 
 echo Simulation complete.

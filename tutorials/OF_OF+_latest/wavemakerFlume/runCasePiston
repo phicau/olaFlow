@@ -18,6 +18,6 @@ python pistonWaveGen.py
 cd ..
 
 echo Running...
-olaDyMFoam > olaDyMFoam.log
+olaDyMFlow > olaDyMFlow.log
 
 echo Simulation complete.

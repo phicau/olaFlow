@@ -1,19 +1,19 @@
 /*---------------------------------------------------------------------------*\
 License
-    This file is part of olaFoam Project.
+    This file is part of olaFlow Project.
 
-    olaFoam is free software: you can redistribute it and/or modify it
+    olaFlow is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    olaFoam is distributed in the hope that it will be useful, but WITHOUT
+    olaFlow is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with olaFoam.  If not, see <http://www.gnu.org/licenses/>.
+    along with olaFlow.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
     Foam::waveAbsorptionVelocity2DFvPatchVectorField
@@ -45,18 +45,18 @@ SourceFiles
 
 \*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*\
-| olaFoam Project                                       ll                    |
+| olaFlow Project                                       ll                    |
 |                                                       l l                   |
 |   Coder: Pablo Higuera Caubilla                 ooo   l l     aa            |
-|   Bug reports: phicau@gmail.com                o   o  l l    a  a           |
+|   Bug reports: olaFlowCFD@gmail.com            o   o  l l    a  a           |
 |                                                o   o  ll   l a  aa  aa      |
 |                                                 ooo    llll   aa  aa        |
 |                                                                             |
-|                                                FFFFF OOOOO AAAAA M   M      |
-|                                                F     O   O A   A MM MM      |
-|  Formerly IHFOAM Project                       FFFF  O   O AAAAA M M M      |
-|  Work initially developed at IH Cantabria      F     O   O A   A M   M      |
-|                                                F     OOOOO A   A M   M      |
+|                                                FFFFF L     OOOOO W   W      |
+|                                                F     L     O   O W   W      |
+|                                                FFFF  L     O   O W W W      |
+|                                                F     L     O   O WW WW      |
+|                                                F     LLLLL OOOOO W   W      |
 |   -----------------------------------------------------------------------   |
 | References:                                                                 |
 |                                                                             |
