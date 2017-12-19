@@ -22,9 +22,9 @@ wclean > /dev/null
 wmake libso
 
 if (( $? )) ; then 
-    echo "\n\nWave generation boundary conditions compilation failed"
+    echo "\n\nOlaFlow project wave generation boundary conditions compilation failed"
     exit; else
-    echo -e "\n\nWave generation boundary conditions compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";  
+    echo -e "\n\nOlaFlow project wave generation boundary conditions compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";  
 fi
 
 wclean > /dev/null

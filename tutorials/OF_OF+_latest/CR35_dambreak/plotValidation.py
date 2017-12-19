@@ -68,5 +68,5 @@ for i in range(len(times)):
     if(i!=0):
         legend(('Num', 'Lab'),loc=1)
 
-suptitle('OLAFOAM validation. Lin (1998) dam break experiments: crushed rocks, h = 0.35 m.', fontsize=22)
+suptitle('olaFlow validation. Lin (1998) dam break experiments: crushed rocks, h = 0.35 m.', fontsize=22)
 show()

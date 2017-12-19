@@ -16,7 +16,7 @@ FoamFile
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     olaFoam;
+application     olaFlow;
 
 startFrom       latestTime;
 

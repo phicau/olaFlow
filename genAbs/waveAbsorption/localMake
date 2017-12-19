@@ -22,9 +22,9 @@ wclean > /dev/null
 wmake libso
 
 if (( $? )) ; then 
-    echo "\n\nWave absorption boundary conditions compilation failed"
+    echo "\n\nOlaFlow project wave absorption boundary conditions compilation failed"
     exit; else
-    echo -e "\n\nWave absorption boundary conditions compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";  
+    echo -e "\n\nOlaFlow project wave absorption boundary conditions compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";  
 fi
 
 wclean > /dev/null

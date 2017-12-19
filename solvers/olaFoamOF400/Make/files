@@ -1,3 +1,0 @@
-olaFoam.C
-
-EXE = $(FOAM_USER_APPBIN)/olaFoam
