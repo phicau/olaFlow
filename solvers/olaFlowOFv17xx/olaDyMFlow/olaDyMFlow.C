@@ -169,7 +169,11 @@ int main(int argc, char *argv[])
                     // if the mesh topology changed
                     if (mesh.topoChanging())
                     {
-                        talphaPhiCorr0.clear();
+                        #if OFVERSION >= 1712
+                            talphaPhi1Corr0.clear();
+                        #else
+                            talphaPhiCorr0.clear();
+                        #endif
                     }
 
                     gh = (g & mesh.C()) - ghRef;
