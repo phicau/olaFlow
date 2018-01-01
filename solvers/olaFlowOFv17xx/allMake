@@ -24,7 +24,7 @@ else
         elif [ $OF_VERSION -lt 1700 ]; then
             export OF_SOLVER=olaFlowOF1612+
         else
-            export OF_SOLVER=olaFlowOFv17xx
+            export OF_SOLVER=olaFlowOF17xx+
         fi
     else
         # OpenFOAM
@@ -33,7 +33,7 @@ else
 
         if [ $OF_VERSION -gt 1700 ]; then
             # OpenFOAM + decided to drop the + ...
-            export OF_SOLVER=olaFlowOFv17xx
+            export OF_SOLVER=olaFlowOF17xx+
         elif [ $OF_VERSION -lt 170 ]; then
             export OF_SOLVER=olaFlowOF16ext
         elif [ $OF_VERSION -lt 180 ]; then
@@ -56,46 +56,24 @@ else
     fi
 fi
 
-wclean all > /dev/null
+wclean > /dev/null
+wclean olaDyMFlow > /dev/null
 
-wmake libso genAbs/waveGeneration
-
-if (( $? )) ; then 
-    echo "\n\nOlaFlow project wave generation boundary conditions compilation failed"
-    exit; else
-    echo -e "\n\nOlaFlow project wave generation boundary conditions compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";  
-fi
-
-wmake libso genAbs/waveAbsorption
+wmake
 
 if (( $? )) ; then 
-    echo "\n\nOlaFlow project wave absorption boundary conditions compilation failed"
+    echo "olaFlow compilation failed"
     exit; else
-    echo -e "\n\nOlaFlow project wave absorption boundary conditions compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";  
+    echo -e "\n\nolaFlow compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";
 fi
 
-
-wmake solvers/$OF_SOLVER
+wmake olaDyMFlow
 
 if (( $? )) ; then 
-    echo "olaFlow solver compilation failed"
+    echo "olaDyMFlow compilation failed"
     exit; else
-    echo -e "\n\nolaFlow solver compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n"; 
+    echo -e "\n\nolaDyMFlow compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";   
 fi
 
-wmake solvers/$OF_SOLVER/olaDyMFlow
-
-if (( $? )) ; then 
-    echo "olaDyMFlow solver compilation failed"
-    exit; else
-    echo -e "\n\nolaDyMFlow solver compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";   
-fi
-
-
-wclean all > /dev/null
-rm -f genAbs/common/waveFun.dep
-
-if [ $WM_PROJECT == "foam" ]; then
-    rm -fr genAbs/*/lnInclude
-fi
-
+wclean > /dev/null
+wclean olaDyMFlow > /dev/null

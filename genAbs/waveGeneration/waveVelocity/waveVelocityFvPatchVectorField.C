@@ -705,9 +705,15 @@ void Foam::waveVelocityFvPatchVectorField::write(Ostream& os) const
     os.writeKeyword("allCheck") << allCheck_ << token::END_STATEMENT << nl;
     os.writeKeyword("waveDictName") << waveDictName_ << token::END_STATEMENT << nl;
 
-    writeEntryIfDifferent<vector>(os, "uCurrent", vector::zero, uCurrent_);
-    writeEntryIfDifferent<scalar>(os, "tSmooth", -1.0, tSmooth_);
-    writeEntryIfDifferent<scalar>(os, "tuningFactor", 1.0, tuningFactor_);
+    #if OFVERSION >= 1712
+        os.writeEntryIfDifferent<vector>("uCurrent", vector::zero, uCurrent_);
+        os.writeEntryIfDifferent<scalar>("tSmooth", -1.0, tSmooth_);
+        os.writeEntryIfDifferent<scalar>("tuningFactor", 1.0, tuningFactor_);
+    #else
+        writeEntryIfDifferent<vector>(os, "uCurrent", vector::zero, uCurrent_);
+        writeEntryIfDifferent<scalar>(os, "tSmooth", -1.0, tSmooth_);
+        writeEntryIfDifferent<scalar>(os, "tuningFactor", 1.0, tuningFactor_);
+    #endif
 
     if (genAbs_)
     {
@@ -725,7 +731,11 @@ void Foam::waveVelocityFvPatchVectorField::write(Ostream& os) const
 
         os.writeKeyword("nComp") << nComp_ << token::END_STATEMENT << nl;
 
-        writeEntryIfDifferent<bool>(os, "secondOrder", false, secondOrder_);
+        #if OFVERSION >= 1712
+            os.writeEntryIfDifferent<bool>("secondOrder", false, secondOrder_);
+        #else
+            writeEntryIfDifferent<bool>(os, "secondOrder", false, secondOrder_);
+        #endif
     }
     else if ( waveType_ == "regular" )
     {
@@ -782,7 +792,11 @@ void Foam::waveVelocityFvPatchVectorField::write(Ostream& os) const
         paddleVelocity_.writeEntry("paddleVelocity", os);
         paddleEta_.writeEntry("paddleEta", os);
 
-        writeEntryIfDifferent<word>(os, "waveTheoryOrig", "aaa", waveTheoryOrig_);
+        #if OFVERSION >= 1712
+            os.writeEntryIfDifferent<word>("waveTheoryOrig", "aaa", waveTheoryOrig_);
+        #else
+            writeEntryIfDifferent<word>(os, "waveTheoryOrig", "aaa", waveTheoryOrig_);
+        #endif
     }
     else if ( waveType_ == "solitary" )
     {

@@ -367,8 +367,13 @@ write(Ostream& os) const
     meanAngles_.writeEntry("meanAngles", os);
     zSpanL_.writeEntry("zSpanL", os);
 
-    writeEntryIfDifferent<label>(os, "nEdgeMin", 0, nEdgeMin_);
-    writeEntryIfDifferent<label>(os, "nEdgeMax", 0, nEdgeMax_);
+    #if OFVERSION >= 1712
+        os.writeEntryIfDifferent<label>("nEdgeMin", 0, nEdgeMin_);
+        os.writeEntryIfDifferent<label>("nEdgeMax", 0, nEdgeMax_);
+    #else
+        writeEntryIfDifferent<label>(os, "nEdgeMin", 0, nEdgeMin_);
+        writeEntryIfDifferent<label>(os, "nEdgeMax", 0, nEdgeMax_);
+    #endif
     
     os.writeKeyword("allCheck") << allCheck_ << token::END_STATEMENT << nl;
 
