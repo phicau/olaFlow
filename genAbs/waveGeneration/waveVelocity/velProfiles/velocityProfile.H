@@ -14,6 +14,10 @@
                 - waveOmega*currTime + wavePhase_;
             #include "profileStokesII.H"
         }
+        else if ( waveTheory_ == "StokesIII" )
+        {
+            #include "profileStokesIII.H"
+        }
         else  if ( waveTheory_ == "StokesV" )
         {
             #include "profileStokesV.H"

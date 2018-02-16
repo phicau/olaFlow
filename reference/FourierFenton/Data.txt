@@ -1,4 +1,4 @@
-IHFOAM Case
+OLAFLOW Case
 0.375	    H/d
 Period	    Measure of length: "Wavelength" or "Period"
 14.857 	Value of that length: L/d or T(g/d)^(1/2) respectively

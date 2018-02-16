@@ -554,6 +554,21 @@ void Foam::waveVelocityFvPatchVectorField::updateCoeffs()
     }
     // Info << "Paddle angle " << meanAngle << endl;
 
+    // Auxiliar variables for Stokes III
+    double aE_SIII = 0;
+    double klE_SIII = 0;
+    if ( waveTheory_ == "StokesIII" )
+    {
+        StokesIIIFun::waveLengthCalc
+        (
+            waveHeight_,
+            waterDepth_,
+            wavePeriod_,
+            &aE_SIII,
+            &klE_SIII
+        );
+    }
+
     scalarList calculatedLevel (nPaddles_,0.0);
 
     if ( waveType_ == "regular" )
@@ -601,7 +616,7 @@ void Foam::waveVelocityFvPatchVectorField::updateCoeffs()
 
     // Velocity cycle
     scalar corrLevel = 0.0;
-    forAll(patchHeight, cellIndex)    
+    forAll(patchHeight, cellIndex)
     {
         #include "velocityProfile.H"
 
@@ -746,7 +761,11 @@ void Foam::waveVelocityFvPatchVectorField::write(Ostream& os) const
         os.writeKeyword("waveDir") << waveDir_ << token::END_STATEMENT << nl;
         os.writeKeyword("timeLag") << timeLag_ << token::END_STATEMENT << nl;
 
-        if ( waveTheory_ == "StokesI" || waveTheory_ == "StokesII" )
+        if
+        (
+            waveTheory_ == "StokesI" || waveTheory_ == "StokesII"
+            || waveTheory_ == "StokesIII"
+        )
         {
             os.writeKeyword("waveLength") << 
                 waveLength_ << token::END_STATEMENT << nl;

@@ -1,4 +1,4 @@
-IHFOAM Case - Height/Depth: 0.375  Dimensionless Period:  14.86
+OLAFLOW Case - Height/Depth: 0.375  Dimensionless Period:  14.86
 Current criterion: 2  Magnitude: 0.00
 
 Fourier Approximation: 10 terms in series

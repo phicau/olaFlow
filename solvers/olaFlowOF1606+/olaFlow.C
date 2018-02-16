@@ -39,6 +39,8 @@ Description
 
     For a two-fluid approach see twoPhaseEulerFoam.
 
+    olaFlow solves the VARANS equations.
+
 \*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*\
 | olaFlow Project                                       ll                    |

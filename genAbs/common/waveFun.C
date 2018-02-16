@@ -214,6 +214,132 @@ namespace StokesIIFun
     }
 }
 
+namespace StokesIIIFun
+{
+    #define PII 3.1415926535897932384626433832795028
+    #define G 9.81 
+    
+    double waveLengthCalc (double H, double h, double T, double* aE, double* klE)
+    {
+        // Calculates wavelength with Newton's method
+        double a = 1, aN = 10;
+        double kl = 1, klN = 10;
+        double eps = 1e-6;
+
+        while (true)
+        {
+            double d_a = 
+                (dEq(h, T, a+eps, kl) - dEq(h, T, a-eps, kl))/(2*eps);
+            double d_kl = 
+                (dEq(h, T, a, kl+eps) - dEq(h, T, a, kl-eps))/(2*eps);
+            double H_a = 
+                (HEq(H, T, a+eps, kl) - HEq(H, T, a-eps, kl))/(2*eps);
+            double H_kl = 
+                (HEq(H, T, a, kl+eps) - HEq(H, T, a, kl-eps))/(2*eps);
+
+            double factor = 1/(d_a*H_kl-d_kl*H_a);
+
+            aN = a - factor*( H_kl*dEq(h, T, a, kl) - d_kl*HEq(H, T, a, kl) );
+            klN = kl - factor*( d_a*HEq(H, T, a, kl) - H_a*dEq(h, T, a, kl) );
+
+            if
+            (
+                (fabs(dEq(h, T, aN, klN))<=eps) && 
+                (fabs(HEq(H, T, aN, klN))<=eps)
+            )
+            {
+                a = aN;
+                kl = klN;
+                break;
+            }
+            else
+            {
+                a = aN;
+                kl = klN;
+            }
+        }
+        
+        *aE = a;
+        *klE = kl;
+
+        double L = 
+            tanh(kl)/(2*PII)*(1 + pow(a,2)*(cosh(4*kl) + 2*cosh(2*kl) + 6)
+            /(4*(cosh(2*kl) - 1)))*G*pow(T,2);
+
+        return L;
+    }
+
+    double dEq (double h, double T, double a, double kl)
+    {
+        double aux = tanh(kl)/(4*pow(PII,2))*(kl + pow(a,2)/4.*(sinh(2*kl)
+            + kl*(cosh(4*kl) + 2*cosh(2*kl) + 6)/(cosh(2*kl)-1)))
+            - h/(G*pow(T,2));
+        return aux;
+    }
+
+    double HEq (double H, double T, double a, double kl)
+    {
+        double aux = a*tanh(kl)/(2*pow(PII,2))*(sinh(kl) + pow(a,2)/8.
+            *(sinh(kl)*(2*cosh(4*kl) + 3*cosh(2*kl) + 10)/(cosh(2*kl) - 1)
+            + sinh(3*kl)/2.*( 3*cosh(4*kl) + 4*cosh(2*kl) + 2)
+            /pow(cosh(2*kl) - 1,2))) - H/(G*pow(T,2));
+        return aux;
+    }
+
+
+    double eta (double H, double h, double Kx, double x, double Ky, double y, double omega, double t, double phase, double a, double kl)
+    {
+        double k = sqrt(Kx*Kx + Ky*Ky);
+        double L = 2*PII/k;
+        double faseTot = Kx*x + Ky*y - omega*t + phase;
+
+        double eta1 = L*a/(2*PII)*( sinh(kl) + pow(a,2)/64.*(9*sinh(5*kl) + 15*sinh(3*kl) + 6*sinh(kl))/(cosh(2*kl) - 1) );
+        double eta2 = L*pow(a,2)/(16*PII)*(sinh(4*kl) + 4*sinh(2*kl))/(cosh(2*kl) - 1);
+        double eta3 = L*pow(a,3)/(256*PII)*(3*sinh(7*kl) + 15*sinh(5*kl) + 27*sinh(3*kl) + 39*sinh(kl))/pow(cosh(2*kl) - 1,2);
+        
+        double sup = eta1*cos(faseTot) + eta2*cos(2*faseTot) + eta3*cos(3*faseTot);
+        return sup;
+    }
+    
+    double U (double H, double h, double Kx, double x, double Ky, double y, double omega, double t, double phase, double z, double a, double kl)
+    {
+        double k = sqrt(Kx*Kx + Ky*Ky);
+        double L = 2*PII/k;
+        double T = 2*PII/omega;
+        double faseTot = Kx*x + Ky*y - omega*t + phase;
+
+        double v1 = L*a/T;
+        double v2 = 3*L*pow(a,2)/(2*T*(cosh(2*kl) - 1));
+        double v3 = 
+            3*L*pow(a,3)*(2*cosh(2*kl) - 11)/(16*T*pow(cosh(2*kl) - 1,2));
+
+        double velocity = 
+            v1*cos(faseTot)*cosh(k*z) + v2*cos(2*faseTot)*cosh(2*k*z)
+            + v3*cos(3*faseTot)*cosh(3*k*z);
+
+        return velocity;
+    }
+    
+    double W (double H, double h, double Kx, double x, double Ky, double y, double omega, double t, double phase, double z, double a, double kl)
+    {
+        double k = sqrt(Kx*Kx + Ky*Ky);
+        double L = 2*PII/k;
+        double T = 2*PII/omega;
+        double faseTot = Kx*x + Ky*y - omega*t + phase;
+
+        double v1 = L*a/T;
+        double v2 = 3*L*pow(a,2)/(2*T*(cosh(2*kl) - 1));
+        double v3 = 
+            3*L*pow(a,3)*(2*cosh(2*kl) - 11)/(16*T*pow(cosh(2*kl) - 1,2));
+
+        double velocity = 
+            v1*sin(faseTot)*sinh(k*z) + v2*sin(2*faseTot)*sinh(2*k*z)
+            + v3*sin(3*faseTot)*sinh(3*k*z);
+
+        return velocity;
+    } 
+}
+
 namespace Elliptic
 {
     #define PII 3.1415926535897932384626433832795028
@@ -253,8 +379,8 @@ namespace Elliptic
             g = sqrt(g);
         }
 
-        *K = (double) (PII/2. / a);
-        *E = (double) (PII/4. / a * sum);
+        *K = (double) (PII/2./a);
+        *E = (double) (PII/4./a * sum);
         return;
     }
 
