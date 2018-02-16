@@ -36,6 +36,27 @@
                 );
         }
     }
+    else if ( waveTheory_ == "StokesIII" )
+    {
+        forAll(calculatedLevel, itS2)
+        {
+            calculatedLevel = waterDepth_ + timeMult*
+                StokesIIIFun::eta
+                (
+                    waveHeight_, 
+                    waterDepth_, 
+                    waveKx, 
+                    xGroup[itS2], 
+                    waveKy, 
+                    yGroup[itS2], 
+                    waveOmega, 
+                    currTime, 
+                    wavePhase_,
+                    aE_SIII,
+                    klE_SIII
+                );
+        }
+    }
     else  if ( waveTheory_ == "StokesV" )
     {
         forAll(calculatedLevel, it1)

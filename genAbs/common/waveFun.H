@@ -51,6 +51,17 @@ namespace StokesIIFun
     double timeLag (double H, double h, double Kx, double x, double Ky, double y, double T, double phase);
 }
 
+namespace StokesIIIFun
+{
+    double waveLengthCalc (double H, double h, double T, double* aE, double* klE);
+    double dEq (double h, double T, double a, double kl);
+    double HEq (double H, double T, double a, double kl);
+    double eta (double H, double h, double Kx, double x, double Ky, double y, double omega, double t, double phase, double a, double kl);
+    double U (double H, double h, double Kx, double x, double Ky, double y, double omega, double t, double phase, double z, double a, double kl);
+    double W (double H, double h, double Kx, double x, double Ky, double y, double omega, double t, double phase, double z, double a, double kl);
+    // double timeLag (double H, double h, double Kx, double x, double Ky, double y, double T, double phase);
+}
+
 namespace Elliptic
 {
     void ellipticIntegralsKE (double m, double* K, double* E);

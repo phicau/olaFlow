@@ -96,7 +96,56 @@
                     wavePhase_
                 );
         }
+    }
+    else if ( waveTheory_ == "StokesIII" )
+    {
+        if ( wavePeriod_ <= 0.0 )
+        {
+            FatalError
+                << "Check wave period value."
+                << exit(FatalError);
+        }
 
+        if ( waveLength_ <= 0.0 )
+        {
+            word generation = "a"; // Auxiliar
+
+            waveLength_ = 
+                StokesIIIFun::waveLengthCalc
+                (
+                    waveHeight_,
+                    waterDepth_,
+                    wavePeriod_,
+                    &waveK,
+                    &waveK
+                );
+
+            waveK = 2.0*PI()/waveLength_;
+
+            if ( waveK*waterDepth_ > PI() )
+            {
+                generation = "Deep";
+            }
+            else if ( waveK*waterDepth_ < PI()/10.0 )
+            {
+                generation = "Shallow";
+            }
+            else
+            {
+                generation = "Intermediate";
+            }
+
+            Info << "\nWave Generation BC" << endl;
+            Info << "Wave theory: " << waveTheory_ << endl;
+            Info << "H: " << waveHeight_ << endl;
+            Info << "T: " << wavePeriod_ << endl;
+            Info << "h: " << waterDepth_ << endl;
+            Info << "L: " << waveLength_ << endl;
+            Info << "Direction: " << waveDir_ << "º" << endl;
+            Info << "Generation in: " << generation << " waters." << endl;
+            Info << "Relative depth (kh): " << 
+                waveK*waterDepth_ << "\n\n" << endl;
+        }
     }
     else if ( waveTheory_ == "StokesV" )
     {
@@ -269,6 +318,6 @@
     {
         FatalError
             << "Wave theory not supported, use:\n"
-            << "StokesI, StokesII, StokesV, cnoidal, streamFunction"
+            << "StokesI, StokesII, StokesIII, StokesV, cnoidal, streamFunction"
             << exit(FatalError);
     }
