@@ -146,16 +146,6 @@ namespace secondOrderFun
     double wSO (double H1, double H2, double sigma1, double sigma2, double phase1, double phase2, double kx1, double ky1, double kx2, double ky2, double x, double y, double t, double h, double z);
 }
 
-namespace BoussinesqFun1
-{
-    double eta (double H, double h, double x, double y, double theta, double t, double X0);
-    double Deta1 (double H, double h, double x, double y, double theta, double t, double X0);
-    double Deta2 (double H, double h, double x, double y, double theta, double t, double X0);
-    double Deta3 (double H, double h, double x, double y, double theta, double t, double X0);
-    double U (double H, double h, double x, double y, double theta, double t, double X0, double z);
-    double W (double H, double h, double x, double y, double theta, double t, double X0, double z);
-}
-
 namespace BoussinesqFun
 {
     double sech (double a);
@@ -165,6 +155,15 @@ namespace BoussinesqFun
     double Deta3 (double H, double h, double x, double y, double theta, double t, double X0);
     double U (double H, double h, double x, double y, double theta, double t, double X0, double z);
     double W (double H, double h, double x, double y, double theta, double t, double X0, double z);
+}
+
+namespace McCowanFun
+{
+    double Mcalc (double H, double h);
+    double Ncalc (double H, double h, double M);
+    double eta (double H, double h, double x, double y, double theta, double t, double X0, double M, double N);
+    double U (double H, double h, double x, double y, double theta, double t, double X0, double z, double M, double N);
+    double W (double H, double h, double x, double y, double theta, double t, double X0, double z, double M, double N);
 }
 
 namespace GrimshawFun

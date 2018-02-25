@@ -35,21 +35,35 @@
     if ( waveTheory_ == "aaa" )    // No wave theory specified
     {
         FatalError
-            << "Wave theory not specified."
+            << "Wave theory not specified, use:\n"
+            << "Boussinesq, McCowan, Grimshaw"
             << exit(FatalError);
     }
-    else if ( waveTheory_ == "Boussinesq" || waveTheory_ == "Grimshaw")
+    else if
+    ( 
+        waveTheory_ == "Boussinesq" ||
+        waveTheory_ == "McCowan" ||
+        waveTheory_ == "Grimshaw"
+    )
     {
+        double Lequivalent = 
+            2.0*PI()/sqrt(3.0*waveHeight_/(4.0*pow(waterDepth_,3.0)));
+        double Cequivalent = sqrt(g*(waveHeight_ + waterDepth_));
+        double Tequivalent = Lequivalent/Cequivalent;
+
         Info << "\nWave Generation BC" << endl;
         Info << "Wave theory: " << waveTheory_ << endl;
         Info << "H: " << waveHeight_ << endl;
         Info << "h: " << waterDepth_ << endl;
+        Info << "c: " << Cequivalent << endl;
+        Info << "Equivalent T: " << Tequivalent << endl;
+        Info << "Equivalent L: " << Lequivalent << endl;
         Info << "Direction: " << waveDir_ << "º" <<  "\n\n" << endl;
     }
     else
     {
         FatalError
             << "Wave theory not supported, use:\n"
-            << "Boussinesq, Grimshaw"
+            << "Boussinesq, McCowan, Grimshaw"
             << exit(FatalError);
     }

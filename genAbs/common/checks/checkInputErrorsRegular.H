@@ -38,7 +38,8 @@
     if ( waveTheory_ == "aaa" )    // No wave theory specified
     {
         FatalError
-            << "Wave theory not specified."
+            << "Wave theory not specified, use:\n"
+            << "StokesI, StokesII, StokesIII, StokesV, cnoidal, streamFunction"
             << exit(FatalError);
     }
     else if ( waveTheory_ == "StokesI" || waveTheory_ == "StokesII" )

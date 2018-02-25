@@ -543,8 +543,6 @@ namespace cnoidalFun
 
     double timeLag (double H, double m, double kx, double ky, double T, double x, double y, double phase)
     {
-        double omega = 2.0*PII/T;
-        
         double lagIncrement = 0.001;
 
         double lag = 0;
@@ -629,8 +627,6 @@ namespace cnoidalFun
         double mTolerance = 0.0001;
         double mElliptic = 0.5;
         double LElliptic = 0;
-        double KElliptic = 0;
-        double EElliptic = 0;
         double phaseSpeed = 0;
 
         double mError = 0.0;
@@ -1233,8 +1229,6 @@ namespace stokesVFun
     
     double timeLag (double h, double kx, double ky, double lambda, double T, double x, double y, double phase)
     {
-        double omega = 2.0*PII/T;
-        
         double lagIncrement = 0.001;
 
         double lag = 0;
@@ -1719,7 +1713,7 @@ namespace BoussinesqFun
     double eta (double H, double h, double x, double y, double theta, double t, double X0)
     {
         double C = sqrt(G*(H+h));
-        double ts = 3.5*h/sqrt(H/h);
+        double ts = 2.0*PII/sqrt(3)*h/sqrt(H/h);
         double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
         double aux = sqrt(3.0*H/(4.0*h))*Xa/h;
 
@@ -1731,7 +1725,7 @@ namespace BoussinesqFun
     double Deta1 (double H, double h, double x, double y, double theta, double t, double X0)
     {
         double C = sqrt(G*(H+h));
-        double ts = 3.5*h/sqrt(H/h);
+        double ts = 2.0*PII/sqrt(3)*h/sqrt(H/h);
         double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
         double aux = sqrt(3.0*H/(4.0*h))*Xa/h;
 
@@ -1743,7 +1737,7 @@ namespace BoussinesqFun
     double Deta2 (double H, double h, double x, double y, double theta, double t, double X0)
     {
         double C = sqrt(G*(H+h));
-        double ts = 3.5*h/sqrt(H/h);
+        double ts = 2.0*PII/sqrt(3)*h/sqrt(H/h);
         double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
         double aux = sqrt(3.0*H/(4.0*h))*Xa/h;
 
@@ -1756,7 +1750,7 @@ namespace BoussinesqFun
     double Deta3 (double H, double h, double x, double y, double theta, double t, double X0)
     {
         double C = sqrt(G*(H+h));
-        double ts = 3.5*h/sqrt(H/h);
+        double ts = 2.0*PII/sqrt(3)*h/sqrt(H/h);
         double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
         double aux = sqrt(3.0*H/(4.0*h))*Xa/h;
 
@@ -1768,11 +1762,10 @@ namespace BoussinesqFun
 
     double U (double H, double h, double x, double y, double theta, double t, double X0, double z)
     {
-        double C = sqrt(G*(H+h));
         double etaSolit = eta( H, h, x, y, theta, t, X0);
         double Detas2 = Deta2( H, h, x, y, theta, t, X0);
 
-        double vel = C*etaSolit/h
+        double vel = sqrt(G*h)*etaSolit/h
                 *(1.0 - etaSolit/(4.0*h) +
                 pow(h,2)/(3.0*etaSolit)
                 *(1.0 - 3.0/2.0*pow(z/h,2))
@@ -1783,16 +1776,137 @@ namespace BoussinesqFun
 
     double W (double H, double h, double x, double y, double theta, double t, double X0, double z)
     {
-        double C = sqrt(G*(H+h));
         double etaSolit = eta( H, h, x, y, theta, t, X0);
         double Detas1 = Deta1( H, h, x, y, theta, t, X0);
         double Detas3 = Deta3( H, h, x, y, theta, t, X0);
 
-        double vel = -C*z/h
+        double vel = -sqrt(G*h)*z/h
                 *((1.0 - etaSolit/(2.0*h))*Detas1 +
                 pow(h,2)/3.0
                 *(1.0 - 1.0/2.0*pow(z/h,2))
                 *Detas3);
+
+        return vel;
+    }
+}
+
+namespace McCowanFun
+{
+    #define PII 3.1415926535897932384626433832795028
+    #define G 9.81
+
+    double Mcalc (double H, double h)
+    {
+        // Bisection method
+        // M = h/H*Ncalc(H,h,Mold)*tan(Mold/2.0*(1 + H/h));
+        double eps = 1e-6;
+        double Xl = 0.5;
+        double Xr = 1.5;
+        double Mc = 1.0;
+        
+        while (true)
+        {
+            double Ml = h/H*Ncalc(H,h,Xl)*tan(Xl/2.0*(1 + H/h));
+            double Mr = h/H*Ncalc(H,h,Xr)*tan(Xr/2.0*(1 + H/h));
+
+            if(Ml*Mr>0) // Same side
+            {
+                // Error, should not happen with given Xl and Xr
+            }
+
+            double Xc = (Xl + Xr)/2.0;
+            Mc = h/H*Ncalc(H,h,Xc)*tan(Xc/2.0*(1 + H/h));
+
+            if(fabs(Mc - Xc)<=eps)
+            {
+                break;
+            }
+            
+            if(((Ml - Xl)*(Mc - Xc))<0.)
+            {
+                Xr = Xc;
+            }
+            else
+            {
+                Xl = Xc;
+            }
+        }
+
+        return Mc;
+    }
+    
+    double Ncalc (double H, double h, double M)
+    {
+        return 2.0/3.0*pow(sin(M*(1+2.0/3.0*H/h)),2.0);
+    }
+
+    double eta (double H, double h, double x, double y, double theta, double t, double X0, double M, double N)
+    {
+        double C = sqrt(G*h*tan(M)/M);
+        double ts = 2.0*PII/sqrt(3)*h/sqrt(H/h);
+        double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
+
+        // Bisection method
+        // eta = h*N/M*sin(M*(1 + eta/h))/(cos(M*(1 + eta/h)) + cosh(M*Xa/h));
+        double eps = 1e-6;
+        double Xl = -0.01*H;
+        double Xr = 1.01*H;
+        double etac = 0;
+
+        while (true)
+        {
+            double aux = M*(1 + Xl/h);
+            double etal = h*N/M*sin(aux)/(cos(aux) + cosh(M*Xa/h));
+            aux = M*(1 + Xr/h);
+            double etar = h*N/M*sin(aux)/(cos(aux) + cosh(M*Xa/h));
+
+            if(etal*etar>0) // Same side
+            {
+                // Error, should not happen with given Xl and Xr
+            }
+
+            double Xc = (Xl + Xr)/2.0;
+            aux = M*(1 + Xc/h);
+            etac = h*N/M*sin(aux)/(cos(aux) + cosh(M*Xa/h));
+
+            if(fabs(etac - Xc)<=eps)
+            {
+                break;
+            }
+            
+            if(((etal - Xl)*(etac - Xc))<0.)
+            {
+                Xr = Xc;
+            }
+            else
+            {
+                Xl = Xc;
+            }
+        }
+
+        return etac;
+    }
+
+    double U (double H, double h, double x, double y, double theta, double t, double X0, double z, double M, double N)
+    {
+        double C = sqrt(G*h*tan(M)/M);
+        double ts = 2.0*PII/sqrt(3)*h/sqrt(H/h);
+        double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
+
+        double vel = C*N*(1 + cos(M*z/h)*cosh(M*Xa/h))
+            /pow(cos(M*z/h) + cosh(M*Xa/h),2.0);
+
+        return vel;
+    }
+
+    double W (double H, double h, double x, double y, double theta, double t, double X0, double z, double M, double N)
+    {
+        double C = sqrt(G*h*tan(M)/M);
+        double ts = 2.0*PII/sqrt(3)*h/sqrt(H/h);
+        double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
+
+        double vel = C*N*(sin(M*z/h)*sinh(M*Xa/h))
+            /pow(cos(M*z/h) + cosh(M*Xa/h),2.0);
 
         return vel;
     }
@@ -1810,7 +1924,7 @@ namespace GrimshawFun
             + 71.0/128.0*pow(epsilon,2) );
         double C =  sqrt(G*h)*sqrt(1.0 + epsilon - 1.0/20.0*pow(epsilon,2) - 3.0/70.0*pow(epsilon,3));
 
-        double ts = 4.0*h/sqrt(epsilon);
+        double ts = 2.0*PII/sqrt(3)*h/sqrt(epsilon);
         double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
 
         double s = 1.0/cosh(beta/h*Xa);
@@ -1829,7 +1943,7 @@ namespace GrimshawFun
             + 71.0/128.0*pow(epsilon,2) );
         double C = sqrt(G*h)*sqrt(1.0 + epsilon - 1.0/20.0*pow(epsilon,2) - 3.0/70.0*pow(epsilon,3));
 
-        double ts = 4.0*h/sqrt(epsilon);
+        double ts = 2.0*PII/sqrt(3)*h/sqrt(epsilon);
         double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
 
         double s = 1.0/cosh(beta/h*Xa);
@@ -1852,7 +1966,7 @@ namespace GrimshawFun
             + 71.0/128.0*pow(epsilon,2) );
         double C = sqrt(G*h)*sqrt(1.0 + epsilon - 1.0/20.0*pow(epsilon,2) - 3.0/70.0*pow(epsilon,3));
 
-        double ts = 4.0*h/sqrt(epsilon);
+        double ts = 2.0*PII/sqrt(3)*h/sqrt(epsilon);
         double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
 
         double s = 1.0/cosh(beta/h*Xa);
