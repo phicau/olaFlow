@@ -25,7 +25,7 @@ absDir          0.0;
 
 nPaddles        1;
 
-waveHeight      0.15;
+waveHeight      0.10;
 
 waveDir         0.0;
 

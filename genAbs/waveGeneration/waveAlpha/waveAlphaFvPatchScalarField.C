@@ -317,14 +317,12 @@ void Foam::waveAlphaFvPatchScalarField::updateCoeffs()
     // Aux. values
     scalar auxiliar = 0;
     scalar auxiliarTotal = 0;
-    scalar auxiliarSolit = 0;
 
     // Variables solitary
-    scalar Csolitary = 0;
-    scalar ts = 0;
-    scalar Xa = 0;
     scalar X0 = 0;
     scalarField patchXsolit;
+    scalar Mmc = 1;
+    scalar Nmc = 1;
 
     // Variables tveta
     scalar etaInterp = 0;
@@ -480,6 +478,8 @@ void Foam::waveAlphaFvPatchScalarField::updateCoeffs()
             patch().Cf().component(0)*cos(waveAngle) 
             + patch().Cf().component(1)*sin(waveAngle);
         X0 = gMin(patchXsolit);
+        Mmc = McCowanFun::Mcalc(waveHeight_, waterDepth_);
+        Nmc = McCowanFun::Ncalc(waveHeight_, waterDepth_, Mmc);
     }
     else if ( waveType_ == "irregular" )
     {

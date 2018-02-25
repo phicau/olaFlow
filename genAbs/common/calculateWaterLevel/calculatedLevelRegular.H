@@ -115,6 +115,6 @@
         FatalError
             << "Wave theory not supported, use:\n"
             << "StokesI, StokesII, StokesV, cnoidal, "
-            << "solitaryBoussinesq, streamFunction"
+            << "streamFunction"
             << exit(FatalError);
     }

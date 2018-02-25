@@ -15,6 +15,25 @@
                 );
         }
     }
+    else if (waveTheory_ == "McCowan")
+    {
+        forAll(calculatedLevel, it2)
+        {
+            calculatedLevel[it2] = waterDepth_ + 
+                McCowanFun::eta
+                (
+                    waveHeight_, 
+                    waterDepth_, 
+                    xGroup[it2], 
+                    yGroup[it2], 
+                    waveAngle, 
+                    currTime, 
+                    X0,
+                    Mmc,
+                    Nmc
+                );
+        }
+    }
     else if (waveTheory_ == "Grimshaw")
     {
         forAll(calculatedLevel, it2)
@@ -36,6 +55,6 @@
     {
         FatalError
             << "Wave theory not supported, use:\n"
-            << "Boussinesq, Grimshaw"
+            << "Boussinesq, McCowan, Grimshaw"
             << exit(FatalError);
     }

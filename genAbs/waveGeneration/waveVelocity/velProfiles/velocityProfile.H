@@ -40,6 +40,10 @@
         {
             #include "profileBoussinesq.H"
         }
+        else if ( waveTheory_ == "McCowan" )
+        {
+            #include "profileMcCowan.H"
+        }
         else if ( waveTheory_ == "Grimshaw" )
         {
             #include "profileGrimshaw.H"
