@@ -127,6 +127,9 @@ class waveVelocityFvPatchVectorField
         //- Time lag to match the phase for irregular case
         scalarList timeLags_;
 
+        //- Number of solitary waves
+        label nSolitaryWaves_;
+
         //- Lambda parameter
         scalar lambdaStokesV_;
 

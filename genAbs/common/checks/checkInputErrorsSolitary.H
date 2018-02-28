@@ -5,6 +5,7 @@
     genAbs_ = (waveDict.lookupOrDefault<bool>("genAbs", false ));
     nPaddles_ = (waveDict.lookupOrDefault<label>("nPaddles", 1));
     absDir_ = (waveDict.lookupOrDefault<scalar>("absDir", 0));
+    nSolitaryWaves_ = (waveDict.lookupOrDefault<label>("nSolitaryWaves", 1));
 
     // Check if the value of nPaddles is correct for the number of columns
     if (nPaddles_ < 1)
@@ -32,6 +33,13 @@
             << exit(FatalError);
     }
 
+    if ( nSolitaryWaves_ < 1 )
+    {
+        FatalError
+            << "Check nSolitaryWaves value."
+            << exit(FatalError);
+    }
+
     if ( waveTheory_ == "aaa" )    // No wave theory specified
     {
         FatalError
@@ -46,10 +54,10 @@
         waveTheory_ == "Grimshaw"
     )
     {
-        double Lequivalent = 
+        scalar Lequivalent = 
             2.0*PI()/sqrt(3.0*waveHeight_/(4.0*pow(waterDepth_,3.0)));
-        double Cequivalent = sqrt(g*(waveHeight_ + waterDepth_));
-        double Tequivalent = Lequivalent/Cequivalent;
+        scalar Cequivalent = sqrt(g*(waveHeight_ + waterDepth_));
+        scalar Tequivalent = Lequivalent/Cequivalent;
 
         Info << "\nWave Generation BC" << endl;
         Info << "Wave theory: " << waveTheory_ << endl;
