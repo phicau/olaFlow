@@ -75,6 +75,7 @@ waveVelocityFvPatchVectorField
     wavePhases_( List<scalar> (1, -1.0) ),
     timeLag_(0),
     timeLags_( List<scalar> (1, 0.0) ),
+    nSolitaryWaves_(1),
     lambdaStokesV_(-1),
     mCnoidal_(-1),
     uMean_(-1),
@@ -124,6 +125,7 @@ waveVelocityFvPatchVectorField
     wavePhases_(ptf.wavePhases_),
     timeLag_(ptf.timeLag_),
     timeLags_(ptf.timeLags_),
+    nSolitaryWaves_(ptf.nSolitaryWaves_),
     lambdaStokesV_(ptf.lambdaStokesV_),
     mCnoidal_(ptf.mCnoidal_),
     uMean_(ptf.uMean_),
@@ -172,6 +174,7 @@ waveVelocityFvPatchVectorField
     wavePhases_( dict.lookupOrDefault("wavePhases", List<scalar> (1, -1.0)) ),
     timeLag_(dict.lookupOrDefault<scalar>("timeLag", 0)),
     timeLags_( dict.lookupOrDefault("timeLags", List<scalar> (1, 0.0)) ),
+    nSolitaryWaves_(dict.lookupOrDefault<label>("nSolitaryWaves", 1)),
     lambdaStokesV_(dict.lookupOrDefault<scalar>("lambdaStokesV", -1 )),
     mCnoidal_(dict.lookupOrDefault<scalar>("mCnoidal", -1 )),
     uMean_(dict.lookupOrDefault<scalar>("uMean", -1)),
@@ -232,6 +235,7 @@ waveVelocityFvPatchVectorField
     wavePhases_(ptf.wavePhases_),
     timeLag_(ptf.timeLag_),
     timeLags_(ptf.timeLags_),
+    nSolitaryWaves_(ptf.nSolitaryWaves_),
     lambdaStokesV_(ptf.lambdaStokesV_),
     mCnoidal_(ptf.mCnoidal_),
     uMean_(ptf.uMean_),
@@ -279,6 +283,7 @@ waveVelocityFvPatchVectorField
     wavePhases_(ptf.wavePhases_),
     timeLag_(ptf.timeLag_),
     timeLags_(ptf.timeLags_),
+    nSolitaryWaves_(ptf.nSolitaryWaves_),
     lambdaStokesV_(ptf.lambdaStokesV_),
     mCnoidal_(ptf.mCnoidal_),
     uMean_(ptf.uMean_),
@@ -498,8 +503,22 @@ void Foam::waveVelocityFvPatchVectorField::updateCoeffs()
             patch().Cf().component(0)*cos(waveAngle) 
             + patch().Cf().component(1)*sin(waveAngle);
         X0 = gMin(patchXsolit);
-        Mmc = McCowanFun::Mcalc(waveHeight_, waterDepth_);
-        Nmc = McCowanFun::Ncalc(waveHeight_, waterDepth_, Mmc);
+        if(waveTheory_ == "McCowan")
+        {
+            Mmc = McCowanFun::Mcalc(waveHeight_, waterDepth_);
+            Nmc = McCowanFun::Ncalc(waveHeight_, waterDepth_, Mmc);
+        }
+        if(nSolitaryWaves_>1)
+        {
+            scalar Leq = 2.0*PI()/sqrt(3.0*waveHeight_/(4.0*pow(waterDepth_,3.0)));
+            scalar Ceq = sqrt(g*(waveHeight_ + waterDepth_));
+            scalar solitT = Leq/Ceq;
+
+            while (currTime>solitT && currTime<nSolitaryWaves_*solitT)
+            {
+                currTime -= solitT;
+            }
+        }
     }
     else if ( waveType_ == "irregular" )
     {
@@ -823,11 +842,16 @@ void Foam::waveVelocityFvPatchVectorField::write(Ostream& os) const
         os.writeKeyword("waveHeight") << 
             waveHeight_ << token::END_STATEMENT << nl;
         os.writeKeyword("waveDir") << waveDir_ << token::END_STATEMENT << nl;
+
+        #if OFVERSION >= 1712
+            os.writeEntryIfDifferent<label>("nSolitaryWaves", 1, nSolitaryWaves_);
+        #else
+            writeEntryIfDifferent<label>(os, "nSolitaryWaves", 1, nSolitaryWaves_);
+        #endif 
     }
 
     writeEntry("value", os);
 }
-
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
