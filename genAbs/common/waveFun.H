@@ -149,6 +149,9 @@ namespace secondOrderFun
 namespace BoussinesqFun
 {
     double sech (double a);
+    double celerity (double H, double h);
+    double waveLength (double H, double h);
+    double wavePeriod (double H, double h);
     double eta (double H, double h, double x, double y, double theta, double t, double X0);
     double Deta1 (double H, double h, double x, double y, double theta, double t, double X0);
     double Deta2 (double H, double h, double x, double y, double theta, double t, double X0);
@@ -161,6 +164,9 @@ namespace McCowanFun
 {
     double Mcalc (double H, double h);
     double Ncalc (double H, double h, double M);
+    double celerity (double h, double M);
+    double waveLength (double H, double h);
+    double wavePeriod (double H, double h, double M);
     double eta (double H, double h, double x, double y, double theta, double t, double X0, double M, double N);
     double U (double H, double h, double x, double y, double theta, double t, double X0, double z, double M, double N);
     double W (double H, double h, double x, double y, double theta, double t, double X0, double z, double M, double N);
@@ -168,6 +174,9 @@ namespace McCowanFun
 
 namespace GrimshawFun
 {
+    double celerity (double H, double h);
+    double waveLength (double H, double h);
+    double wavePeriod (double H, double h);
     double eta (double H, double h, double x, double y, double theta, double t, double X0);
     double U (double H, double h, double x, double y, double theta, double t, double X0, double z);
     double W (double H, double h, double x, double y, double theta, double t, double X0, double z);

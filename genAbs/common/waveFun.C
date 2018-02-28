@@ -1709,11 +1709,26 @@ namespace BoussinesqFun
     {
         return 1.0/cosh(a);
     }
+
+    double celerity (double H, double h)
+    {
+        return sqrt(G*(H+h));
+    }
+
+    double waveLength (double H, double h)
+    {
+        return 4.0*PII/sqrt(3)*h/sqrt(H/h);
+    }
+
+    double wavePeriod (double H, double h)
+    {
+        return waveLength(H, h)/celerity(H, h);
+    }
     
     double eta (double H, double h, double x, double y, double theta, double t, double X0)
     {
-        double C = sqrt(G*(H+h));
-        double ts = 2.0*PII/sqrt(3)*h/sqrt(H/h);
+        double C = celerity(H, h);
+        double ts = waveLength(H, h)/2.0;
         double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
         double aux = sqrt(3.0*H/(4.0*h))*Xa/h;
 
@@ -1724,8 +1739,8 @@ namespace BoussinesqFun
 
     double Deta1 (double H, double h, double x, double y, double theta, double t, double X0)
     {
-        double C = sqrt(G*(H+h));
-        double ts = 2.0*PII/sqrt(3)*h/sqrt(H/h);
+        double C = celerity(H, h);
+        double ts = waveLength(H, h)/2.0;
         double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
         double aux = sqrt(3.0*H/(4.0*h))*Xa/h;
 
@@ -1736,8 +1751,8 @@ namespace BoussinesqFun
 
     double Deta2 (double H, double h, double x, double y, double theta, double t, double X0)
     {
-        double C = sqrt(G*(H+h));
-        double ts = 2.0*PII/sqrt(3)*h/sqrt(H/h);
+        double C = celerity(H, h);
+        double ts = waveLength(H, h)/2.0;
         double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
         double aux = sqrt(3.0*H/(4.0*h))*Xa/h;
 
@@ -1749,8 +1764,8 @@ namespace BoussinesqFun
 
     double Deta3 (double H, double h, double x, double y, double theta, double t, double X0)
     {
-        double C = sqrt(G*(H+h));
-        double ts = 2.0*PII/sqrt(3)*h/sqrt(H/h);
+        double C = celerity(H, h);
+        double ts = waveLength(H, h)/2.0;
         double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
         double aux = sqrt(3.0*H/(4.0*h))*Xa/h;
 
@@ -1840,10 +1855,25 @@ namespace McCowanFun
         return 2.0/3.0*pow(sin(M*(1+2.0/3.0*H/h)),2.0);
     }
 
+    double celerity (double h, double M)
+    {
+        return sqrt(G*h*tan(M)/M);
+    }
+
+    double waveLength (double H, double h)
+    {
+        return 2.0*4.56*h/sqrt(H/h);
+    }
+
+    double wavePeriod (double H, double h, double M)
+    {
+        return waveLength(H, h)/celerity(h, M);
+    }
+
     double eta (double H, double h, double x, double y, double theta, double t, double X0, double M, double N)
     {
-        double C = sqrt(G*h*tan(M)/M);
-        double ts = 2.0*PII/sqrt(3)*h/sqrt(H/h);
+        double C = celerity(h, M);
+        double ts = waveLength(H, h)/2.0;
         double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
 
         // Bisection method
@@ -1889,8 +1919,8 @@ namespace McCowanFun
 
     double U (double H, double h, double x, double y, double theta, double t, double X0, double z, double M, double N)
     {
-        double C = sqrt(G*h*tan(M)/M);
-        double ts = 2.0*PII/sqrt(3)*h/sqrt(H/h);
+        double C = celerity(h, M);
+        double ts = waveLength(H, h)/2.0;
         double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
 
         double vel = C*N*(1 + cos(M*z/h)*cosh(M*Xa/h))
@@ -1901,8 +1931,8 @@ namespace McCowanFun
 
     double W (double H, double h, double x, double y, double theta, double t, double X0, double z, double M, double N)
     {
-        double C = sqrt(G*h*tan(M)/M);
-        double ts = 2.0*PII/sqrt(3)*h/sqrt(H/h);
+        double C = celerity(h, M);
+        double ts = waveLength(H, h)/2.0;
         double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
 
         double vel = C*N*(sin(M*z/h)*sinh(M*Xa/h))
@@ -1915,16 +1945,32 @@ namespace McCowanFun
 namespace GrimshawFun
 {
     #define PII 3.1415926535897932384626433832795028
-    #define G 9.81 
+    #define G 9.81
+
+    double celerity (double H, double h)
+    {
+        double epsilon = H/h;
+        return sqrt(G*h)*sqrt(1.0 + epsilon - 1.0/20.0*pow(epsilon,2) - 3.0/70.0*pow(epsilon,3));
+    }
+
+    double waveLength (double H, double h)
+    {
+        return 2.0*4.22*h/sqrt(H/h);
+    }
+
+    double wavePeriod (double H, double h)
+    {
+        return waveLength(H, h)/celerity(H, h);
+    }
     
     double eta (double H, double h, double x, double y, double theta, double t, double X0)
     {
         double epsilon = H/h;
         double beta = sqrt(3.0*epsilon/4.0)*( 1.0 - 5.0/8.0*epsilon
             + 71.0/128.0*pow(epsilon,2) );
-        double C =  sqrt(G*h)*sqrt(1.0 + epsilon - 1.0/20.0*pow(epsilon,2) - 3.0/70.0*pow(epsilon,3));
+        double C = celerity(H, h);
 
-        double ts = 2.0*PII/sqrt(3)*h/sqrt(epsilon);
+        double ts = waveLength(H, h)/2.0;
         double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
 
         double s = 1.0/cosh(beta/h*Xa);
@@ -1941,9 +1987,9 @@ namespace GrimshawFun
         double epsilon = H/h;
         double beta = sqrt(3.0*epsilon/4.0)*( 1.0 - 5.0/8.0*epsilon
             + 71.0/128.0*pow(epsilon,2) );
-        double C = sqrt(G*h)*sqrt(1.0 + epsilon - 1.0/20.0*pow(epsilon,2) - 3.0/70.0*pow(epsilon,3));
+        double C = celerity(H, h);
 
-        double ts = 2.0*PII/sqrt(3)*h/sqrt(epsilon);
+        double ts = waveLength(H, h)/2.0;
         double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
 
         double s = 1.0/cosh(beta/h*Xa);
@@ -1964,15 +2010,15 @@ namespace GrimshawFun
         double epsilon = H/h;
         double beta = sqrt(3.0*epsilon/4.0)*( 1.0 - 5.0/8.0*epsilon
             + 71.0/128.0*pow(epsilon,2) );
-        double C = sqrt(G*h)*sqrt(1.0 + epsilon - 1.0/20.0*pow(epsilon,2) - 3.0/70.0*pow(epsilon,3));
+        double C = celerity(H, h);
 
-        double ts = 2.0*PII/sqrt(3)*h/sqrt(epsilon);
+        double ts = waveLength(H, h)/2.0;
         double Xa = -C * t + ts - X0 + x * cos(theta) + y * sin(theta);
 
         double s = 1.0/cosh(beta/h*Xa);
         double q = tanh(beta/h*Xa);
 
-        double vel = sqrt(3.0*epsilon)*(z/h)*q*(
+        double vel = -sqrt(3.0*epsilon)*(z/h)*q*(
             - epsilon*pow(s,2)
             + pow(epsilon,2)*( 3.0/8.0*pow(s,2) + 2.0*pow(s,4) 
                 + pow(z/h,2)*(1.0/2.0*pow(s,2) - 3.0/2.0*pow(s,4) ) )
@@ -1981,6 +2027,6 @@ namespace GrimshawFun
                 - 25.0/16.0*pow(s,4) + 15.0/2.0*pow(s,6) )
                 + pow(z/h,4)*(-3.0/40.0*pow(s,2)+9.0/8.0*pow(s,4)-27.0/16.0*pow(s,6) ) ) );
 
-        return -sqrt(G*h)*vel;
+        return sqrt(G*h)*vel;
     }
 }
