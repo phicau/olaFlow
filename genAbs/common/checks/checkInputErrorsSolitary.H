@@ -54,18 +54,30 @@
         waveTheory_ == "Grimshaw"
     )
     {
-        scalar Lequivalent = 
-            2.0*PI()/sqrt(3.0*waveHeight_/(4.0*pow(waterDepth_,3.0)));
-        scalar Cequivalent = sqrt(g*(waveHeight_ + waterDepth_));
-        scalar Tequivalent = Lequivalent/Cequivalent;
+        if ( waveTheory_ == "Boussinesq" )
+        {
+            waveLength_ = BoussinesqFun::waveLength(waveHeight_, waterDepth_);
+            wavePeriod_ = BoussinesqFun::wavePeriod(waveHeight_, waterDepth_);
+        }
+        else if ( waveTheory_ == "McCowan" )
+        {
+            scalar Mtemp = McCowanFun::Mcalc(waveHeight_, waterDepth_);
+            waveLength_ = McCowanFun::waveLength(waveHeight_, waterDepth_);
+            wavePeriod_ = McCowanFun::wavePeriod(waveHeight_, waterDepth_, Mtemp);
+        }
+        else if ( waveTheory_ == "Grimshaw" )
+        {
+            waveLength_ = GrimshawFun::waveLength(waveHeight_, waterDepth_);
+            wavePeriod_ = GrimshawFun::wavePeriod(waveHeight_, waterDepth_);
+        }
 
         Info << "\nWave Generation BC" << endl;
         Info << "Wave theory: " << waveTheory_ << endl;
         Info << "H: " << waveHeight_ << endl;
         Info << "h: " << waterDepth_ << endl;
-        Info << "c: " << Cequivalent << endl;
-        Info << "Equivalent T: " << Tequivalent << endl;
-        Info << "Equivalent L: " << Lequivalent << endl;
+        Info << "c: " << waveLength_/wavePeriod_ << endl;
+        Info << "Equivalent T: " << wavePeriod_ << endl;
+        Info << "Equivalent L: " << waveLength_ << endl;
         Info << "Direction: " << waveDir_ << "º" <<  "\n\n" << endl;
     }
     else

@@ -510,13 +510,9 @@ void Foam::waveVelocityFvPatchVectorField::updateCoeffs()
         }
         if(nSolitaryWaves_>1)
         {
-            scalar Leq = 2.0*PI()/sqrt(3.0*waveHeight_/(4.0*pow(waterDepth_,3.0)));
-            scalar Ceq = sqrt(g*(waveHeight_ + waterDepth_));
-            scalar solitT = Leq/Ceq;
-
-            while (currTime>solitT && currTime<nSolitaryWaves_*solitT)
+            while (currTime>wavePeriod_ && currTime<nSolitaryWaves_*wavePeriod_)
             {
-                currTime -= solitT;
+                currTime -= wavePeriod_;
             }
         }
     }
@@ -841,6 +837,10 @@ void Foam::waveVelocityFvPatchVectorField::write(Ostream& os) const
             waveTheory_ << token::END_STATEMENT << nl;
         os.writeKeyword("waveHeight") << 
             waveHeight_ << token::END_STATEMENT << nl;
+        os.writeKeyword("waveLength") << 
+            waveLength_ << token::END_STATEMENT << nl;
+        os.writeKeyword("wavePeriod") << 
+            wavePeriod_ << token::END_STATEMENT << nl;
         os.writeKeyword("waveDir") << waveDir_ << token::END_STATEMENT << nl;
 
         #if OFVERSION >= 1712
