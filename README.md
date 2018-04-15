@@ -17,7 +17,7 @@ https://openfoamwiki.net/index.php/Contrib/olaFlow
 
 ## Basic download guide
 
-To get a full copy of olaFlow source and reference materials run in a terminal:
+To get a full copy of olaFlow source and reference materials, run in a terminal:
 
 `git clone git://github.com/phicau/olaFlow.git`
 
@@ -49,8 +49,12 @@ In this case be sure to select the correct folder for your preferred OpenFOAM/FO
 
 Reference materials and test cases are included in the olaFlow download. Check the *reference* and the *tutorials* folders. For a full description on these materials see:
 
-https://sites.google.com/view/olaflowcfd/source-code/tutorials
-https://openfoamwiki.net/index.php/Contrib/olaFlow#olaFlow_Documentation_and_Tutorials
+- https://sites.google.com/view/olaflowcfd/source-code/tutorials
+- https://openfoamwiki.net/index.php/Contrib/olaFlow#olaFlow_Documentation_and_Tutorials
+
+This repository only includes the tutorials for the most recent versions of OpenFOAM and OpenFOAM+.
+
+The historic record of tutorials released along with olaFlow for the major past versions and FOAM-extend have been moved into their own repository, which you can find in: https://github.com/phicau/olaFlow_oldVersionTutorials
 
 ----------------------------------------------------------
-OPENFOAM®  is a registered trade mark of OpenCFD Limited, producer and distributor of the OpenFOAM software via wwww.openfoam.com.
+OPENFOAM®  is a registered trade mark of OpenCFD Limited, producer and distributor of the OpenFOAM software via www.openfoam.com.
