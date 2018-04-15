@@ -3,6 +3,12 @@ shopt -s extglob
 
 directory=`pwd`
 
+read -p "Clearing case. Are you sure? (y/N)" -n 1 -r
+if ! [[ $REPLY =~ ^[Yy]$ ]]
+then
+    exit
+fi
+
 if [ -d "./constant/polyMesh" ]; then
   cd ./constant/polyMesh
   rm -fr !(blockMeshDict)
