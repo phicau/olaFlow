@@ -39,9 +39,12 @@ divSchemes
     div(phi,k)      Gauss upwind;
     div(phi,epsilon) Gauss upwind;
     div((phi|interpolate(porosity)),k)      Gauss upwind;
+    div((phi*interpolate(rho)),k)      Gauss upwind;
     div((phi|interpolate(porosity)),epsilon) Gauss upwind;
     div(phi,omega) Gauss upwind;
     div((phi|interpolate(porosity)),omega) Gauss upwind;
+    div((phi*interpolate(rho)),omega) Gauss upwind;
+    div((phi*interpolate(rho)),epsilon) Gauss upwind;
 }
 
 laplacianSchemes
@@ -65,6 +68,11 @@ fluxRequired
     p_rgh;
     pcorr;
     alpha.water;
+}
+
+wallDist
+{
+    method meshWave;
 }
 
 

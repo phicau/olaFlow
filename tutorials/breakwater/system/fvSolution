@@ -63,18 +63,10 @@ solvers
         relTol          0;
     }
 
-    "(U|k|epsilon)"
+    "(k|epsilon|omega|B|nuTilda).*"
     {
-        solver          PBiCG;
-        preconditioner  DILU;
-        tolerance       1e-06;
-        relTol          0;
-    }
-
-    "(U|k|epsilon)Final"
-    {
-        solver          PBiCG;
-        preconditioner  DILU;
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
         tolerance       1e-08;
         relTol          0;
     }

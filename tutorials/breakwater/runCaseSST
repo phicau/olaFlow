@@ -1,0 +1,71 @@
+#!/bin/bash
+
+mkdir 0
+
+cp constant/turbulenceProperties_sst constant/turbulenceProperties
+
+echo blockMesh meshing...
+blockMesh > blockMesh.log
+
+echo snappyHexMesh meshing...
+snappyHexMesh -overwrite > snappyHexMesh.log
+
+sed -i 's/caisson_diqueMixto/caisson/g' constant/polyMesh/boundary
+
+echo Preparing 0 folder...
+rm -fr 0
+cp -r 0.org 0
+
+echo Setting the fields...
+setFields > setFields.log
+
+echo Running...
+olaFlow > olaFlow.log
+
+echo Simulation complete
+
+if [ $WM_PROJECT == "foam" ]; then
+    # FOAM-Extend
+    export OF_VERSION=`echo $WM_PROJECT_VERSION | sed -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -2 | tr -d '\n'`
+    export OF_FLAVOUR=1
+else
+    if [[ $WM_PROJECT_VERSION == *"+"* ]]
+    then
+        # OpenFOAM +
+        export OF_VERSION=`echo $WM_PROJECT_VERSION"-0" | sed -e 's/v//' -e 's/+//' -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -3 | tr -d '\n' | head -c4`
+        export OF_FLAVOUR=2
+    else
+        # OpenFOAM
+        export OF_VERSION=`echo $WM_PROJECT_VERSION"-0" | sed -e 's/v//' -e 's/+//' -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -3 | tr -d '\n'`
+        export OF_FLAVOUR=3
+    fi
+fi
+
+if [ OF_FLAVOUR -eq 2 ]; then
+    echo Sampling free surface...
+    sample -dict system/sampleDictVOF > sampleVOF.log
+
+    echo Sampling pressure...
+    sample -dict system/sampleDictPres > samplePres.log
+else
+    if [ $OF_VERSION -lt 400 ]; then
+        echo Sampling free surface...
+        sample -dict system/sampleDictVOF > sampleVOF.log
+
+        echo Sampling pressure...
+        sample -dict system/sampleDictPres > samplePres.log
+    else
+        echo Sampling free surface...
+        postProcess -func sampleDictVOF > sampleVOF.log
+
+        echo Sampling pressure...
+        postProcess -func sampleDictPres > samplePres.log
+    fi
+fi
+
+echo Processing and plotting variables
+python postSensVOF.py
+python postSensPres.py
+python plotSensVOF.py
+python plotSensPres.py
+

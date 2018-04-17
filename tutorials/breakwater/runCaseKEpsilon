@@ -2,6 +2,8 @@
 
 mkdir 0
 
+cp constant/turbulenceProperties_keps constant/turbulenceProperties
+
 echo blockMesh meshing...
 blockMesh > blockMesh.log
 

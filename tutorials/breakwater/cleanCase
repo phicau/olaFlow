@@ -17,4 +17,4 @@ fi
 
 rm -fr *[0-9].[0-9]* [0-9] [1-3]* gaugesVOF sensorsPres postProcessing
 rm *.log
-rm system/sampleDict
+rm system/sampleDict constant/turbulenceProperties
