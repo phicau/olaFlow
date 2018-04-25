@@ -11,7 +11,7 @@ if [ $WM_PROJECT == "foam" ]; then
         export OF_SOLVER=olaFlowFE30_32
     fi
 else
-    if [[ $WM_PROJECT_VERSION == *"+"* ]]
+    if [[ $WM_PROJECT_VERSION == *"v"* ]] && [ $WM_PROJECT_VERSION != "dev" ]
     then
         # OpenFOAM +
         export OF_VERSION=`echo $WM_PROJECT_VERSION"-0" | sed -e 's/v//' -e 's/+//' -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -3 | tr -d '\n' | head -c4`
@@ -31,9 +31,10 @@ else
         export OF_VERSION=`echo $WM_PROJECT_VERSION"-0" | sed -e 's/v//' -e 's/+//' -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -3 | tr -d '\n' | head -c4`
         export OF_FLAVOUR=3
 
-        if [ $OF_VERSION -gt 1700 ]; then
-            # OpenFOAM + decided to drop the + ...
-            export OF_SOLVER=olaFlowOFv17xx
+        if [ $OF_VERSION -lt 1 ]; then
+            # Dev version
+            export OF_SOLVER=olaFlowOFdev
+            export OF_VERSION=500
         elif [ $OF_VERSION -lt 170 ]; then
             export OF_SOLVER=olaFlowOF16ext
         elif [ $OF_VERSION -lt 180 ]; then
@@ -83,12 +84,14 @@ if (( $? )) ; then
     echo -e "\n\nolaFlow solver compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n"; 
 fi
 
-wmake solvers/$OF_SOLVER/olaDyMFlow
+if [ $WM_PROJECT_VERSION != "dev" ]; then
+    wmake solvers/$OF_SOLVER/olaDyMFlow
 
-if (( $? )) ; then 
-    echo "olaDyMFlow solver compilation failed"
-    exit; else
-    echo -e "\n\nolaDyMFlow solver compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";   
+    if (( $? )) ; then 
+        echo "olaDyMFlow solver compilation failed"
+        exit; else
+        echo -e "\n\nolaDyMFlow solver compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";   
+    fi
 fi
 
 
@@ -98,4 +101,3 @@ rm -f genAbs/common/waveFun.dep
 if [ $WM_PROJECT == "foam" ]; then
     rm -fr genAbs/*/lnInclude
 fi
-

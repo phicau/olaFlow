@@ -1,0 +1,13 @@
+#!/bin/bash
+
+wclean > /dev/null
+
+wmake
+
+if (( $? )) ; then 
+    echo "olaFlow compilation failed"
+    exit; else
+    echo -e "\n\nolaFlow compiled successfully for OpenFOAM dev\n\n\n";
+fi
+
+wclean > /dev/null
