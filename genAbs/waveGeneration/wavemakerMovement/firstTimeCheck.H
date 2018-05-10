@@ -209,8 +209,6 @@ else if ( wavemakerType_ == "Mixed" )
     }
 }
 
-allCheck_ = true;
-
 // First time initializations
 DPS_ = List<bool>(nPaddles_, false);
 DPSsign_ = scalarList(nPaddles_, 1.0);

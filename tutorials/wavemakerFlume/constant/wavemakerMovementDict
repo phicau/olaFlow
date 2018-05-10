@@ -15,4 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+// Change to true to re-read this dictionary upon restart.
+reread          false;
+
 #include "wavemakerMovement.txt"

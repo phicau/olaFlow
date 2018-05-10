@@ -419,8 +419,10 @@ void Foam::waveVelocityFvPatchVectorField::updateCoeffs()
         )
     );
 
-    // Check for errors - Just the first time
-    if (!allCheck_)
+    // Check for errors - First time or if indicated
+    bool reread = (waveDict.lookupOrDefault<bool>("rereadU", false));
+
+    if (!allCheck_ || reread)
     {
         waveType_ = (waveDict.lookupOrDefault<word>("waveType", "aaa")); 
 
@@ -476,6 +478,13 @@ void Foam::waveVelocityFvPatchVectorField::updateCoeffs()
         }
 
         allCheck_ = true;
+
+        if (reread)
+        {
+            Info << "Reread " << waveDictName_ << endl;
+            waveDict.set("rereadU", false);
+            waveDict.regIOobject::write();
+        }
     } // End of allCheck
 
     scalar currTime = this->db().time().value();

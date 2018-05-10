@@ -339,9 +339,21 @@ void wavemakerMovement::updateCoeffs()
         )
     );
 
-    if (!allCheck_) // Just the first time
+    // Check for errors - First time or if indicated
+    bool reread = (wavemakerMovementDict.lookupOrDefault<bool>("reread", false));
+
+    if (!allCheck_ || reread)
     {
         #include "firstTimeCheck.H"
+
+        allCheck_ = true;
+
+        if (reread)
+        {
+            Info << "Reread " << wavemakerDictName_ << endl;
+            wavemakerMovementDict.set("reread", false);
+            wavemakerMovementDict.regIOobject::write();
+        }
     }
 
     // Time interpolation

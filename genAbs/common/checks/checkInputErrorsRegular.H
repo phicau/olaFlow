@@ -51,38 +51,35 @@
                 << exit(FatalError);
         }
 
-        if ( waveLength_ <= 0.0 )
+        word generation = "a"; // Auxiliar
+
+        waveLength_ = StokesIFun::waveLength (waterDepth_, wavePeriod_);
+
+        waveK = 2.0*PI()/waveLength_;
+
+        if ( waveK*waterDepth_ > PI() )
         {
-            word generation = "a"; // Auxiliar
-
-            waveLength_ = StokesIFun::waveLength (waterDepth_, wavePeriod_);
-
-            waveK = 2.0*PI()/waveLength_;
-
-            if ( waveK*waterDepth_ > PI() )
-            {
-                generation = "Deep";
-            }
-            else if ( waveK*waterDepth_ < PI()/10.0 )
-            {
-                generation = "Shallow";
-            }
-            else
-            {
-                generation = "Intermediate";
-            }
-
-            Info << "\nWave Generation BC" << endl;
-            Info << "Wave theory: " << waveTheory_ << endl;
-            Info << "H: " << waveHeight_ << endl;
-            Info << "T: " << wavePeriod_ << endl;
-            Info << "h: " << waterDepth_ << endl;
-            Info << "L: " << waveLength_ << endl;
-            Info << "Direction: " << waveDir_ << "º" << endl;
-            Info << "Generation in: " << generation << " waters." << endl;
-            Info << "Relative depth (kh): " << 
-                waveK*waterDepth_ << "\n\n" << endl;
+            generation = "Deep";
         }
+        else if ( waveK*waterDepth_ < PI()/10.0 )
+        {
+            generation = "Shallow";
+        }
+        else
+        {
+            generation = "Intermediate";
+        }
+
+        Info << "\nWave Generation BC" << endl;
+        Info << "Wave theory: " << waveTheory_ << endl;
+        Info << "H: " << waveHeight_ << endl;
+        Info << "T: " << wavePeriod_ << endl;
+        Info << "h: " << waterDepth_ << endl;
+        Info << "L: " << waveLength_ << endl;
+        Info << "Direction: " << waveDir_ << "º" << endl;
+        Info << "Generation in: " << generation << " waters." << endl;
+        Info << "Relative depth (kh): " << 
+            waveK*waterDepth_ << "\n\n" << endl;
 
         if (waveTheory_ == "StokesII")
         {
@@ -107,46 +104,43 @@
                 << exit(FatalError);
         }
 
-        if ( waveLength_ <= 0.0 )
+        word generation = "a"; // Auxiliar
+
+        waveLength_ = 
+            StokesIIIFun::waveLengthCalc
+            (
+                waveHeight_,
+                waterDepth_,
+                wavePeriod_,
+                &waveK,
+                &waveK
+            );
+
+        waveK = 2.0*PI()/waveLength_;
+
+        if ( waveK*waterDepth_ > PI() )
         {
-            word generation = "a"; // Auxiliar
-
-            waveLength_ = 
-                StokesIIIFun::waveLengthCalc
-                (
-                    waveHeight_,
-                    waterDepth_,
-                    wavePeriod_,
-                    &waveK,
-                    &waveK
-                );
-
-            waveK = 2.0*PI()/waveLength_;
-
-            if ( waveK*waterDepth_ > PI() )
-            {
-                generation = "Deep";
-            }
-            else if ( waveK*waterDepth_ < PI()/10.0 )
-            {
-                generation = "Shallow";
-            }
-            else
-            {
-                generation = "Intermediate";
-            }
-
-            Info << "\nWave Generation BC" << endl;
-            Info << "Wave theory: " << waveTheory_ << endl;
-            Info << "H: " << waveHeight_ << endl;
-            Info << "T: " << wavePeriod_ << endl;
-            Info << "h: " << waterDepth_ << endl;
-            Info << "L: " << waveLength_ << endl;
-            Info << "Direction: " << waveDir_ << "º" << endl;
-            Info << "Generation in: " << generation << " waters." << endl;
-            Info << "Relative depth (kh): " << 
-                waveK*waterDepth_ << "\n\n" << endl;
+            generation = "Deep";
         }
+        else if ( waveK*waterDepth_ < PI()/10.0 )
+        {
+            generation = "Shallow";
+        }
+        else
+        {
+            generation = "Intermediate";
+        }
+
+        Info << "\nWave Generation BC" << endl;
+        Info << "Wave theory: " << waveTheory_ << endl;
+        Info << "H: " << waveHeight_ << endl;
+        Info << "T: " << wavePeriod_ << endl;
+        Info << "h: " << waterDepth_ << endl;
+        Info << "L: " << waveLength_ << endl;
+        Info << "Direction: " << waveDir_ << "º" << endl;
+        Info << "Generation in: " << generation << " waters." << endl;
+        Info << "Relative depth (kh): " << 
+            waveK*waterDepth_ << "\n\n" << endl;
     }
     else if ( waveTheory_ == "StokesV" )
     {
@@ -157,73 +151,70 @@
                 << exit(FatalError);
         }
 
-        if ( lambdaStokesV_ <= 0.0 )
+        word generation = "a"; // Auxiliar
+
+        scalar f1;
+        scalar f2;
+
+        stokesVFun::StokesVNR
+        (
+            waveHeight_, 
+            waterDepth_, 
+            wavePeriod_, 
+            &waveK, 
+            &lambdaStokesV_, 
+            &f1, 
+            &f2 
+        );
+
+        Info << "f1 residual " << f1 << endl;
+        Info << "f2 residual " << f2 << endl;
+
+        if ( f1 > 0.001 || f2 > 0.001 )
         {
-            word generation = "a"; // Auxiliar
+	        FatalError
+	            << "No convergence for Stokes V wave theory.\n"
+                << exit(FatalError);
+        }
 
-            scalar f1;
-            scalar f2;
+        waveLength_ = 2.0*PI()/waveK;
 
-            stokesVFun::StokesVNR
+        timeLag_ = 
+            stokesVFun::timeLag
             (
-                waveHeight_, 
                 waterDepth_, 
+                waveK, 
+                0, 
+                lambdaStokesV_, 
                 wavePeriod_, 
-                &waveK, 
-                &lambdaStokesV_, 
-                &f1, 
-                &f2 
+                0, 0, 
+                wavePhase_
             );
 
-            Info << "f1 residual " << f1 << endl;
-            Info << "f2 residual " << f2 << endl;
-
-            if ( f1 > 0.001 || f2 > 0.001 )
-            {
-		        FatalError
-		            << "No convergence for Stokes V wave theory.\n"
-                    << exit(FatalError);
-            }
-
-            waveLength_ = 2.0*PI()/waveK;
-
-            timeLag_ = 
-                stokesVFun::timeLag
-                (
-                    waterDepth_, 
-                    waveK, 
-                    0, 
-                    lambdaStokesV_, 
-                    wavePeriod_, 
-                    0, 0, 
-                    wavePhase_
-                );
-
-            if ( waveK*waterDepth_ > PI() )
-            {
-                generation = "Deep";
-            }
-            else if ( waveK*waterDepth_ < PI()/10.0 )
-            {
-                generation = "Shallow";
-            }
-            else
-            {
-                generation = "Intermediate";
-            }
-
-            Info << "\nWave Generation BC" << endl;
-            Info << "Wave theory: " << waveTheory_ << endl;
-            Info << "H: " << waveHeight_ << endl;
-            Info << "T: " << wavePeriod_ << endl;
-            Info << "h: " << waterDepth_ << endl;
-            Info << "L: " << waveLength_ << endl;
-            Info << "Lambda: " << lambdaStokesV_ << endl;
-            Info << "Direction: " << waveDir_ << "º"  << endl;
-            Info << "Generation in: " << generation << " waters." << endl;
-            Info << "Relative depth (kh): " << 
-                waveK*waterDepth_ << "\n\n" << endl;
+        if ( waveK*waterDepth_ > PI() )
+        {
+            generation = "Deep";
         }
+        else if ( waveK*waterDepth_ < PI()/10.0 )
+        {
+            generation = "Shallow";
+        }
+        else
+        {
+            generation = "Intermediate";
+        }
+
+        Info << "\nWave Generation BC" << endl;
+        Info << "Wave theory: " << waveTheory_ << endl;
+        Info << "H: " << waveHeight_ << endl;
+        Info << "T: " << wavePeriod_ << endl;
+        Info << "h: " << waterDepth_ << endl;
+        Info << "L: " << waveLength_ << endl;
+        Info << "Lambda: " << lambdaStokesV_ << endl;
+        Info << "Direction: " << waveDir_ << "º"  << endl;
+        Info << "Generation in: " << generation << " waters." << endl;
+        Info << "Relative depth (kh): " << 
+            waveK*waterDepth_ << "\n\n" << endl;
     }
     else if ( waveTheory_ == "cnoidal" )
     {
@@ -234,38 +225,35 @@
                 << exit(FatalError);
         }
 
-        if ( mCnoidal_ <= 0.0 )
-        {
-            cnoidalFun::calculations
+        cnoidalFun::calculations
+        (
+            waveHeight_, 
+            waterDepth_, 
+            wavePeriod_, 
+            &mCnoidal_, 
+            &waveLength_
+        );
+
+        timeLag_ = 
+            cnoidalFun::timeLag
             (
                 waveHeight_, 
-                waterDepth_, 
+                mCnoidal_, 
+                waveLength_, 
+                0, 
                 wavePeriod_, 
-                &mCnoidal_, 
-                &waveLength_
+                0, 0, 
+                wavePhase_
             );
 
-            timeLag_ = 
-                cnoidalFun::timeLag
-                (
-                    waveHeight_, 
-                    mCnoidal_, 
-                    waveLength_, 
-                    0, 
-                    wavePeriod_, 
-                    0, 0, 
-                    wavePhase_
-                );
-
-            Info << "\nWave Generation BC" << endl;
-            Info << "Wave theory: " << waveTheory_ << endl;
-            Info << "H: " << waveHeight_ << endl;
-            Info << "T: " << wavePeriod_ << endl;
-            Info << "h: " << waterDepth_ << endl;
-            Info << "L: " << waveLength_ << endl;
-            Info << "m parameter: " << mCnoidal_ << endl;
-            Info << "Direction: " << waveDir_ << "º" <<  "\n\n" << endl;
-        }
+        Info << "\nWave Generation BC" << endl;
+        Info << "Wave theory: " << waveTheory_ << endl;
+        Info << "H: " << waveHeight_ << endl;
+        Info << "T: " << wavePeriod_ << endl;
+        Info << "h: " << waterDepth_ << endl;
+        Info << "L: " << waveLength_ << endl;
+        Info << "m parameter: " << mCnoidal_ << endl;
+        Info << "Direction: " << waveDir_ << "º" <<  "\n\n" << endl;
     }
     else if ( waveTheory_ == "streamFunction" )
     {

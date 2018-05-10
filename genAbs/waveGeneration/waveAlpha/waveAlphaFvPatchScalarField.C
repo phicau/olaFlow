@@ -399,10 +399,12 @@ void Foam::waveAlphaFvPatchScalarField::updateCoeffs()
         )
     );
 
-    // Check for errors - Just the first time
-    if (!allCheck_)
+    // Check for errors - First time or if indicated
+    bool reread = (waveDict.lookupOrDefault<bool>("rereadAlpha", false));
+
+    if (!allCheck_ || reread)
     {
-        waveType_ = (waveDict.lookupOrDefault<word>("waveType", "aaa")); 
+        waveType_ = (waveDict.lookupOrDefault<word>("waveType", "aaa"));
 
         tSmooth_ = (waveDict.lookupOrDefault<scalar>("tSmooth", -1.0 ));
         tuningFactor_ = 
@@ -445,6 +447,13 @@ void Foam::waveAlphaFvPatchScalarField::updateCoeffs()
         }
 
         allCheck_ = true;
+
+        if (reread)
+        {
+            Info << "Reread " << waveDictName_ << endl;
+            waveDict.set("rereadAlpha", false);
+            waveDict.regIOobject::write();
+        }
     } // End of allCheck
 
     scalar currTime = this->db().time().value();

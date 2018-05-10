@@ -33,4 +33,8 @@ waveDir         0.0;
 
 wavePhase       1.57079633;
 
+// Change both entries to true to re-read this dictionary upon restart.
+rereadAlpha     false;
+rereadU         false;
+
 // ************************************************************************* //
