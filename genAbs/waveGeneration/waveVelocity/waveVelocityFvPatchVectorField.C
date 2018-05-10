@@ -530,11 +530,23 @@ void Foam::waveVelocityFvPatchVectorField::updateCoeffs()
             Mmc = McCowanFun::Mcalc(waveHeight_, waterDepth_);
             Nmc = McCowanFun::Ncalc(waveHeight_, waterDepth_, Mmc);
         }
-        if(nSolitaryWaves_>1)
+        if(nSolitaryWaves_ > 1)
         {
-            while (currTime>wavePeriod_ && currTime<nSolitaryWaves_*wavePeriod_)
+            double tSeparation = 
+                waveDict.lookupOrDefault<scalar>("tSeparation", wavePeriod_ );
+            if (currTime > wavePeriod_/2. + tSeparation/2.)
             {
-                currTime -= wavePeriod_;
+                if (currTime < wavePeriod_/2. + (nSolitaryWaves_ - 1)*tSeparation)
+                {
+                    while (currTime >= wavePeriod_/2. + tSeparation/2.)
+                    {
+                        currTime -= tSeparation;
+                    }
+                }
+                else
+                {
+                    currTime -= (nSolitaryWaves_ - 1)*tSeparation;
+                }
             }
         }
     }
