@@ -10,7 +10,7 @@
                     waveAngle, 
                     currTime, 
                     X0, 
-                    patchHeight[cellIndex],
+                    zExtra,
                     Mmc,
                     Nmc
                 );
@@ -28,7 +28,7 @@
                     waveAngle, 
                     currTime, 
                     X0, 
-                    patchHeight[cellIndex],
+                    zExtra,
                     Mmc,
                     Nmc
                 );
@@ -42,6 +42,10 @@
 
             // Height corresponding to the partial cell
             auxiliar = zInf[cellIndex] + auxiliar/scalar(2);
+            if (!extrapolation_)
+            {
+                auxiliar = zExtra;
+            }
 
             patchU[cellIndex] = auxiliarTotal*
                 McCowanFun::U

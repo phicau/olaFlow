@@ -6,11 +6,11 @@
             forAll(Bjs_, iterSF2)
             {
                 patchU[cellIndex] += (iterSF2 + 1)*Bjs_[iterSF2]
-                    *cosh((iterSF2 + 1)*waveK*patchHeight[cellIndex]) 
+                    *cosh((iterSF2 + 1)*waveK*zExtra) 
                     /cosh((iterSF2 + 1)*waveK*waterDepth_)
                     *cos((iterSF2 + 1)*faseTot);
                 patchW[cellIndex] += (iterSF2 + 1)*Bjs_[iterSF2]
-                    *sinh((iterSF2 + 1)*waveK*patchHeight[cellIndex]) 
+                    *sinh((iterSF2 + 1)*waveK*zExtra) 
                     /cosh((iterSF2 + 1)*waveK*waterDepth_)
                     *sin((iterSF2 + 1)*faseTot);
             }
@@ -32,6 +32,10 @@
 
             // Height corresponding to the partial cell
             auxiliar = zInf[cellIndex] + auxiliar/scalar(2);
+            if (!extrapolation_)
+            {
+                auxiliar = zExtra;
+            }
 
             patchU[cellIndex] = 0;
             patchW[cellIndex] = 0;

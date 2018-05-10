@@ -7,16 +7,11 @@
                     + waveKys[ln2]*yGroup[cellGroup[cellIndex]-1] 
                     - waveOmegas[ln2]*currTime + wavePhases_[ln2];
                 
-                // Sin extrapolacion
-                //auxiliar = 0.0;
-                //if ( patchHeight[cellIndex] > waterDepth_ )
-                //{
-                //    auxiliar = waterDepth_;
-                //}
-                //else
-                //{
-                    auxiliar = patchHeight[cellIndex];
-                //}
+                auxiliar = patchHeight[cellIndex];
+                if (!extrapolation_)
+                {
+                    auxiliar = zExtra;
+                }
 
                 patchU[cellIndex] +=
                     sqr(cos( limAngle(waveAngles[ln2] 
@@ -105,12 +100,10 @@
 
             // Height corresponding to the partial cell
             auxiliar = zInf[cellIndex] + auxiliar/2.0;
-
-            // Sin extrapolacion
-            //if ( auxiliar > waterDepth_ )
-            //{
-            //    auxiliar = waterDepth_;
-            //}
+            if (!extrapolation_)
+            {
+                auxiliar = zExtra;
+            }
 
             forAll(waveHeights_, ln3)
             {

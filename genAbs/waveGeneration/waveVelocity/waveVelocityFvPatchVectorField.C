@@ -84,6 +84,7 @@ waveVelocityFvPatchVectorField
     uCurrent_( vector(0., 0., 0.) ),
     genAbs_(false),
     secondOrder_(false),
+    extrapolation_(true),
     nPaddles_(1),
     tSmooth_(-1),
     tuningFactor_(1),
@@ -134,6 +135,7 @@ waveVelocityFvPatchVectorField
     uCurrent_(ptf.uCurrent_),
     genAbs_(ptf.genAbs_),
     secondOrder_(ptf.secondOrder_),
+    extrapolation_(ptf.extrapolation_),
     nPaddles_(ptf.nPaddles_),
     tSmooth_(ptf.tSmooth_),
     tuningFactor_(ptf.tuningFactor_),
@@ -183,6 +185,7 @@ waveVelocityFvPatchVectorField
     uCurrent_(dict.lookupOrDefault("uCurrent", vector(0., 0., 0.))),
     genAbs_(dict.lookupOrDefault<bool>("genAbs", false )),
     secondOrder_(dict.lookupOrDefault<bool>("secondOrder", false )),
+    extrapolation_(dict.lookupOrDefault<bool>("extrapolation", true )),
     nPaddles_(dict.lookupOrDefault<label>("nPaddles", 1)),
     tSmooth_(dict.lookupOrDefault<scalar>("tSmooth", -1)),
     tuningFactor_(dict.lookupOrDefault<scalar>("tuningFactor", 1)),
@@ -244,6 +247,7 @@ waveVelocityFvPatchVectorField
     uCurrent_(ptf.uCurrent_),
     genAbs_(ptf.genAbs_),
     secondOrder_(ptf.secondOrder_),
+    extrapolation_(ptf.extrapolation_),
     nPaddles_(ptf.nPaddles_),
     tSmooth_(ptf.tSmooth_),
     tuningFactor_(ptf.tuningFactor_),
@@ -292,6 +296,7 @@ waveVelocityFvPatchVectorField
     uCurrent_(ptf.uCurrent_),
     genAbs_(ptf.genAbs_),
     secondOrder_(ptf.secondOrder_),
+    extrapolation_(ptf.extrapolation_),
     nPaddles_(ptf.nPaddles_),
     tSmooth_(ptf.tSmooth_),
     tuningFactor_(ptf.tuningFactor_),
@@ -462,6 +467,14 @@ void Foam::waveVelocityFvPatchVectorField::updateCoeffs()
                 << exit(FatalError);
         }
 
+        extrapolation_ = waveDict.lookupOrDefault<bool>("extrapolation", true);
+        if (!extrapolation_)
+        {
+            Info
+                << "Velocity profile extrapolation over SWL not connected."
+                << endl;
+        }
+
         allCheck_ = true;
     } // End of allCheck
 
@@ -630,8 +643,18 @@ void Foam::waveVelocityFvPatchVectorField::updateCoeffs()
 
     // Velocity cycle
     scalar corrLevel = 0.0;
+    scalar zExtra = 0.0;
     forAll(patchHeight, cellIndex)
     {
+        if (!extrapolation_)
+        {
+            zExtra = waterDepth_;
+        }
+        else
+        {
+            zExtra = patchHeight[cellIndex];
+        }
+
         #include "velocityProfile.H"
 
         vector cellV = 
@@ -738,10 +761,12 @@ void Foam::waveVelocityFvPatchVectorField::write(Ostream& os) const
         os.writeEntryIfDifferent<vector>("uCurrent", vector::zero, uCurrent_);
         os.writeEntryIfDifferent<scalar>("tSmooth", -1.0, tSmooth_);
         os.writeEntryIfDifferent<scalar>("tuningFactor", 1.0, tuningFactor_);
+        os.writeEntryIfDifferent<bool>("extrapolation", true, extrapolation_);
     #else
         writeEntryIfDifferent<vector>(os, "uCurrent", vector::zero, uCurrent_);
         writeEntryIfDifferent<scalar>(os, "tSmooth", -1.0, tSmooth_);
         writeEntryIfDifferent<scalar>(os, "tuningFactor", 1.0, tuningFactor_);
+        writeEntryIfDifferent<scalar>(os, "extrapolation", true, extrapolation_);
     #endif
 
     if (genAbs_)

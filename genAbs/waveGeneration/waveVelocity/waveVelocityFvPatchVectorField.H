@@ -154,6 +154,9 @@ class waveVelocityFvPatchVectorField
         //- Second order irregular generation
         bool secondOrder_;
 
+        //- Extrapolate velocity field over SWL
+        bool extrapolation_;
+
         //- Number of different paddles (for absorption)
         label nPaddles_;
 

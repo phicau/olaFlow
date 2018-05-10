@@ -12,7 +12,7 @@
                     xGroup[cellGroup[cellIndex]-1], 
                     yGroup[cellGroup[cellIndex]-1], 
                     currTime, 
-                    patchHeight[cellIndex]
+                    zExtra
                 );
 
             patchV[cellIndex] = patchU[cellIndex]*sin(waveAngle);
@@ -30,7 +30,7 @@
                     xGroup[cellGroup[cellIndex]-1], 
                     yGroup[cellGroup[cellIndex]-1], 
                     currTime, 
-                    patchHeight[cellIndex]
+                    zExtra
                 );
 
         }
@@ -42,6 +42,10 @@
 
             // Height corresponding to the partial cell
             auxiliar = zInf[cellIndex] + auxiliar/scalar(2);
+            if (!extrapolation_)
+            {
+                auxiliar = zExtra;
+            }
 
             patchU[cellIndex] = auxiliarTotal*
                 cnoidalFun::U

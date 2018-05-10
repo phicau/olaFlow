@@ -12,7 +12,7 @@
                     waveOmega, 
                     currTime, 
                     wavePhase_, 
-                    patchHeight[cellIndex]
+                    zExtra
                 );
 
             patchV[cellIndex] = patchU[cellIndex]*sin(waveAngle);
@@ -30,7 +30,7 @@
                     waveOmega, 
                     currTime, 
                     wavePhase_, 
-                    patchHeight[cellIndex]
+                    zExtra
                 ); 
         }
         else if (zInf[cellIndex] < heights[cellGroup[cellIndex]-1]) 
@@ -41,6 +41,10 @@
 
             // Height corresponding to the partial cell
             auxiliar = zInf[cellIndex] + auxiliar/scalar(2);
+            if (!extrapolation_)
+            {
+                auxiliar = zExtra;
+            }
 
             patchU[cellIndex] = auxiliarTotal*
                 StokesIIFun::U

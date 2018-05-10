@@ -10,7 +10,7 @@
                     waveAngle, 
                     currTime, 
                     X0, 
-                    patchHeight[cellIndex]
+                    zExtra
                 );
 
             patchV[cellIndex] = patchU[cellIndex]*sin(waveAngle);
@@ -26,7 +26,7 @@
                     waveAngle, 
                     currTime, 
                     X0, 
-                    patchHeight[cellIndex]
+                    zExtra
                 );
         }
         else if (zInf[cellIndex] < calculatedLevel[cellGroup[cellIndex]-1])
@@ -38,6 +38,10 @@
 
             // Height corresponding to the partial cell
             auxiliar = zInf[cellIndex] + auxiliar/scalar(2);
+            if (!extrapolation_)
+            {
+                auxiliar = zExtra;
+            }
 
             patchU[cellIndex] = auxiliarTotal*
                 BoussinesqFun::U
