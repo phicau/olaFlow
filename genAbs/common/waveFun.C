@@ -639,8 +639,7 @@ namespace cnoidalFun
             Elliptic::ellipticIntegralsKE(mElliptic, &KElliptic, &EElliptic);
 
             LElliptic = KElliptic*sqrt(16.0*pow(d,3)*mElliptic/(3.0*H));        // (Svendsen p404)
-
-            phaseSpeed = sqrt(G*d)*(1.0 - H/d/2.0 + H/d/mElliptic*(1.0-3.0/2.0*EElliptic/KElliptic));        // (Svendsen p405)
+            phaseSpeed = sqrt( (G*d)*(1.0 + H/(mElliptic*d)*(2.0 - mElliptic - 3.0*EElliptic/KElliptic) ) );        // (Svendsen p405)
 
             mError = fabs(T-LElliptic/phaseSpeed);
 
@@ -652,6 +651,63 @@ namespace cnoidalFun
             }
 
             mElliptic += mTolerance;
+        }
+
+        return 0;
+    }
+
+    int bisection (double H, double d, double T, double* mOut, double* LOut)
+    {
+        double eps = 1e-6;
+        double KEllipticC, EEllipticC;
+
+        double mL = 0.5;
+        double mR = 0.99999;
+
+        while (true)
+        {
+            // Calculate K & E
+            double KEllipticL, EEllipticL, KEllipticR, EEllipticR;
+            Elliptic::ellipticIntegralsKE(mL, &KEllipticL, &EEllipticL);
+            Elliptic::ellipticIntegralsKE(mR, &KEllipticR, &EEllipticR);
+
+            //std::cout << "m k e: " << mL << " " << KEllipticL << " " << EEllipticL << std::endl;
+            //std::cout << "m k e: " << mR << " " << KEllipticR << " " << EEllipticR << std::endl;
+
+            double LerrL = KEllipticL*sqrt(16.0*pow(d,3)*mL/(3.0*H))
+                - sqrt(G*d)*T*
+                sqrt( 1.0 + H/(mL*d)*(2.0 - mL - 3.0*EEllipticL/KEllipticL) );
+
+            double LerrR = KEllipticR*sqrt(16.0*pow(d,3)*mR/(3.0*H))
+                - sqrt(G*d)*T*
+                sqrt( 1.0 + H/(mR*d)*(2.0 - mR - 3.0*EEllipticR/KEllipticR) );
+
+            if(LerrL*LerrR>0) // Same side
+            {
+                // Error, should not happen with given Xl and Xr
+            }
+
+            double mC = (mL + mR)/2.0;
+            Elliptic::ellipticIntegralsKE(mC, &KEllipticC, &EEllipticC);
+            double LerrC = KEllipticC*sqrt(16.0*pow(d,3)*mC/(3.0*H))
+                - sqrt(G*d)*T*
+                sqrt( 1.0 + H/(mC*d)*(2.0 - mC - 3.0*EEllipticC/KEllipticC) );
+
+            if(fabs(LerrC)<=eps)
+            {
+                *mOut = mC;
+                *LOut = KEllipticC*sqrt(16.0*pow(d,3)*mC/(3.0*H));
+                break;
+            }
+            
+            if((LerrR*LerrC)<0.)
+            {
+                mL = mC;
+            }
+            else
+            {
+                mR = mC;
+            }
         }
 
         return 0;

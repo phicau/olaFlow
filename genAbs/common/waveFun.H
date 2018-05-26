@@ -79,6 +79,7 @@ namespace cnoidalFun
     double d3EtaDx (double H, double m, double uCnoidal, double L);
     double timeLag (double H, double m, double kx, double ky, double T, double x, double y, double phase);
     int calculations (double H, double d, double T, double* mOut, double* LOut);
+    int bisection (double H, double d, double T, double* mOut, double* LOut);
     double U (double H, double h, double m, double kx, double ky, double T, double x, double y, double t, double z);
     double W (double H, double h, double m, double kx, double ky, double T, double x, double y, double t, double z);
 }
