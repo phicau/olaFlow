@@ -667,7 +667,7 @@ void Foam::waveVelocityFvPatchVectorField::updateCoeffs()
     scalar zExtra = 0.0;
     forAll(patchHeight, cellIndex)
     {
-        if (!extrapolation_)
+        if (patchHeight[cellIndex] > waterDepth_ && !extrapolation_)
         {
             zExtra = waterDepth_;
         }
