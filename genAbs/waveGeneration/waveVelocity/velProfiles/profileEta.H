@@ -1,6 +1,15 @@
     if ( indexF == 0)
     {
-        UInterp = paddleVelocity_[0];
+        UInterp = paddleVelocityU_[0];
+
+        if (waveTheory_ == "tvetaw")
+        {
+            WInterp = paddleVelocityW_[0];
+        }
+        else
+        {
+            WInterp = 0;
+        }
     }
     else
     {
@@ -9,16 +18,33 @@
             (
                 timeSeries_[indexF-1], 
                 timeSeries_[indexF], 
-                paddleVelocity_[indexF-1], 
-                paddleVelocity_[indexF], 
+                paddleVelocityU_[indexF-1], 
+                paddleVelocityU_[indexF], 
                 currTime
             );
+
+        if (waveTheory_ == "tvetaw")
+        {
+            WInterp = 
+                interpolation
+                (
+                    timeSeries_[indexF-1], 
+                    timeSeries_[indexF], 
+                    paddleVelocityW_[indexF-1], 
+                    paddleVelocityW_[indexF], 
+                    currTime
+                );
+        }
+        else
+        {
+            WInterp = 0;
+        }
     }
 
     if (zSup[cellIndex] <= heights[cellGroup[cellIndex]-1]) 
     {// Full cell
         patchU[cellIndex] = UInterp;
-        patchV[cellIndex] = 0;
+        patchV[cellIndex] = WInterp*zExtra/waterDepth_;
         patchW[cellIndex] = 0;        
     }
     else if (zInf[cellIndex] < heights[cellGroup[cellIndex]-1]) 
@@ -31,7 +57,7 @@
         auxiliar = zInf[cellIndex] + auxiliar/scalar(2);
 
         patchU[cellIndex] = auxiliarTotal*UInterp;
-        patchV[cellIndex] = 0;
+        patchV[cellIndex] = auxiliarTotal*WInterp*zExtra/waterDepth_;
         patchW[cellIndex] = 0;  
     }
     else // Empty cell

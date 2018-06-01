@@ -99,7 +99,8 @@ waveVelocityFvPatchVectorField
     waveDirs_( List<scalar> (1, -1.0) ),
     timeSeries_( List<scalar> (1, -1.0) ),
     paddlePosition_( List<scalar> (1, -1.0) ),
-    paddleVelocity_( List<scalar> (1, -1.0) ),
+    paddleVelocityU_( List<scalar> (1, -1.0) ),
+    paddleVelocityW_( List<scalar> (1, -1.0) ),
     paddleEta_( List<scalar> (1, -1.0) )
 {}
 
@@ -150,7 +151,8 @@ waveVelocityFvPatchVectorField
     waveDirs_(ptf.waveDirs_),
     timeSeries_(ptf.timeSeries_),
     paddlePosition_(ptf.paddlePosition_),
-    paddleVelocity_(ptf.paddleVelocity_),
+    paddleVelocityU_(ptf.paddleVelocityU_),
+    paddleVelocityW_(ptf.paddleVelocityW_),
     paddleEta_(ptf.paddleEta_)
 {}
 
@@ -201,8 +203,10 @@ waveVelocityFvPatchVectorField
     timeSeries_( dict.lookupOrDefault("timeSeries", List<scalar> (1, -1.0)) ),
     paddlePosition_( 
         dict.lookupOrDefault("paddlePosition", List<scalar> (1, -1.0)) ),
-    paddleVelocity_( 
+    paddleVelocityU_( 
         dict.lookupOrDefault("paddleVelocity", List<scalar> (1, -1.0)) ),
+    paddleVelocityW_( 
+        dict.lookupOrDefault("paddleVelocityW", List<scalar> (1, -1.0)) ),
     paddleEta_( dict.lookupOrDefault("paddleEta", List<scalar> (1, -1.0)) )
 {
     word dictName = dict.lookupOrDefault<word>("waveDict", "empty");
@@ -262,7 +266,8 @@ waveVelocityFvPatchVectorField
     waveDirs_(ptf.waveDirs_),
     timeSeries_(ptf.timeSeries_),
     paddlePosition_(ptf.paddlePosition_),
-    paddleVelocity_(ptf.paddleVelocity_),
+    paddleVelocityU_(ptf.paddleVelocityU_),
+    paddleVelocityW_(ptf.paddleVelocityW_),
     paddleEta_(ptf.paddleEta_)
 {}
 
@@ -311,7 +316,8 @@ waveVelocityFvPatchVectorField
     waveDirs_(ptf.waveDirs_),
     timeSeries_(ptf.timeSeries_),
     paddlePosition_(ptf.paddlePosition_),
-    paddleVelocity_(ptf.paddleVelocity_),
+    paddleVelocityU_(ptf.paddleVelocityU_),
+    paddleVelocityW_(ptf.paddleVelocityW_),
     paddleEta_(ptf.paddleEta_)
 {}
 
@@ -344,8 +350,7 @@ void Foam::waveVelocityFvPatchVectorField::updateCoeffs()
     scalar faseTot;
 
     // Variables tveta
-    scalar etaInterp = 0;
-    scalar UInterp = 0;
+    scalar etaInterp = 0, UInterp = 0, WInterp = 0;
     label indexF = 0;
 
     // 3D Variables
@@ -868,7 +873,8 @@ void Foam::waveVelocityFvPatchVectorField::write(Ostream& os) const
         os.writeKeyword("waveTheory") << 
             waveTheory_ << token::END_STATEMENT << nl;
         timeSeries_.writeEntry("timeSeries", os);
-        paddleVelocity_.writeEntry("paddleVelocity", os);
+        paddleVelocityU_.writeEntry("paddleVelocity", os);
+        paddleVelocityW_.writeEntry("paddleVelocityW", os);
         paddleEta_.writeEntry("paddleEta", os);
 
         #if OFVERSION >= 1712

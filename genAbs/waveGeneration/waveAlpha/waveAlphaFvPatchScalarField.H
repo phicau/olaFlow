@@ -193,8 +193,11 @@ class waveAlphaFvPatchScalarField
         //- Paddle position series for interpolation
         scalarList paddlePosition_;
 
-        //- Paddle velocity series for interpolation
-        scalarList paddleVelocity_;
+        //- Horizontal velocity series for interpolation
+        scalarList paddleVelocityU_;
+
+        //- Vertical velocity series for interpolation
+        scalarList paddleVelocityW_;
 
         //- Free surface series at the paddle for interpolation
         scalarList paddleEta_;
