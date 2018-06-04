@@ -41,7 +41,7 @@ else
     fi
 fi
 
-if [ OF_FLAVOUR -eq 2 ]; then
+if [ $OF_FLAVOUR -eq 2 ]; then
     echo Sampling free surface...
     sample -dict system/sampleDictVOF > sampleVOF.log
 
