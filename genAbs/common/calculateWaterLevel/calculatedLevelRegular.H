@@ -3,7 +3,7 @@
     {
         forAll(calculatedLevel, itS1)
         {
-            calculatedLevel = waterDepth_ + timeMult*
+            calculatedLevel[itS1] = waterDepth_ + timeMult*
                 StokesIFun::eta
                 (
                     waveHeight_, 
@@ -21,7 +21,7 @@
     {
         forAll(calculatedLevel, itS2)
         {
-            calculatedLevel = waterDepth_ + timeMult*
+            calculatedLevel[itS2] = waterDepth_ + timeMult*
                 StokesIIFun::eta
                 (
                     waveHeight_, 
@@ -40,7 +40,7 @@
     {
         forAll(calculatedLevel, itS2)
         {
-            calculatedLevel = waterDepth_ + timeMult*
+            calculatedLevel[itS2] = waterDepth_ + timeMult*
                 StokesIIIFun::eta
                 (
                     waveHeight_, 
