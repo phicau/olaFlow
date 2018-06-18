@@ -58,7 +58,7 @@
                     yGroup[cellGroup[cellIndex]-1], 
                     currTime, 
                     wavePhase_, 
-                    patchHeight[cellIndex]
+                    auxiliar
                 );
 
             patchV[cellIndex] = patchU[cellIndex]*sin(waveAngle);
@@ -76,7 +76,7 @@
                     yGroup[cellGroup[cellIndex]-1], 
                     currTime, 
                     wavePhase_, 
-                    patchHeight[cellIndex]
+                    auxiliar
                 );
         }
         else // Empty cell

@@ -7,18 +7,12 @@
                     + waveKys[ln2]*yGroup[cellGroup[cellIndex]-1] 
                     - waveOmegas[ln2]*currTime + wavePhases_[ln2];
                 
-                auxiliar = patchHeight[cellIndex];
-                if (!extrapolation_)
-                {
-                    auxiliar = zExtra;
-                }
-
                 patchU[cellIndex] +=
                     sqr(cos( limAngle(waveAngles[ln2] 
                     - meanAngle[cellGroup[cellIndex]-1]) ))* // spreading function
                     waveHeights_[ln2]*0.5*waveOmegas[ln2]*
                     cos(faseTot)*
-                    cosh(waveKs[ln2]*auxiliar)/
+                    cosh(waveKs[ln2]*zExtra)/
                     sinh(waveKs[ln2]*waterDepth_)*cos(waveAngles[ln2]);
 
                 patchV[cellIndex] +=
@@ -26,7 +20,7 @@
                     - meanAngle[cellGroup[cellIndex]-1]) ))* // spreading function
                     waveHeights_[ln2]*0.5*waveOmegas[ln2]*
                     cos(faseTot)*
-                    cosh(waveKs[ln2]*auxiliar)/
+                    cosh(waveKs[ln2]*zExtra)/
                     sinh(waveKs[ln2]*waterDepth_)*sin(waveAngles[ln2]);
 
                 patchW[cellIndex] +=
@@ -34,7 +28,7 @@
                     - meanAngle[cellGroup[cellIndex]-1]) ))* // spreading function
                     waveHeights_[ln2]*0.5*waveOmegas[ln2]*
                     sin(faseTot)*
-                    sinh(waveKs[ln2]*auxiliar)/
+                    sinh(waveKs[ln2]*zExtra)/
                     sinh(waveKs[ln2]*waterDepth_); 
             }
 
