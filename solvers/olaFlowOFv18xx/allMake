@@ -59,7 +59,6 @@ else
 fi
 
 wclean > /dev/null
-wclean olaDyMFlow > /dev/null
 
 wmake
 
@@ -69,13 +68,4 @@ if (( $? )) ; then
     echo -e "\n\nolaFlow compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";
 fi
 
-wmake olaDyMFlow
-
-if (( $? )) ; then 
-    echo "olaDyMFlow compilation failed"
-    exit; else
-    echo -e "\n\nolaDyMFlow compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";   
-fi
-
 wclean > /dev/null
-wclean olaDyMFlow > /dev/null

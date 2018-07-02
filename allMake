@@ -23,8 +23,10 @@ else
             export OF_SOLVER=olaFlowOF1606+
         elif [ $OF_VERSION -lt 1700 ]; then
             export OF_SOLVER=olaFlowOF1612+
-        else
+        elif [ $OF_VERSION -lt 1800 ]; then
             export OF_SOLVER=olaFlowOFv17xx
+        else
+            export OF_SOLVER=olaFlowOFv18xx
         fi
     else
         # OpenFOAM
