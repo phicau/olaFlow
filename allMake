@@ -77,27 +77,27 @@ if (( $? )) ; then
     echo -e "\n\nOlaFlow project wave absorption boundary conditions compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";  
 fi
 
+cd solvers/$OF_SOLVER
 
-wmake solvers/$OF_SOLVER
+wclean all > /dev/null
+
+wmake all
 
 if (( $? )) ; then 
-    echo "olaFlow solver compilation failed"
+    echo "olaFlow solvers compilation failed"
     exit; else
-    echo -e "\n\nolaFlow solver compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n"; 
-fi
+    echo -e "\n\nolaFlow solvers compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";
 
-if [ $WM_PROJECT_VERSION != "dev" ]; then
-    wmake solvers/$OF_SOLVER/olaDyMFlow
-
-    if (( $? )) ; then 
-        echo "olaDyMFlow solver compilation failed"
-        exit; else
-        echo -e "\n\nolaDyMFlow solver compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";   
+    # Create symbolic link if olaDyMFlow does not exist (OF-dev, OFv1806)
+    if [ ! -f $FOAM_USER_APPBIN/olaDyMFlow ]; then
+        ln -s $FOAM_USER_APPBIN/olaFlow $FOAM_USER_APPBIN/olaDyMFlow
     fi
 fi
 
-
 wclean all > /dev/null
+
+# Clean up
+cd -
 rm -f genAbs/common/waveFun.dep
 
 if [ $WM_PROJECT == "foam" ]; then

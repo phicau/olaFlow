@@ -1,23 +1,18 @@
 #!/bin/bash
 
-wclean > /dev/null
-wclean olaDyMFlow > /dev/null
+wclean all > /dev/null
 
-wmake
-
-if (( $? )) ; then 
-    echo "olaFlow compilation failed"
-    exit; else
-    echo -e "\n\nolaFlow compiled successfully for FOAM-Extend 3.0-3.2\n\n\n";  
-fi
-
-wmake olaDyMFlow
+wmake all
 
 if (( $? )) ; then 
-    echo "olaDyMFlow compilation failed"
+    echo "olaFlow solvers compilation failed"
     exit; else
-    echo -e "\n\nolaDyMFlow compiled successfully for FOAM-Extend 3.0-3.2\n\n\n";  
+    echo -e "\n\nolaFlow solvers compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";
+
+    # Create symbolic link if olaDyMFlow does not exist (OF-dev, OFv1806)
+    if [ ! -f $FOAM_USER_APPBIN/olaDyMFlow ]; then
+        ln -s $FOAM_USER_APPBIN/olaFlow $FOAM_USER_APPBIN/olaDyMFlow
+    fi
 fi
 
-wclean > /dev/null
-wclean olaDyMFlow > /dev/null
+wclean all > /dev/null

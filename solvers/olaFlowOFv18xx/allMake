@@ -1,71 +1,18 @@
 #!/bin/bash
 
-if [ $WM_PROJECT == "foam" ]; then
-    # FOAM-Extend
-    export OF_VERSION=`echo $WM_PROJECT_VERSION | sed -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -2 | tr -d '\n'`
-    export OF_FLAVOUR=1
+wclean all > /dev/null
 
-    if [ $OF_VERSION -ge 40 ]; then
-        export OF_SOLVER=olaFlowFE40
-    else
-        export OF_SOLVER=olaFlowFE30_32
-    fi
-else
-    if [[ $WM_PROJECT_VERSION == *"+"* ]]
-    then
-        # OpenFOAM +
-        export OF_VERSION=`echo $WM_PROJECT_VERSION"-0" | sed -e 's/v//' -e 's/+//' -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -3 | tr -d '\n' | head -c4`
-        export OF_FLAVOUR=2
-        
-        if [ $OF_VERSION -lt 400 ]; then
-            export OF_SOLVER=olaFlowOF300+
-        elif [ $OF_VERSION -lt 1610 ]; then
-            export OF_SOLVER=olaFlowOF1606+
-        elif [ $OF_VERSION -lt 1700 ]; then
-            export OF_SOLVER=olaFlowOF1612+
-        elif [ $OF_VERSION -lt 1800 ]; then
-            export OF_SOLVER=olaFlowOFv17xx
-        else
-            export OF_SOLVER=olaFlowOFv18xx
-        fi
-    else
-        # OpenFOAM
-        export OF_VERSION=`echo $WM_PROJECT_VERSION"-0" | sed -e 's/v//' -e 's/+//' -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -3 | tr -d '\n' | head -c4`
-        export OF_FLAVOUR=3
-
-        if [ $OF_VERSION -gt 1700 ]; then
-            # OpenFOAM + decided to drop the + ...
-            export OF_SOLVER=olaFlowOF17xx+
-        elif [ $OF_VERSION -lt 170 ]; then
-            export OF_SOLVER=olaFlowOF16ext
-        elif [ $OF_VERSION -lt 180 ]; then
-            export OF_SOLVER=olaFlowOF171
-        elif [ $OF_VERSION -lt 220 ]; then
-            export OF_SOLVER=olaFlowOF211
-        elif [ $OF_VERSION -lt 230 ]; then
-            export OF_SOLVER=olaFlowOF222
-        elif [ $OF_VERSION -lt 240 ]; then
-            export OF_SOLVER=olaFlowOF230
-        elif [ $OF_VERSION -lt 250 ]; then
-            export OF_SOLVER=olaFlowOF240
-        elif [ $OF_VERSION -lt 400 ]; then
-            export OF_SOLVER=olaFlowOF300
-        elif [ $OF_VERSION -lt 500 ]; then
-            export OF_SOLVER=olaFlowOF400
-        else
-            export OF_SOLVER=olaFlowOF500
-        fi
-    fi
-fi
-
-wclean > /dev/null
-
-wmake
+wmake all
 
 if (( $? )) ; then 
-    echo "olaFlow compilation failed"
+    echo "olaFlow solvers compilation failed"
     exit; else
-    echo -e "\n\nolaFlow compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";
+    echo -e "\n\nolaFlow solvers compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";
+
+    # Create symbolic link if olaDyMFlow does not exist (OF-dev, OFv1806)
+    if [ ! -f $FOAM_USER_APPBIN/olaDyMFlow ]; then
+        ln -s $FOAM_USER_APPBIN/olaFlow $FOAM_USER_APPBIN/olaDyMFlow
+    fi
 fi
 
-wclean > /dev/null
+wclean all > /dev/null
