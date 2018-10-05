@@ -237,7 +237,7 @@ namespace StokesIIIFun
             double H_kl = 
                 (HEq(H, T, a, kl+eps) - HEq(H, T, a, kl-eps))/(2*eps);
 
-            double factor = 1/(d_a*H_kl-d_kl*H_a);
+            double factor = 1/(d_a*H_kl-d_kl*H_a)*0.5; // Deceleration factor
 
             aN = a - factor*( H_kl*dEq(h, T, a, kl) - d_kl*HEq(H, T, a, kl) );
             klN = kl - factor*( d_a*HEq(H, T, a, kl) - H_a*dEq(h, T, a, kl) );

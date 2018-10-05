@@ -13,8 +13,8 @@
                     currTime, 
                     wavePhase_, 
                     zExtra,
-                    aE_SIII,
-                    klE_SIII
+                    aE_SIII_,
+                    klE_SIII_
                 );
 
             patchV[cellIndex] = patchU[cellIndex]*sin(waveAngle);
@@ -33,8 +33,8 @@
                     currTime, 
                     wavePhase_, 
                     zExtra,
-                    aE_SIII,
-                    klE_SIII
+                    aE_SIII_,
+                    klE_SIII_
                 ); 
         }
         else if (zInf[cellIndex] < heights[cellGroup[cellIndex]-1]) 
@@ -63,8 +63,8 @@
                     currTime, 
                     wavePhase_, 
                     auxiliar,
-                    aE_SIII,
-                    klE_SIII
+                    aE_SIII_,
+                    klE_SIII_
                 );
 
             patchV[cellIndex] = patchU[cellIndex]*sin(waveAngle);
@@ -83,8 +83,8 @@
                     currTime, 
                     wavePhase_, 
                     auxiliar,
-                    aE_SIII,
-                    klE_SIII
+                    aE_SIII_,
+                    klE_SIII_
                 ); 
         }
         else // Empty cell

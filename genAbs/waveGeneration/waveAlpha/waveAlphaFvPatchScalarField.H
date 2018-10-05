@@ -136,6 +136,12 @@ class waveAlphaFvPatchScalarField
         //- m Cnoidal 
         scalar mCnoidal_;
 
+        //- Parameter a - Stokes III
+        scalar aE_SIII_;
+
+        //- Parameter kl - Stokes III
+        scalar klE_SIII_;
+
         //- Mean fluid speed in frame of reference (stream function)
         scalar uMean_;
 

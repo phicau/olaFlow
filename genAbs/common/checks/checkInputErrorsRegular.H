@@ -112,8 +112,8 @@
                 waveHeight_,
                 waterDepth_,
                 wavePeriod_,
-                &waveK,
-                &waveK
+                &aE_SIII_,
+                &klE_SIII_
             );
 
         waveK = 2.0*PI()/waveLength_;

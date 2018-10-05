@@ -78,6 +78,8 @@ waveVelocityFvPatchVectorField
     nSolitaryWaves_(1),
     lambdaStokesV_(-1),
     mCnoidal_(-1),
+    aE_SIII_(-1),
+    klE_SIII_(-1),
     uMean_(-1),
     Bjs_( List<scalar> (1, -1.0) ),
     Ejs_( List<scalar> (1, -1.0) ),
@@ -130,6 +132,8 @@ waveVelocityFvPatchVectorField
     nSolitaryWaves_(ptf.nSolitaryWaves_),
     lambdaStokesV_(ptf.lambdaStokesV_),
     mCnoidal_(ptf.mCnoidal_),
+    aE_SIII_(ptf.aE_SIII_),
+    klE_SIII_(ptf.klE_SIII_),
     uMean_(ptf.uMean_),
     Bjs_(ptf.Bjs_),
     Ejs_(ptf.Ejs_),
@@ -181,6 +185,8 @@ waveVelocityFvPatchVectorField
     nSolitaryWaves_(dict.lookupOrDefault<label>("nSolitaryWaves", 1)),
     lambdaStokesV_(dict.lookupOrDefault<scalar>("lambdaStokesV", -1 )),
     mCnoidal_(dict.lookupOrDefault<scalar>("mCnoidal", -1 )),
+    aE_SIII_(dict.lookupOrDefault<scalar>("aE_SIII", -1 )),
+    klE_SIII_(dict.lookupOrDefault<scalar>("klE_SIII", -1 )),
     uMean_(dict.lookupOrDefault<scalar>("uMean", -1)),
     Bjs_( dict.lookupOrDefault("Bjs", List<scalar> (1, -1.0)) ),
     Ejs_( dict.lookupOrDefault("Ejs", List<scalar> (1, -1.0)) ),
@@ -245,6 +251,8 @@ waveVelocityFvPatchVectorField
     nSolitaryWaves_(ptf.nSolitaryWaves_),
     lambdaStokesV_(ptf.lambdaStokesV_),
     mCnoidal_(ptf.mCnoidal_),
+    aE_SIII_(ptf.aE_SIII_),
+    klE_SIII_(ptf.klE_SIII_),
     uMean_(ptf.uMean_),
     Bjs_(ptf.Bjs_),
     Ejs_(ptf.Ejs_),
@@ -295,6 +303,8 @@ waveVelocityFvPatchVectorField
     nSolitaryWaves_(ptf.nSolitaryWaves_),
     lambdaStokesV_(ptf.lambdaStokesV_),
     mCnoidal_(ptf.mCnoidal_),
+    aE_SIII_(ptf.aE_SIII_),
+    klE_SIII_(ptf.klE_SIII_),
     uMean_(ptf.uMean_),
     Bjs_(ptf.Bjs_),
     Ejs_(ptf.Ejs_),
@@ -607,21 +617,6 @@ void Foam::waveVelocityFvPatchVectorField::updateCoeffs()
     }
     // Info << "Paddle angle " << meanAngle << endl;
 
-    // Auxiliar variables for Stokes III
-    double aE_SIII = 0;
-    double klE_SIII = 0;
-    if ( waveTheory_ == "StokesIII" )
-    {
-        StokesIIIFun::waveLengthCalc
-        (
-            waveHeight_,
-            waterDepth_,
-            wavePeriod_,
-            &aE_SIII,
-            &klE_SIII
-        );
-    }
-
     scalarList calculatedLevel (nPaddles_,0.0);
 
     if ( waveType_ == "regular" )
@@ -826,46 +821,41 @@ void Foam::waveVelocityFvPatchVectorField::write(Ostream& os) const
         os.writeKeyword("waveDir") << waveDir_ << token::END_STATEMENT << nl;
         os.writeKeyword("timeLag") << timeLag_ << token::END_STATEMENT << nl;
 
-        if
-        (
-            waveTheory_ == "StokesI" || waveTheory_ == "StokesII"
-            || waveTheory_ == "StokesIII"
-        )
-        {
-            os.writeKeyword("waveLength") << 
-                waveLength_ << token::END_STATEMENT << nl;
-            os.writeKeyword("wavePeriod") << 
-                wavePeriod_ << token::END_STATEMENT << nl;
-            os.writeKeyword("wavePhase") << 
-                wavePhase_ << token::END_STATEMENT << nl;
-        }
-        else if ( waveTheory_ == "StokesV" )
-        {
-            os.writeKeyword("waveLength") << 
-                waveLength_ << token::END_STATEMENT << nl;
-            os.writeKeyword("wavePeriod") << 
-                wavePeriod_ << token::END_STATEMENT << nl;
-            os.writeKeyword("wavePhase") << 
-                wavePhase_ << token::END_STATEMENT << nl;
-            os.writeKeyword("lambdaStokesV") << 
-                lambdaStokesV_ << token::END_STATEMENT << nl;
-        }
-        else if ( waveTheory_ == "cnoidal" )
-        {
-            os.writeKeyword("waveLength") << 
-                waveLength_ << token::END_STATEMENT << nl;
-            os.writeKeyword("wavePeriod") << 
-                wavePeriod_ << token::END_STATEMENT << nl;
-            os.writeKeyword("wavePhase") << 
-                wavePhase_ << token::END_STATEMENT << nl;
-            os.writeKeyword("mCnoidal") << 
-                mCnoidal_ << token::END_STATEMENT << nl;
-        }
-        else if ( waveTheory_ == "streamFunction" )
+        if ( waveTheory_ == "streamFunction" )
         {
             os.writeKeyword("uMean") << uMean_ << token::END_STATEMENT << nl;
             Bjs_.writeEntry("Bjs", os);
             Ejs_.writeEntry("Ejs", os);
+        }
+        else
+        {
+            os.writeKeyword("waveLength") << 
+                waveLength_ << token::END_STATEMENT << nl;
+            os.writeKeyword("wavePeriod") << 
+                wavePeriod_ << token::END_STATEMENT << nl;
+            os.writeKeyword("wavePhase") << 
+                wavePhase_ << token::END_STATEMENT << nl;
+
+            if ( waveTheory_ == "StokesIII" )
+            {
+                #if OFVERSION >= 1712
+                    os.writeEntryIfDifferent<scalar>("aE_SIII", -1, aE_SIII_);
+                    os.writeEntryIfDifferent<scalar>("klE_SIII", -1, klE_SIII_);
+                #else
+                    writeEntryIfDifferent<scalar>(os, "aE_SIII", -1, aE_SIII_);
+                    writeEntryIfDifferent<scalar>(os, "klE_SIII", -1, klE_SIII_);
+                #endif
+            }
+            else if ( waveTheory_ == "StokesV" )
+            {
+                os.writeKeyword("lambdaStokesV") << 
+                    lambdaStokesV_ << token::END_STATEMENT << nl;
+            }
+            else if ( waveTheory_ == "cnoidal" )
+            {
+                os.writeKeyword("mCnoidal") << 
+                    mCnoidal_ << token::END_STATEMENT << nl;
+            }
         }
     }
     else if ( waveType_ == "wavemaker" )

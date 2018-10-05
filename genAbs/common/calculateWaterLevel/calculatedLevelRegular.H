@@ -52,8 +52,8 @@
                     waveOmega, 
                     currTime, 
                     wavePhase_,
-                    aE_SIII,
-                    klE_SIII
+                    aE_SIII_,
+                    klE_SIII_
                 );
         }
     }
