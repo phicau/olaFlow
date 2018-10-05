@@ -106,8 +106,8 @@
 
         word generation = "a"; // Auxiliar
 
-        waveLength_ = 
-            StokesIIIFun::waveLengthCalc
+        bool iniOK =
+            StokesIIIFun::initialise
             (
                 waveHeight_,
                 waterDepth_,
@@ -115,6 +115,18 @@
                 &aE_SIII_,
                 &klE_SIII_
             );
+
+        if( !iniOK )
+        {
+            FatalError
+                << "StokesIII initialisation did not converge,"
+                << "check your wave conditions."
+                << exit(FatalError);
+        }
+
+        waveLength_ = 
+            StokesIIIFun::waveLength (wavePeriod_, aE_SIII_, klE_SIII_);
+
 
         waveK = 2.0*PI()/waveLength_;
 

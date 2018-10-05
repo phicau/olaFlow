@@ -98,6 +98,19 @@ namespace StokesIIFun
 {
     #define PII 3.1415926535897932384626433832795028
     #define G 9.81 
+
+    double waveLength (double h, double T)
+    {
+        double L0 = G*T*T/(2.0*PII);
+        double L = L0;
+
+        for(int i=1; i<=100; i++)
+        {
+            L = L0*tanh(2.0*PII*h/L);
+        }
+
+        return L;
+    }
     
     double eta (double H, double h, double Kx, double x, double Ky, double y, double omega, double t, double phase)
     {
@@ -219,53 +232,78 @@ namespace StokesIIIFun
     #define PII 3.1415926535897932384626433832795028
     #define G 9.81 
     
-    double waveLengthCalc (double H, double h, double T, double* aE, double* klE)
+    bool initialise (double H, double h, double T, double* aE, double* klE)
     {
-        // Calculates wavelength with Newton's method
-        double a = 1, aN = 10;
-        double kl = 1, klN = 10;
+        // Calculates Stokes III parameters with Newton's method
+        std::cout << "Solving Stokes III parameters..." << std::endl;
         double eps = 1e-6;
 
-        while (true)
+        int i = 1;
+        double relax = 2.;
+        double converged = false;
+
+        while(relax > 0.1)
         {
-            double d_a = 
-                (dEq(h, T, a+eps, kl) - dEq(h, T, a-eps, kl))/(2*eps);
-            double d_kl = 
-                (dEq(h, T, a, kl+eps) - dEq(h, T, a, kl-eps))/(2*eps);
-            double H_a = 
-                (HEq(H, T, a+eps, kl) - HEq(H, T, a-eps, kl))/(2*eps);
-            double H_kl = 
-                (HEq(H, T, a, kl+eps) - HEq(H, T, a, kl-eps))/(2*eps);
+            relax /= 2.;
+            double a = 1, aN = 10;
+            double kl = 1, klN = 10;
+            
+            std::cout << "Relaxation factor: " << relax << std::endl;
 
-            double factor = 1/(d_a*H_kl-d_kl*H_a)*0.5; // Deceleration factor
-
-            aN = a - factor*( H_kl*dEq(h, T, a, kl) - d_kl*HEq(H, T, a, kl) );
-            klN = kl - factor*( d_a*HEq(H, T, a, kl) - H_a*dEq(h, T, a, kl) );
-
-            if
-            (
-                (fabs(dEq(h, T, aN, klN))<=eps) && 
-                (fabs(HEq(H, T, aN, klN))<=eps)
-            )
+            for(i=1; i<=5e6; i++)
             {
-                a = aN;
-                kl = klN;
-                break;
+                double d_a = 
+                    (dEq(h, T, a+eps, kl) - dEq(h, T, a-eps, kl))/(2*eps);
+                double d_kl = 
+                    (dEq(h, T, a, kl+eps) - dEq(h, T, a, kl-eps))/(2*eps);
+                double H_a = 
+                    (HEq(H, T, a+eps, kl) - HEq(H, T, a-eps, kl))/(2*eps);
+                double H_kl = 
+                    (HEq(H, T, a, kl+eps) - HEq(H, T, a, kl-eps))/(2*eps);
+
+                double factor = 1/(d_a*H_kl-d_kl*H_a)*relax;
+
+                aN = a - factor*( H_kl*dEq(h, T, a, kl) - d_kl*HEq(H, T, a, kl) );
+                klN = kl - factor*( d_a*HEq(H, T, a, kl) - H_a*dEq(h, T, a, kl) );
+
+                if
+                (
+                    (fabs(dEq(h, T, aN, klN))<=eps) && 
+                    (fabs(HEq(H, T, aN, klN))<=eps)
+                )
+                {
+                    a = aN;
+                    kl = klN;
+                    break;
+                }
+                else
+                {
+                    a = aN;
+                    kl = klN;
+                }
+            }
+
+            if ( i > 5e6 )
+            {
+                converged = false;
             }
             else
             {
-                a = aN;
-                kl = klN;
+                converged = true;
+                *aE = a;
+                *klE = kl;
+                break;
             }
         }
-        
-        *aE = a;
-        *klE = kl;
 
+        return converged;
+    }
+
+    double waveLength (double T, double aE, double klE)
+    {
         double L = 
-            tanh(kl)/(2*PII)*(1 + pow(a,2)*(cosh(4*kl) + 2*cosh(2*kl) + 6)
-            /(4*(cosh(2*kl) - 1)))*G*pow(T,2);
-
+            tanh(klE)/(2*PII)*(1 + pow(aE,2)*(cosh(4*klE) + 2*cosh(2*klE) + 6)
+            /(4*(cosh(2*klE) - 1)))*G*pow(T,2);
         return L;
     }
 

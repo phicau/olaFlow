@@ -45,6 +45,7 @@ namespace StokesIFun
 
 namespace StokesIIFun
 {
+    double waveLength (double h, double T);
     double eta (double H, double h, double Kx, double x, double Ky, double y, double omega, double t, double phase);
     double U (double H, double h, double Kx, double x, double Ky, double y, double omega, double t, double phase, double z);
     double W (double H, double h, double Kx, double x, double Ky, double y, double omega, double t, double phase, double z);
@@ -53,7 +54,8 @@ namespace StokesIIFun
 
 namespace StokesIIIFun
 {
-    double waveLengthCalc (double H, double h, double T, double* aE, double* klE);
+    bool initialise (double H, double h, double T, double* aE, double* klE);
+    double waveLength (double T, double aE, double klE);
     double dEq (double h, double T, double a, double kl);
     double HEq (double H, double T, double a, double kl);
     double eta (double H, double h, double Kx, double x, double Ky, double y, double omega, double t, double phase, double a, double kl);
