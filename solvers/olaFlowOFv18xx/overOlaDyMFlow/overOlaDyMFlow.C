@@ -2,8 +2,8 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
-     \\/     M anipulation  |
+    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+     \\/     M anipulation  | Copyright (C) 2016-2017 OpenCFD Ltd.
 -------------------------------------------------------------------------------
 License
     This file is a derivative work of OpenFOAM.
@@ -23,7 +23,7 @@ License
 \*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*\
 Application
-    olaDyMFlow
+    overOlaDyMFlow
 
 Group
     grpMultiphaseSolvers grpMovingMeshSolvers
@@ -34,7 +34,7 @@ Description
     with optional mesh motion and mesh topology changes including adaptive
     re-meshing.
 
-    olaDyMFlow solves the VARANS equations.
+    overOlaDyMFlow solves the VARANS equations.
 
 \*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*\
@@ -85,6 +85,12 @@ Description
 #include "fvOptions.H"
 #include "CorrectPhi.H"
 #include "fvcSmooth.H"
+#include "cellCellStencilObject.H"
+#include "localMin.H"
+#include "interpolationCellPoint.H"
+#include "transform.H"
+#include "fvMeshSubset.H"
+#include "oversetAdjustPhi.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -96,7 +102,7 @@ int main(int argc, char *argv[])
     #include "createTime.H"
     #include "createDynamicFvMesh.H"
     #include "initContinuityErrs.H"
-    #include "createControl.H"
+    pimpleControl pimple(mesh);
     #include "createTimeControls.H"
     #include "createDyMControls.H"
     #include "createFields.H"
@@ -127,6 +133,9 @@ int main(int argc, char *argv[])
         #include "CourantNo.H"
         #include "setInitialDeltaT.H"
     }
+
+    #include "setCellMask.H"
+    #include "setInterpolatedCells.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     Info<< "\nStarting time loop\n" << endl;
@@ -169,11 +178,15 @@ int main(int argc, char *argv[])
                     // if the mesh topology changed
                     if (mesh.topoChanging())
                     {
-                        talphaPhiCorr0.clear();
+                        talphaPhi1Corr0.clear();
                     }
 
                     gh = (g & mesh.C()) - ghRef;
                     ghf = (g & mesh.Cf()) - ghRef;
+
+                    // Update cellMask field for blocking out hole cells
+                    #include "setCellMask.H"
+                    #include "setInterpolatedCells.H"
                 }
 
                 if ((mesh.changing() && correctPhi) || mesh.topoChanging())
@@ -182,6 +195,7 @@ int main(int argc, char *argv[])
                     // Note: temporary fix until mapped Uf is assessed
                     Uf = fvc::interpolate(U);
 
+                    // Calculate absolute flux from the mapped surface velocity
                     phi = mesh.Sf() & Uf;
 
                     #include "correctPhi.H"
@@ -225,9 +239,7 @@ int main(int argc, char *argv[])
             porosityIndex.write();
         }
 
-        Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
-            << "  ClockTime = " << runTime.elapsedClockTime() << " s"
-            << nl << endl;
+        runTime.printExecutionTime(Info);
     }
 
     Info<< "End\n" << endl;

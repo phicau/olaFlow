@@ -13,7 +13,7 @@
         mesh,
         dimensionedScalar( "porosityIndex", dimless, 0.0 )
     );
-Info << "What is going on" << endl;
+
     scalar nPor = gMax(porosityIndex); // Number of porous media
     bool activePorosity = (nPor > 0.0);
 
