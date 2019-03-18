@@ -15,5 +15,5 @@ if [ -d "./constant/polyMesh" ]; then
   cd $directory
 fi
 
-rm -fr *[0-9].[0-9]* [0-9] [1-6]*
+rm -fr *[0-9].[0-9]* [0-9] [1-9]* dynamicCode
 rm *.log

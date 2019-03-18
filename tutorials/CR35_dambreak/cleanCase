@@ -3,7 +3,7 @@ shopt -s extglob
 
 directory=`pwd`
 
-read -p "Clearing case. Are you sure? (y/N)" -n 1 -r
+read -p "Clearing case. Are you sure? (y/N) " -n 1 -r
 if ! [[ $REPLY =~ ^[Yy]$ ]]
 then
     exit

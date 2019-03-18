@@ -3,7 +3,7 @@ OLAFLOW
 
 # Description
 
-[olaFlow](https://sites.google.com/view/olaflowcfd) (formerly known as olaFoam) is a numerical model conceived as a continuation of the work in [IHFOAM](https://github.com/phicau/IHFOAM). Its development has been continuous from ihFoam (Jul 8, 2014 - Feb 11, 2016) and olaFoam (Mar 2, 2016 - Nov 25, 2017).
+[olaFlow](https://olaflow.github.io) (formerly known as olaFoam) is a numerical model conceived as a continuation of the work in [IHFOAM](https://github.com/phicau/IHFOAM). Its development has been continuous from ihFoam (Jul 8, 2014 - Feb 11, 2016) and olaFoam (Mar 2, 2016 - Nov 25, 2017).
 
 This free and open source project is committed to bringing the latest advances in the simulation of wave dynamics to the OpenFOAM® and FOAM-extend communities.
 
@@ -11,7 +11,7 @@ olaFlow includes a set of solvers and boundary conditions to generate and absorb
 
 You can find all the information regarding the model at its web site and wiki:
 
-- https://sites.google.com/view/olaflowcfd
+- https://olaflow.github.io
 - https://openfoamwiki.net/index.php/Contrib/olaFlow
 
 # Citation
@@ -25,7 +25,7 @@ If you want to reference the model in your publications you can use the followin
 
 Feel free to modify the phase and adapt it for your own needs.
 
-You can also include any of the [following references](https://sites.google.com/view/olaflowcfd/numerical-model/references/references-internal) when citing the implementation, validation and applications.
+You can also include any of the [following references](https://olaflow.github.io/numerical-model/internal-references/) when citing the implementation, validation and applications.
 
 # Download and compilation
 
@@ -52,7 +52,7 @@ Compilation is straightforward, simply run the following script from the olaFlow
 
 Reference materials and test cases are included in the olaFlow download. Check the *reference* and the *tutorials* folders. For a full description on these materials see:
 
-- https://sites.google.com/view/olaflowcfd/source-code/tutorials
+- https://olaflow.github.io/numerical-model/model-tutorials/
 - https://openfoamwiki.net/index.php/Contrib/olaFlow#olaFlow_Documentation_and_Tutorials
 
 This repository only includes the tutorials for the most recent versions of OpenFOAM and OpenFOAM+. The historic record of tutorials released along with olaFlow for the major past versions and FOAM-extend have been moved into their own repository, which you can find in: https://github.com/phicau/olaFlow_oldVersionTutorials

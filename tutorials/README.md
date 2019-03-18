@@ -9,5 +9,5 @@ The historic record of tutorials released along with olaFlow for the major past 
 
 For a full description on these tutorials see:
 
-- https://sites.google.com/view/olaflowcfd/source-code/tutorials
+- https://olaflow.github.io/numerical-model/model-tutorials/
 - https://openfoamwiki.net/index.php/Contrib/olaFlow#olaFlow_Documentation_and_Tutorials
