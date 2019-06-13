@@ -1,3 +1,5 @@
+// TODO Integrate with memberFun.H
+
         //- Return Pi
         scalar PI()
         {
@@ -21,33 +23,45 @@
         }
 
         //- Return prevalent direction - X or Y to sort groups of columns
-        scalarField patchDirection ( vector span, scalar* dMin, scalar* dSpan )
+        scalarField patchDirection
+        ( 
+            const polyPatch myPatch,
+            vector span,
+            scalar* dMin,
+            scalar* dSpan
+        )
         {
-            const pointField& points = patch().patch().localPoints();
+            const pointField& points = myPatch.localPoints();
+            const vectorField& cf = myPatch.faceCentres();
             // Check prevalent direction
             if (span[0] >= span[1]) // More perpendicular to Y plane
             {
                 *dMin = gMin(points.component(0));
                 *dSpan = gMax(points.component(0)) - *dMin;
-                return patch().Cf().component(0); // patchX
+                return cf.component(0); // patchX
             }
             else // More perpendicular to X plane
             {
                 *dMin = gMin(points.component(1));
                 *dSpan = gMax(points.component(1)) - *dMin;
-                return patch().Cf().component(1);  // patchY
+                return cf.component(1);  // patchY
             }
         }
 
         //- Return Zmax and Zmin of the patch faces
-        void faceBoundsZ(scalarField* zSup, scalarField* zInf)
+        void faceBoundsZ
+        (
+            const polyPatch myPatch,
+            scalarField* zSup,
+            scalarField* zInf
+        )
         {
-            const label nF = patch().faceCells().size();
-            scalarField zMax = Foam::scalarField(nF, -9999.0);
-            scalarField zMin = Foam::scalarField(nF, 9999.0);
-            
-            const faceList& faces = this->patch().patch().localFaces();
-            const List<vector>& points = this->patch().patch().localPoints();
+            const faceList& faces = myPatch.localFaces();
+            const List<vector>& points = myPatch.localPoints();
+            const label nF = faces.size();
+
+            scalarField zMax = Foam::scalarField(nF, -GREAT);
+            scalarField zMin = Foam::scalarField(nF,  GREAT);
 
             forAll( faces, faceI )
             {
@@ -65,8 +79,35 @@
             *zInf = zMin;
         }
 
+        //- Calculate z-bounds for each paddle
+        scalarList zSpanList 
+        ( 
+            labelList cellGroup, 
+            scalarField zInf, 
+            scalarField zSup 
+        )
+        {
+            scalarList zMaxL (nPaddles_, -GREAT);
+            scalarList zMinL (nPaddles_,  GREAT);
+
+            forAll(zInf, faceI) 
+            {
+                zMaxL[cellGroup[faceI] - 1] = 
+                    max(zMaxL[cellGroup[faceI] - 1], zSup[faceI] );
+                zMinL[cellGroup[faceI] - 1] = 
+                    min(zMinL[cellGroup[faceI] - 1], zInf[faceI] );
+            }
+
+            for (label i = 0; i <= nPaddles_ - 1; i++)
+            {
+                reduce(zMaxL[i], maxOp<scalar>());
+                reduce(zMinL[i], minOp<scalar>());
+            }
+            return zMaxL-zMinL;
+        }
+
         //- Calculate water levels on each paddle (same zSpan)
-        scalarList calcWL
+        /*scalarList calcWL
         ( 
             scalarField alphaCell, 
             labelList cellGroup, 
@@ -95,43 +136,12 @@
             }
 
             return heights;
-        }
-
-        //- Calculate water levels on each paddle (different zSpan)
-        scalarList calcWL
-        ( 
-            scalarField alphaCell, 
-            labelList cellGroup, 
-            scalarList zSpanL 
-        )
-        {
-            scalarList groupTotalArea (nPaddles_,0.0); // Paddle total area
-            scalarList groupWaterArea (nPaddles_,0.0); // Paddle wet area
-            scalarList heights (nPaddles_,0.0);
-
-            const scalarField faceSurface = patch().magSf();
-
-            forAll( patch().faceCells(), index ) 
-            {
-                groupTotalArea[cellGroup[index]-1] += faceSurface[index];
-                groupWaterArea[cellGroup[index]-1] += 
-                    faceSurface[index]*alphaCell[index];
-            } 
-
-            for (label i=0; i<=gMax(cellGroup)-1; i++)
-            {
-                reduce(groupTotalArea[i], sumOp<scalar>());
-                reduce(groupWaterArea[i], sumOp<scalar>());
-                // Free surface elevation at each paddle
-                heights[i] = groupWaterArea[i]/groupTotalArea[i]*zSpanL[i];
-            }
-
-            return heights;
-        }
+        }*/
 
         //- Calculate mean velocities on each paddle
         void calcUV 
-        ( 
+        (
+            const polyPatch myPatch,
             scalarField alphaCell, 
             labelList cellGroup, 
             scalarField UxCell, 
@@ -140,20 +150,20 @@
             scalarList* Uy 
         )
         {
-            scalarList groupWaterArea (nPaddles_,0.0); // Paddle wet area
-            scalarList groupUx (nPaddles_,0.0);
-            scalarList groupUy (nPaddles_,0.0);
+            scalarList groupWaterArea (nPaddles_, 0.0); // Paddle wet area
+            scalarList groupUx (nPaddles_, 0.0);
+            scalarList groupUy (nPaddles_, 0.0);
 
-            const scalarField faceSurface = patch().magSf();
+            const scalarField faceSurface = mag(myPatch.faceAreas());
 
-            forAll( patch().faceCells(), index ) 
+            forAll( alphaCell, index ) 
             {
-                groupWaterArea[cellGroup[index]-1] += 
+                groupWaterArea[cellGroup[index] - 1] += 
                     faceSurface[index]*alphaCell[index];
 
-                groupUx[cellGroup[index]-1] += 
+                groupUx[cellGroup[index] - 1] += 
                     UxCell[index]*alphaCell[index]*faceSurface[index];
-                groupUy[cellGroup[index]-1] += 
+                groupUy[cellGroup[index] - 1] += 
                     UyCell[index]*alphaCell[index]*faceSurface[index];
             } 
 
@@ -172,7 +182,7 @@
         }
 
         //- Mean of a scalarList
-        scalar meanSL ( scalarList lst )
+        /*scalar meanSL ( scalarList lst )
         {
             scalar aux = 0.0;
             
@@ -182,7 +192,7 @@
             }
             
             return aux/scalar(lst.size());
-        }
+        }*/
 
         //- Reduce number of paddles if too high (paddles without cells)
         label decreaseNPaddles 
@@ -193,23 +203,23 @@
             scalar dSpan
         )
         {
-            scalarList dBreakPoints(np+1, 0.0); // Paddles' start-end points
+            scalarList dBreakPoints(np + 1, 0.0); // Paddles' start-end points
 
             while(1)
             {
                 scalarList usedGroup (np,0.0); // If group is used = 1, else 0
 
-                for (label i=0; i<=np; i++)
+                for (label i = 0; i <= np; i++)
                 {
                     dBreakPoints[i] = dMin + dSpan/(np)*i; // Breakpoint coords
                 }
 
-                forAll(patch().faceCells(), patchCells) 
+                forAll(patchD, faceI) 
                 {
-                    for (label j=0; j<=np; j++) // Grouping loop
+                    for (label j = 0; j <= np; j++) // Grouping loop
                     {
-                        if ( (patchD[patchCells]>=dBreakPoints[j]) && 
-                            (patchD[patchCells]<dBreakPoints[j+1]) )
+                        if ( (patchD[faceI] >= dBreakPoints[j]) && 
+                            (patchD[faceI] < dBreakPoints[j + 1]) )
                         {
                             usedGroup[j] = 1.0;
                             continue;
@@ -223,7 +233,7 @@
                 {
                     Info << 
                         "Reduced nPaddles from " << np << 
-                        " to " << np-1 << endl;
+                        " to " << np - 1 << endl;
                     np -= 1;
                 }
                 else // All groups are used
@@ -268,22 +278,22 @@
         }
 
         //- Calculate mean horizontal angle for each paddle
-        scalarList meanPatchDirs ( labelList cellGroup )
+        scalarList meanPatchDirs ( const polyPatch myPatch, labelList cellGroup )
         {
-            const vectorField nVecCell = patch().nf();
+            const vectorField nVecCell = myPatch.faceAreas();
 
             scalarList numAngles (nPaddles_, 0.0);
             scalarList meanAngle (nPaddles_, 0.0);
 
-            forAll(patch().faceCells(), patchCells) 
+            forAll(nVecCell, faceI) 
             {
-                meanAngle[cellGroup[patchCells]-1] += 
-                    arcTan( nVecCell[patchCells].component(0), 
-                        nVecCell[patchCells].component(1));
-                numAngles[cellGroup[patchCells]-1] += 1.0;
+                meanAngle[cellGroup[faceI] - 1] += 
+                    arcTan( nVecCell[faceI].component(0), 
+                        nVecCell[faceI].component(1));
+                numAngles[cellGroup[faceI] - 1] += 1.0;
             }
 
-            for (label i=0; i<=nPaddles_-1; i++)
+            for (label i = 0; i <= nPaddles_ - 1; i++)
             {
                 reduce(meanAngle[i], sumOp<scalar>());
                 reduce(numAngles[i], sumOp<scalar>());
@@ -292,32 +302,7 @@
             return meanAngle;
         }
 
-        //- Calculate z-bounds for each paddle
-        scalarList zSpanList 
-        ( 
-            labelList cellGroup, 
-            scalarField zInf, 
-            scalarField zSup 
-        )
-        {
-            scalarList zMaxL (nPaddles_, -9999.0);
-            scalarList zMinL (nPaddles_,  9999.0);
 
-            forAll(cellGroup, patchCells) 
-            {
-                zMaxL[cellGroup[patchCells]-1] = 
-                    max(zMaxL[cellGroup[patchCells]-1], zSup[patchCells] );
-                zMinL[cellGroup[patchCells]-1] = 
-                    min(zMinL[cellGroup[patchCells]-1], zInf[patchCells] );
-            }
-
-            for (label i=0; i<=nPaddles_-1; i++)
-            {
-                reduce(zMaxL[i], maxOp<scalar>());
-                reduce(zMinL[i], minOp<scalar>());
-            }
-            return zMaxL-zMinL;
-        }
 
         //- In-line print for scalarLists
         label inlinePrint ( std::string name, scalarList SL )
@@ -332,7 +317,7 @@
         }
 
         //- Simple linear interpolation
-        scalar interpolation 
+        /*scalar interpolation 
         (
             scalar x1, 
             scalar x2, 
@@ -343,10 +328,10 @@
         {
             scalar yInt = y1 + (y2-y1)/(x2-x1)*(xInt-x1);
             return yInt;
-        }
+        }*/
 
         //- Limit angle between -pi/2 and pi/2
-        scalar limAngle (scalar ang)
+        /*scalar limAngle (scalar ang)
         {
             ang = abs(ang);
 
@@ -363,4 +348,4 @@
             {
                 return ang;
             }
-        }
+        }*/

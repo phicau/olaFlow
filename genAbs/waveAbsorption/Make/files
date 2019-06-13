@@ -1,4 +1,13 @@
 2DWaveAbsorptionVelocity/waveAbsorptionVelocity2DFvPatchVectorField.C
 3DWaveAbsorptionVelocity/waveAbsorptionVelocity3DFvPatchVectorField.C
 
+activeWaveAbsorptionModels/activeWaveAbsorptionModel.C
+activeWaveAbsorptionModels/activeWaveAbsorptionModelNew.C
+
+activeWaveAbsorptionModels/shallowWaterAWA/shallowWaterAWA.C
+activeWaveAbsorptionModels/extendedRangeAWA/extendedRangeAWA.C
+activeWaveAbsorptionModels/lateralShallowWaterAWA/lateralShallowWaterAWA.C
+
+waveAbsorptionVelocity/waveAbsorptionVelocityFvPatchVectorField.C
+
 LIB = $(FOAM_USER_LIBBIN)/libwaveAbsorption

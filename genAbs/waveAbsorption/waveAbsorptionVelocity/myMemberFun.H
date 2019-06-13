@@ -1,3 +1,5 @@
+// TODO Integrate with memberFun.H
+
         //- Return Pi
         scalar PI()
         {
@@ -70,12 +72,13 @@
         ( 
             scalarField alphaCell, 
             labelList cellGroup, 
-            scalar zSpan 
+            scalar zSpan, 
+            label nPaddles
         )
         {
-            scalarList groupTotalArea (nPaddles_,0.0); // Paddle total area
-            scalarList groupWaterArea (nPaddles_,0.0); // Paddle wet area
-            scalarList heights (nPaddles_,0.0);
+            scalarList groupTotalArea (nPaddles,0.0); // Paddle total area
+            scalarList groupWaterArea (nPaddles,0.0); // Paddle wet area
+            scalarList heights (nPaddles,0.0);
 
             const scalarField faceSurface = patch().magSf();
 
@@ -102,12 +105,13 @@
         ( 
             scalarField alphaCell, 
             labelList cellGroup, 
-            scalarList zSpanL 
+            scalarList zSpanL, 
+            label nPaddles
         )
         {
-            scalarList groupTotalArea (nPaddles_,0.0); // Paddle total area
-            scalarList groupWaterArea (nPaddles_,0.0); // Paddle wet area
-            scalarList heights (nPaddles_,0.0);
+            scalarList groupTotalArea (nPaddles,0.0); // Paddle total area
+            scalarList groupWaterArea (nPaddles,0.0); // Paddle wet area
+            scalarList heights (nPaddles,0.0);
 
             const scalarField faceSurface = patch().magSf();
 
@@ -127,61 +131,6 @@
             }
 
             return heights;
-        }
-
-        //- Calculate mean velocities on each paddle
-        void calcUV 
-        ( 
-            scalarField alphaCell, 
-            labelList cellGroup, 
-            scalarField UxCell, 
-            scalarList* Ux, 
-            scalarField UyCell, 
-            scalarList* Uy 
-        )
-        {
-            scalarList groupWaterArea (nPaddles_,0.0); // Paddle wet area
-            scalarList groupUx (nPaddles_,0.0);
-            scalarList groupUy (nPaddles_,0.0);
-
-            const scalarField faceSurface = patch().magSf();
-
-            forAll( patch().faceCells(), index ) 
-            {
-                groupWaterArea[cellGroup[index]-1] += 
-                    faceSurface[index]*alphaCell[index];
-
-                groupUx[cellGroup[index]-1] += 
-                    UxCell[index]*alphaCell[index]*faceSurface[index];
-                groupUy[cellGroup[index]-1] += 
-                    UyCell[index]*alphaCell[index]*faceSurface[index];
-            } 
-
-            for (label i=0; i<=nPaddles_-1; i++)
-            {
-                reduce(groupWaterArea[i], sumOp<scalar>());
-                reduce(groupUx[i], sumOp<scalar>());
-                reduce(groupUy[i], sumOp<scalar>());
-
-                groupUx[i] = groupUx[i]/groupWaterArea[i];
-                groupUy[i] = groupUy[i]/groupWaterArea[i];
-            }
-
-            *Ux = groupUx;
-            *Uy = groupUy;
-        }
-
-        //- Mean of a scalarList
-        scalar meanSL ( scalarList lst )
-        {
-            scalar aux = 0.0;
-            
-            forAll(lst,i)
-            {
-                aux += lst[i];
-            }
-            
-            return aux/scalar(lst.size());
         }
 
         //- Reduce number of paddles if too high (paddles without cells)
@@ -233,7 +182,7 @@
             }
             return np;
         }
-
+        
         //- Own convenient definition of atan
         scalar arcTan ( scalar x, scalar y )
         {
@@ -268,12 +217,12 @@
         }
 
         //- Calculate mean horizontal angle for each paddle
-        scalarList meanPatchDirs ( labelList cellGroup )
+        scalarList meanPatchDirs ( labelList cellGroup, label nPaddles )
         {
             const vectorField nVecCell = patch().nf();
 
-            scalarList numAngles (nPaddles_, 0.0);
-            scalarList meanAngle (nPaddles_, 0.0);
+            scalarList numAngles (nPaddles, 0.0);
+            scalarList meanAngle (nPaddles, 0.0);
 
             forAll(patch().faceCells(), patchCells) 
             {
@@ -283,7 +232,7 @@
                 numAngles[cellGroup[patchCells]-1] += 1.0;
             }
 
-            for (label i=0; i<=nPaddles_-1; i++)
+            for (label i=0; i<=nPaddles-1; i++)
             {
                 reduce(meanAngle[i], sumOp<scalar>());
                 reduce(numAngles[i], sumOp<scalar>());
@@ -297,11 +246,12 @@
         ( 
             labelList cellGroup, 
             scalarField zInf, 
-            scalarField zSup 
+            scalarField zSup, 
+            label nPaddles
         )
         {
-            scalarList zMaxL (nPaddles_, -9999.0);
-            scalarList zMinL (nPaddles_,  9999.0);
+            scalarList zMaxL (nPaddles, -9999.0);
+            scalarList zMinL (nPaddles,  9999.0);
 
             forAll(cellGroup, patchCells) 
             {
@@ -311,7 +261,7 @@
                     min(zMinL[cellGroup[patchCells]-1], zInf[patchCells] );
             }
 
-            for (label i=0; i<=nPaddles_-1; i++)
+            for (label i=0; i<=nPaddles-1; i++)
             {
                 reduce(zMaxL[i], maxOp<scalar>());
                 reduce(zMinL[i], minOp<scalar>());
@@ -329,38 +279,4 @@
             }
             Info << ")\n" << endl;
             return 0;
-        }
-
-        //- Simple linear interpolation
-        scalar interpolation 
-        (
-            scalar x1, 
-            scalar x2, 
-            scalar y1, 
-            scalar y2, 
-            scalar xInt
-        )
-        {
-            scalar yInt = y1 + (y2-y1)/(x2-x1)*(xInt-x1);
-            return yInt;
-        }
-
-        //- Limit angle between -pi/2 and pi/2
-        scalar limAngle (scalar ang)
-        {
-            ang = abs(ang);
-
-            while (ang >= 2.0*PI())
-            {
-                ang -= 2.0*PI();
-            }
-
-            if ( ang >= PI()/2.0 && ang <= 3.0*PI()/2.0 )
-            {
-                return PI()/2.0;
-            }
-            else
-            {
-                return ang;
-            }
         }
