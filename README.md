@@ -48,12 +48,22 @@ Compilation is straightforward, simply run the following script from the olaFlow
 
 `./allMake`
 
+## Developer branch
+
+OlaFlow now includes a Developer branch in which the new features are released in advance, before being integrated in the main release branch. To download the new code perform a code update as usual and change to the new branch:
+
+`git checkout Dev`
+
+Finally, compile the code normally.
+
 # Reference materials and tutorials
 
 Reference materials and test cases are included in the olaFlow download. Check the *reference* and the *tutorials* folders. For a full description on these materials see:
 
 - https://olaflow.github.io/numerical-model/model-tutorials/
 - https://openfoamwiki.net/index.php/Contrib/olaFlow#olaFlow_Documentation_and_Tutorials
+
+Note that the *Dev* branch of olaFlow includes additional materials and tutorials.
 
 This repository only includes the tutorials for the most recent versions of OpenFOAM and OpenFOAM+. The historic record of tutorials released along with olaFlow for the major past versions and FOAM-extend have been moved into their own repository, which you can find in: https://github.com/phicau/olaFlow_oldVersionTutorials
 
