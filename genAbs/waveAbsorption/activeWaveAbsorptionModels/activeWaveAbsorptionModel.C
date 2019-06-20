@@ -232,7 +232,7 @@ Foam::activeWaveAbsorptionModel::activeWaveAbsorptionModel
     yPaddleGroup_(List<scalar> (1, 0.0)),
     absDir_(666),
     uCurrent_(vector::zero),
-    faceGroup_(List<label> (-1)),
+    faceGroup_(List<label> (1, label(-1))),
     meanAngles_(List<scalar> (1, 0.0)),
     zSpanL_(List<scalar> (1, 0.0)),
     initialWaterDepths_(List<scalar> (1, -1.0)),
