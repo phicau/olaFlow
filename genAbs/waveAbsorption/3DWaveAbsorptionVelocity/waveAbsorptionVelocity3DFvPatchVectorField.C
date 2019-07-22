@@ -360,24 +360,11 @@ void Foam::waveAbsorptionVelocity3DFvPatchVectorField::
 write(Ostream& os) const
 {
     fvPatchField<vector>::write(os);
-
-    os.writeKeyword("nPaddles") << nPaddles_ << token::END_STATEMENT << nl;
-
-    initialWaterDepths_.writeEntry("initialWaterDepths", os);
-    meanAngles_.writeEntry("meanAngles", os);
-    zSpanL_.writeEntry("zSpanL", os);
-
-    #if OFVERSION >= 1712
-        os.writeEntryIfDifferent<label>("nEdgeMin", 0, nEdgeMin_);
-        os.writeEntryIfDifferent<label>("nEdgeMax", 0, nEdgeMax_);
+    #if OFFLAVOUR == 3 && OFVERSION >= 700 && OFVERSION < 990
+        #include "newWriting.H"
     #else
-        writeEntryIfDifferent<label>(os, "nEdgeMin", 0, nEdgeMin_);
-        writeEntryIfDifferent<label>(os, "nEdgeMax", 0, nEdgeMax_);
+        #include "classicWriting.H"
     #endif
-    
-    os.writeKeyword("allCheck") << allCheck_ << token::END_STATEMENT << nl;
-
-    writeEntry("value", os);
 }
 
 
