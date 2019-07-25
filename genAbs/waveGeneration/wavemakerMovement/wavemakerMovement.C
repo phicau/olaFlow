@@ -658,7 +658,7 @@ void wavemakerMovement::write(Ostream& os) const
         fixedValuePointPatchField<vector>::write(os);
     #endif
 
-    #if OFFLAVOUR == 3 && OFVERSION >= 700 && OFVERSION < 990
+    #if OFFLAVOUR == 3 && OFVERSION >= 700
         #include "newWriting.H"
     #else
         #include "classicWriting.H"

@@ -771,7 +771,7 @@ void Foam::waveVelocityFvPatchVectorField::updateCoeffs()
 void Foam::waveVelocityFvPatchVectorField::write(Ostream& os) const
 {
     fvPatchField<vector>::write(os);
-    #if OFFLAVOUR == 3 && OFVERSION >= 700 && OFVERSION < 990
+    #if OFFLAVOUR == 3 && OFVERSION >= 700
         #include "newWriting.H"
     #else
         #include "classicWriting.H"

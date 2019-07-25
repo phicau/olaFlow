@@ -713,7 +713,7 @@ void Foam::waveAlphaFvPatchScalarField::updateCoeffs()
 void Foam::waveAlphaFvPatchScalarField::write(Ostream& os) const
 {
     fvPatchField<scalar>::write(os);
-    #if OFFLAVOUR == 3 && OFVERSION >= 700 && OFVERSION < 990
+    #if OFFLAVOUR == 3 && OFVERSION >= 700
         #include "newWriting.H"
     #else
         #include "classicWriting.H"

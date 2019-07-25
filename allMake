@@ -34,11 +34,12 @@ else
         # OpenFOAM
         export OF_VERSION=`echo $WM_PROJECT_VERSION"-00" | sed -e 's/v//' -e 's/+//' -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -3 | tr -d '\n' | head -c3`
         export OF_FLAVOUR=3
+        export LATEST_SOLVER=olaFlowOF700
 
         if [ $OF_VERSION -lt 1 ]; then
             # Dev version
-            export OF_SOLVER=olaFlowOFdev
-            export OF_VERSION=500
+            export OF_SOLVER=$LATEST_SOLVER
+            export OF_VERSION=999
         elif [ $OF_VERSION -lt 170 ]; then
             export OF_SOLVER=olaFlowOF16ext
         elif [ $OF_VERSION -lt 180 ]; then
@@ -58,11 +59,9 @@ else
         elif [ $OF_VERSION -lt 600 ]; then
             export OF_SOLVER=olaFlowOF500
         elif [ $OF_VERSION -lt 700 ]; then
-            export OF_SOLVER=olaFlowOFdev
-        elif [ $OF_VERSION -lt 800 ]; then
-            export OF_SOLVER=olaFlowOF700
+            export OF_SOLVER=olaFlowOF600
         else
-            export OF_SOLVER=olaFlowOFdev
+            export OF_SOLVER=$LATEST_SOLVER
         fi
     fi
 fi

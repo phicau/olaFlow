@@ -12,8 +12,11 @@ else
         export OF_FLAVOUR=2
     else
         # OpenFOAM
-        export OF_VERSION=`echo $WM_PROJECT_VERSION"-0" | sed -e 's/v//' -e 's/+//' -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -3 | tr -d '\n' | head -c4`
+        export OF_VERSION=`echo $WM_PROJECT_VERSION"-00" | sed -e 's/v//' -e 's/+//' -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -3 | tr -d '\n' | head -c3`
         export OF_FLAVOUR=3
+        if [ $WM_PROJECT_VERSION == "dev" ]; then
+            export OF_VERSION=999
+        fi
     fi
 fi
 
