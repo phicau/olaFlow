@@ -7,50 +7,32 @@
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
-    version         2.0;
-    format          ascii;
-    location        "system";
-    class           dictionary;
-    object          controlDict;
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      waveDict;
 }
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     olaFlow;
+waveType        regular;
 
-startFrom       latestTime;
+waveTheory      cnoidal;
 
-startTime       0;
+genAbs          1;
 
-stopAt          endTime;
+absDir          0.0;
 
-endTime         30;
+nPaddles        1;
 
-deltaT          0.001;
+waveHeight      0.10;
 
-writeControl    adjustableRunTime;
+wavePeriod      3;
 
-writeInterval   0.05;
+waveDir         0.0;
 
-purgeWrite      0;
+wavePhase       1.57079633;
 
-writeFormat     ascii;
-
-writePrecision  6;
-
-writeCompression uncompressed;
-
-timeFormat      general;
-
-timePrecision   6;
-
-runTimeModifiable yes;
-
-adjustTimeStep  yes;
-
-maxCo           0.5;
-maxAlphaCo	    0.5;
-
-maxDeltaT       0.025;
+uCurrent        (-0.75 0. 0.);
 
 // ************************************************************************* //

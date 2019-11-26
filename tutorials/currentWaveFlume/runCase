@@ -1,13 +1,49 @@
 #!/bin/bash
 
-mkdir 0
+# Choice
+echo Select a choice:
+echo  "(1) Waves and forward current"
+echo  "(2) Waves and backward current"
+echo  "(3) Forward current only"
+echo  "(4) Backward current only"
+read -p " " -n 1 -r reply
+echo ' '
+
+if ! [[ $reply =~ ^[1234]$ ]]
+then
+    echo Invalid choice
+    exit
+fi
+
+echo Preparing 0 folder...
+cp -r 0.org 0
+
+# Make choice changes
+echo Making case adjustments...
+if [ $reply == "1" ];
+then
+    cp 0/U_forw 0/U
+    cp system/setFieldsDict_forw system/setFieldsDict
+    cp constant/waveDict_wave_forw constant/waveDict
+elif [ $reply == "2" ];
+then
+    cp 0/U_back 0/U
+    cp system/setFieldsDict_back system/setFieldsDict
+    cp constant/waveDict_wave_back constant/waveDict
+elif [ $reply == "3" ];
+then
+    cp 0/U_forw 0/U
+    cp system/setFieldsDict_forw system/setFieldsDict
+    cp constant/waveDict_curr_forw constant/waveDict
+elif [ $reply == "4" ];
+then
+    cp 0/U_back 0/U
+    cp system/setFieldsDict_back system/setFieldsDict
+    cp constant/waveDict_curr_back constant/waveDict
+fi
 
 echo blockMesh meshing...
 blockMesh > blockMesh.log
-
-echo Preparing 0 folder...
-rm -fr 0
-cp -r 0.org 0
 
 echo Setting the fields...
 setFields > setFields.log
@@ -16,3 +52,4 @@ echo Running...
 olaFlow > olaFlow.log
 
 echo Simulation complete.
+
