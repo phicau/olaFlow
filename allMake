@@ -68,6 +68,7 @@ fi
 
 wclean all > /dev/null
 
+# Boundary conditions
 wmake libso genAbs/waveGeneration
 
 if (( $? )) ; then 
@@ -84,6 +85,7 @@ if (( $? )) ; then
     echo -e "\n\nOlaFlow project wave absorption boundary conditions compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";  
 fi
 
+# Solver
 cd solvers/$OF_SOLVER
 
 wclean all > /dev/null
@@ -102,6 +104,25 @@ if (( $? )) ; then
 fi
 
 wclean all > /dev/null
+
+cd -
+
+# Applications
+cd applications/setOla
+
+wclean all > /dev/null
+
+wmake
+
+if (( $? )) ; then 
+    echo "setOla ultility compilation failed. This utility is not compatible with your current version, but it might be in the future."
+    exit; else
+    echo -e "\n\nsetOla ultility compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";
+fi
+
+wclean all > /dev/null
+
+cd -
 
 # Clean up
 cd -

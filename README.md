@@ -7,7 +7,7 @@ OLAFLOW
 
 This free and open source project is committed to bringing the latest advances in the simulation of wave dynamics to the OpenFOAM® and FOAM-extend communities.
 
-olaFlow includes a set of solvers and boundary conditions to generate and absorb water waves actively at the boundaries and to simulate their interaction with porous coastal structures.
+olaFlow includes a set of utilities, solvers and boundary conditions to generate and absorb water waves actively at the boundaries and to simulate their interaction with porous, floating or static structures in the coastal or offshore environments.
 
 You can find all the information regarding the model at its web site and wiki:
 
@@ -21,9 +21,9 @@ olaFlow now has a DOI that can be included in citations: [![DOI](https://zenodo.
 
 If you want to reference the model in your publications you can use the following phrase:
 
-> olaFlow [DOI] is an open source project developed within the OpenFOAM® framework as a continuation of the work in Higuera et al. (xxxx). The numerical model enables simulating wave and porous structure interaction in the coastal and offshore fields.
+> olaFlow [DOI] is an open source project developed within the OpenFOAM® framework as a continuation of the work in Higuera et al. (xxxx) for simulating wave and porous structure interactions in the coastal and offshore fields.
 
-Feel free to modify the phase and adapt it for your own needs.
+Feel free to modify the phrase and adapt it for your own needs.
 
 You can also include any of the [following references](https://olaflow.github.io/numerical-model/internal-references/) when citing the implementation, validation and applications.
 
