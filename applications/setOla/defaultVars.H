@@ -5,6 +5,7 @@ List<scalar> waveHeights_ = List<scalar> (1, -1.0);
 scalar waveLength_ = -1;
 List<scalar> waveLengths_ = List<scalar> (1, -1.0);
 scalar waterDepth_ = -1;
+scalar waterLevel_ = -1;
 scalar wavePhase_ = 3.0*PI()/2.0;
 List<scalar> wavePhases_ = List<scalar> (1, -1.0);
 scalar timeLag_ = 0;

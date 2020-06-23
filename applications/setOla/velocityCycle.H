@@ -15,6 +15,11 @@ forAll(calculatedLevel, cellIndex)
         zExtra = zComp[cellIndex];
     }
 
+    if (zComp[cellIndex] < 0.)
+    {
+        zExtra = 0.;
+    }
+
     #include "velocityProfile.H"
 
     vector cellV = 

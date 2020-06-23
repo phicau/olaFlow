@@ -6,15 +6,6 @@ cellBoundsZ( mesh, &zSup, &zInf );
 scalar X0 = gMin(mesh.points().component(0)); // Variable for solitary
 scalar Z0 = gMin(mesh.points().component(2));
 
-// Change in reference level (-= zMin)
-zSup -= Z0;
-zInf -= Z0;
-
-// Cell centres
-const scalarField xComp = mesh.C().component(0);
-const scalarField yComp = mesh.C().component(1);
-const scalarField zComp = mesh.C().component(2) - dimensionedScalar("Z0", dimLength, Z0);
-
 // Auxiliar variables
 scalar auxiliar = 0; 
 scalar auxiliarTotal = 0;
@@ -77,15 +68,40 @@ if ( waveType_ == "aaa" )    // No target specified
         << exit(FatalError);
 }
 
-waterDepth_ = (waveDict.lookupOrDefault<scalar>("waterDepth", 0));
+waterLevel_ = (waveDict.lookupOrDefault<scalar>("setWaterLevel", -1666));
 
-if ( waterDepth_ <= 0.0 )
+if ( waterLevel_ <= -1665.0 )
 {
     FatalError
-        << "Water depth (waterDepth) not specified in "
+        << "Water level (setWaterLevel) not specified in "
         << waveDictName_
         << exit(FatalError);
 }
+
+waterDepth_ = (waveDict.lookupOrDefault<scalar>("setWaterDepth", -1));
+
+if ( waterDepth_ <= 0.0 )
+{
+    waterDepth_ = waterLevel_ - Z0;
+
+    if ( waterDepth_ <= 0.0 )
+    {
+        FatalError
+            << "Water depth is negative (" << waterDepth_
+            << ") Please fix a correct water depth/level (setWaterDepth or setWaterLevel) values."
+            << exit(FatalError);
+    }
+}
+
+// Change in reference level (+= h - l)
+Z0 = waterDepth_ - waterLevel_;
+zSup += Z0;
+zInf += Z0;
+
+// Cell centres
+const scalarField xComp = mesh.C().component(0);
+const scalarField yComp = mesh.C().component(1);
+const scalarField zComp = mesh.C().component(2) + dimensionedScalar("Z0", dimLength, Z0);
 
 if ( waveType_ == "regular" )
 {
