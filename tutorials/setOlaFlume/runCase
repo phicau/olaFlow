@@ -10,7 +10,7 @@ rm -fr 0
 cp -r 0.org 0
 
 echo Setting the fields...
-setFields > setFields.log
+setOla > setOla.log
 
 echo Running...
 olaFlow > olaFlow.log
