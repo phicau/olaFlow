@@ -28,7 +28,7 @@ else
         elif [ $OF_VERSION -lt 1900 ]; then
             export OF_SOLVER=olaFlowOFv18xx
         else
-            export OF_SOLVER=olaFlowOFv19xx
+            export OF_SOLVER=olaFlowOFv19xx-20xx
         fi
     else
         # OpenFOAM
@@ -38,7 +38,7 @@ else
 
         if [ $OF_VERSION -lt 1 ]; then
             # Dev version
-            export OF_SOLVER=$LATEST_SOLVER
+            export OF_SOLVER=olaFlowOFdev
             export OF_VERSION=999
         elif [ $OF_VERSION -lt 170 ]; then
             export OF_SOLVER=olaFlowOF16ext
