@@ -7,11 +7,9 @@ savePath = os.path.join(pathname,'gaugesVOF')
 if not os.path.isdir(savePath):
     os.makedirs(savePath)
 
-postPath = os.path.join(pathname,'postProcessing')
-if os.path.isdir(postPath):
-    postPath = 'postProcessing/sets'
-else:
-    postPath = 'sets'
+postPath = os.path.join(pathname,'postProcessing/sets')
+if not os.path.isdir(postPath):
+    postPath = 'postProcessing/gaugesVOF'
 
 # List of time dirs in order
 a = os.listdir('./'+postPath)

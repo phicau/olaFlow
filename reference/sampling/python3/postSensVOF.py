@@ -7,15 +7,9 @@ savePath = os.path.join(pathname,'gaugesVOF')
 if not os.path.isdir(savePath):
     os.makedirs(savePath)
 
-postPath = os.path.join(pathname,'sets')
-if os.path.isdir(postPath):
-    postPath = 'sets'
-else:
-    postPath = os.path.join(pathname,'postProcessing/sets')
-    if os.path.isdir(postPath):
-        postPath = 'postProcessing/sets'
-    else:
-        postPath = 'postProcessing/sampleDictVOF'
+postPath = os.path.join(pathname,'postProcessing/sets')
+if not os.path.isdir(postPath):
+    postPath = 'postProcessing/gaugesVOF'
 
 # List of time dirs in order
 a = sorted(os.listdir(postPath), key=float)

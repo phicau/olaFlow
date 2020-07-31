@@ -4,7 +4,7 @@ import os
 from pylab import *
 
 pathname = os.path.abspath('.')
-readPath = os.path.join(pathname,'sensorsPres')
+readPath = os.path.join(pathname,'gaugesP')
 a = os.listdir(readPath)
 
 # Sorting

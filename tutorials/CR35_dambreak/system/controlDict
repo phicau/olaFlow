@@ -37,7 +37,7 @@ writeFormat     ascii;
 
 writePrecision  6;
 
-writeCompression uncompressed;
+compression     off;
 
 timeFormat      general;
 
@@ -57,11 +57,11 @@ functions
     freeSurface
     {
         type surfaces;
-        functionObjectLibs
+        libs
         (
             "libsampling.so"
         );
-        outputControl   outputTime;
+        writeControl   outputTime;
         interpolationScheme cellPoint;
         surfaceFormat  raw;
         fields
