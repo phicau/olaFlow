@@ -1,9 +1,9 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
-     \\/     M anipulation  |
+   \\    /   O peration     |
+    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+     \\/     M anipulation  | Copyright (C) 2016-2017 OpenCFD Ltd.
 -------------------------------------------------------------------------------
 License
     This file is a derivative work of OpenFOAM.
@@ -23,20 +23,18 @@ License
 \*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*\
 Application
-    olaFlow
+    overOlaDyMFlow
+
+Group
+    grpMultiphaseSolvers grpMovingMeshSolvers
 
 Description
     Solver for 2 incompressible, isothermal immiscible fluids using a VOF
-    (volume of fluid) phase-fraction based interface capturing approach.
+    (volume of fluid) phase-fraction based interface capturing approach,
+    with optional mesh motion and mesh topology changes including adaptive
+    re-meshing.
 
-    The momentum and other fluid properties are of the "mixture" and a single
-    momentum equation is solved.
-
-    Turbulence modelling is generic, i.e. laminar, RAS or LES may be selected.
-
-    For a two-fluid approach see twoPhaseEulerFoam.
-
-    olaFlow solves the VARANS equations.
+    overOlaDyMFlow solves the VARANS equations.
 
 \*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*\
@@ -67,6 +65,11 @@ Description
 |    Coastal Engineering, Vol. 83, 259–270.                                   |
 |    http://dx.doi.org/10.1016/j.coastaleng.2013.09.002                       |
 |                                                                             |
+| - Three-dimensional numerical wave generation with moving boundaries        |
+|    Higuera, P., Lara, J.L. and Losada, I.J. (2015)                          |
+|    Coastal Engineering, Vol. 101, 35–47.                                    |
+|    https://doi.org/10.1016/j.coastaleng.2015.04.003                         |
+|                                                                             |
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
@@ -77,11 +80,17 @@ Description
 #include "CrankNicolsonDdtScheme.H"
 #include "subCycle.H"
 #include "immiscibleIncompressibleTwoPhaseMixture.H"
-#include "kinematicMomentumTransportModel.H"
+#include "turbulentTransportModel.H"
 #include "pimpleControl.H"
 #include "fvOptions.H"
 #include "CorrectPhi.H"
 #include "fvcSmooth.H"
+#include "cellCellStencilObject.H"
+#include "localMin.H"
+#include "interpolationCellPoint.H"
+#include "transform.H"
+#include "fvMeshSubset.H"
+#include "oversetAdjustPhi.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -89,15 +98,33 @@ int main(int argc, char *argv[])
 {
     #include "postProcess.H"
 
-    #include "setRootCaseLists.H"
+    #include "setRootCase.H"
     #include "createTime.H"
     #include "createDynamicFvMesh.H"
     #include "initContinuityErrs.H"
+    pimpleControl pimple(mesh);
+    #include "createTimeControls.H"
     #include "createDyMControls.H"
     #include "createFields.H"
     #include "createAlphaFluxes.H"
-    #include "initCorrectPhi.H"
-    #include "createUfIfPresent.H"
+    #include "createFvOptions.H"
+
+    volScalarField rAU
+    (
+        IOobject
+        (
+            "rAU",
+            runTime.timeName(),
+            mesh,
+            IOobject::READ_IF_PRESENT,
+            IOobject::AUTO_WRITE
+        ),
+        mesh,
+        dimensionedScalar("rAUf", dimTime/rho.dimensions(), 1.0)
+    );
+
+    #include "correctPhi.H"
+    #include "createUf.H"
 
     turbulence->validate();
 
@@ -107,12 +134,15 @@ int main(int argc, char *argv[])
         #include "setInitialDeltaT.H"
     }
 
+    #include "setCellMask.H"
+    #include "setInterpolatedCells.H"
+
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     Info<< "\nStarting time loop\n" << endl;
 
-    while (pimple.run(runTime))
+    while (runTime.run())
     {
-        #include "readDyMControls.H"
+        #include "readControls.H"
 
         if (LTS)
         {
@@ -132,12 +162,18 @@ int main(int argc, char *argv[])
         // --- Pressure-velocity PIMPLE corrector loop
         while (pimple.loop())
         {
-            if (pimple.firstPimpleIter() || moveMeshOuterCorrectors)
+            if (pimple.firstIter() || moveMeshOuterCorrectors)
             {
+                scalar timeBeforeMeshUpdate = runTime.elapsedCpuTime();
+
                 mesh.update();
 
                 if (mesh.changing())
                 {
+                    Info<< "Execution time for mesh.update() = "
+                        << runTime.elapsedCpuTime() - timeBeforeMeshUpdate
+                        << " s" << endl;
+
                     // Do not apply previous time-step mesh compression flux
                     // if the mesh topology changed
                     if (mesh.topoChanging())
@@ -148,26 +184,31 @@ int main(int argc, char *argv[])
                     gh = (g & mesh.C()) - ghRef;
                     ghf = (g & mesh.Cf()) - ghRef;
 
-                    MRF.update();
+                    // Update cellMask field for blocking out hole cells
+                    #include "setCellMask.H"
+                    #include "setInterpolatedCells.H"
+                }
 
-                    if (correctPhi)
-                    {
-                        // Calculate absolute flux
-                        // from the mapped surface velocity
-                        phi = mesh.Sf() & Uf();
+                if ((mesh.changing() && correctPhi) || mesh.topoChanging())
+                {
+                    // Calculate absolute flux from the mapped surface velocity
+                    // Note: temporary fix until mapped Uf is assessed
+                    Uf = fvc::interpolate(U);
 
-                        #include "correctPhi.H"
+                    // Calculate absolute flux from the mapped surface velocity
+                    phi = mesh.Sf() & Uf;
 
-                        // Make the flux relative to the mesh motion
-                        fvc::makeRelative(phi, U);
-                    }
+                    #include "correctPhi.H"
+
+                    // Make the flux relative to the mesh motion
+                    fvc::makeRelative(phi, U);
 
                     mixture.correct();
+                }
 
-                    if (checkMeshCourantNo)
-                    {
-                        #include "meshCourantNo.H"
-                    }
+                if (mesh.changing() && checkMeshCourantNo)
+                {
+                    #include "meshCourantNo.H"
                 }
             }
 
@@ -198,9 +239,7 @@ int main(int argc, char *argv[])
             porosityIndex.write();
         }
 
-        Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
-            << "  ClockTime = " << runTime.elapsedClockTime() << " s"
-            << nl << endl;
+        runTime.printExecutionTime(Info);
     }
 
     Info<< "End\n" << endl;

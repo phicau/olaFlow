@@ -50,7 +50,7 @@
 
     scalar maxDeltaT
     (
-        pimpleDict.lookupOrDefault<scalar>("maxDeltaT", great)
+        pimpleDict.lookupOrDefault<scalar>("maxDeltaT", GREAT)
     );
 
     volScalarField rDeltaT0("rDeltaT0", rDeltaT);
@@ -58,7 +58,7 @@
     // Set the reciprocal time-step from the local Courant number
     rDeltaT.ref() = max
     (
-        1/dimensionedScalar(dimTime, maxDeltaT),
+        1/dimensionedScalar("maxDeltaT", dimTime, maxDeltaT),
         fvc::surfaceSum(mag(rhoPhi))()()
        /((2*maxCo)*mesh.V()*rho())
     );
@@ -80,7 +80,7 @@
         );
     }
 
-    // Update the boundary values of the reciprocal time-step
+    // Update tho boundary values of the reciprocal time-step
     rDeltaT.correctBoundaryConditions();
 
     Info<< "Flow time scale min/max = "
@@ -126,7 +126,7 @@
         rDeltaT = max
         (
             rDeltaT,
-            (scalar(1) - rDeltaTDampingCoeff)*rDeltaT0
+            (scalar(1.0) - rDeltaTDampingCoeff)*rDeltaT0
         );
 
         Info<< "Damped flow time scale min/max = "

@@ -13,21 +13,10 @@ if (correctPhi)
             IOobject::AUTO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimTime/dimDensity, 1)
+        dimensionedScalar("rAU", dimTime/dimDensity, 1)
     );
 
-    CorrectPhi
-    (
-        U,
-        phi,
-        p_rgh,
-        surfaceScalarField("rAUf", fvc::interpolate(rAU())),
-        geometricZeroField(),
-        pimple,
-        false
-    );
-
-    #include "continuityErrs.H"
+    #include "correctPhi.H"
 }
 else
 {
@@ -36,10 +25,9 @@ else
         U,
         phi,
         p_rgh,
-        dimensionedScalar(dimTime/rho.dimensions(), 1),
+        dimensionedScalar("rAUf", dimTime/rho.dimensions(), 1),
         geometricZeroField(),
-        pimple,
-        false
+        pimple
     );
 
     #include "continuityErrs.H"

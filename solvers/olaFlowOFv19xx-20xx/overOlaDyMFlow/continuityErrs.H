@@ -1,9 +1,9 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
-     \\/     M anipulation  |
+   \\    /   O peration     |
+    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+     \\/     M anipulation  | Copyright (C) 2016 OpenCFD Ltd.
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -22,32 +22,27 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Global
-    setDeltaT
+    continuityErrs
 
 Description
-    Reset the timestep to maintain a constant maximum courant Number.
-    Reduction of time-step is immediate, but increase is damped to avoid
-    unstable oscillations.
+    Calculates and prints the continuity errors.
 
 \*---------------------------------------------------------------------------*/
 
-if (adjustTimeStep)
 {
-    scalar maxDeltaTFact =
-        min(maxCo/(CoNum + small), maxAlphaCo/(alphaCoNum + small));
+    volScalarField contErr(interpolatedCells*cellMask*fvc::div(phi));
 
-    scalar deltaTFact = min(min(maxDeltaTFact, 1.0 + 0.1*maxDeltaTFact), 1.2);
+    scalar sumLocalContErr = runTime.deltaTValue()*
+        mag(contErr)().weightedAverage(mesh.V()).value();
 
-    runTime.setDeltaT
-    (
-        min
-        (
-            deltaTFact*runTime.deltaTValue(),
-            maxDeltaT
-        )
-    );
+    scalar globalContErr = runTime.deltaTValue()*
+        contErr.weightedAverage(mesh.V()).value();
+    cumulativeContErr += globalContErr;
 
-    Info<< "deltaT = " <<  runTime.deltaTValue() << endl;
+    Info<< "time step continuity errors : sum local = " << sumLocalContErr
+        << ", global = " << globalContErr
+        << ", cumulative = " << cumulativeContErr
+        << endl;
 }
 
 // ************************************************************************* //

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+   \\    /   O peration     |
+    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,32 +22,32 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Global
-    setDeltaT
+    CourantNo
 
 Description
-    Reset the timestep to maintain a constant maximum courant Number.
-    Reduction of time-step is immediate, but increase is damped to avoid
-    unstable oscillations.
+    Calculates and outputs the mean and maximum Courant Numbers.
 
 \*---------------------------------------------------------------------------*/
 
-if (adjustTimeStep)
+scalar CoNum = 0.0;
+scalar meanCoNum = 0.0;
+
+if (mesh.nInternalFaces())
 {
-    scalar maxDeltaTFact =
-        min(maxCo/(CoNum + small), maxAlphaCo/(alphaCoNum + small));
+    surfaceScalarField phiMask(localMin<scalar>(mesh).interpolate(cellMask));
 
-    scalar deltaTFact = min(min(maxDeltaTFact, 1.0 + 0.1*maxDeltaTFact), 1.2);
-
-    runTime.setDeltaT
+    scalarField sumPhi
     (
-        min
-        (
-            deltaTFact*runTime.deltaTValue(),
-            maxDeltaT
-        )
+        fvc::surfaceSum(mag(phiMask*phi))().internalField()
     );
 
-    Info<< "deltaT = " <<  runTime.deltaTValue() << endl;
+    CoNum = 0.5*gMax(sumPhi/mesh.V().field())*runTime.deltaTValue();
+
+    meanCoNum =
+        0.5*(gSum(sumPhi)/gSum(mesh.V().field()))*runTime.deltaTValue();
 }
+
+Info<< "Courant Number mean: " << meanCoNum
+    << " max: " << CoNum << endl;
 
 // ************************************************************************* //

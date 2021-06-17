@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+   \\    /   O peration     |
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,6 +25,9 @@ License
 Application
     olaFlow
 
+Group
+    grpMultiphaseSolvers
+
 Description
     Solver for 2 incompressible, isothermal immiscible fluids using a VOF
     (volume of fluid) phase-fraction based interface capturing approach.
@@ -35,8 +38,6 @@ Description
     Turbulence modelling is generic, i.e. laminar, RAS or LES may be selected.
 
     For a two-fluid approach see twoPhaseEulerFoam.
-
-    olaFlow solves the VARANS equations.
 
 \*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*\
@@ -77,7 +78,7 @@ Description
 #include "CrankNicolsonDdtScheme.H"
 #include "subCycle.H"
 #include "immiscibleIncompressibleTwoPhaseMixture.H"
-#include "kinematicMomentumTransportModel.H"
+#include "turbulentTransportModel.H"
 #include "pimpleControl.H"
 #include "fvOptions.H"
 #include "CorrectPhi.H"
@@ -89,7 +90,8 @@ int main(int argc, char *argv[])
 {
     #include "postProcess.H"
 
-    #include "setRootCaseLists.H"
+    #include "addCheckCaseOptions.H"
+    #include "setRootCase.H"
     #include "createTime.H"
     #include "createDynamicFvMesh.H"
     #include "initContinuityErrs.H"
@@ -110,7 +112,7 @@ int main(int argc, char *argv[])
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     Info<< "\nStarting time loop\n" << endl;
 
-    while (pimple.run(runTime))
+    while (runTime.run())
     {
         #include "readDyMControls.H"
 
@@ -132,7 +134,7 @@ int main(int argc, char *argv[])
         // --- Pressure-velocity PIMPLE corrector loop
         while (pimple.loop())
         {
-            if (pimple.firstPimpleIter() || moveMeshOuterCorrectors)
+            if (pimple.firstIter() || moveMeshOuterCorrectors)
             {
                 mesh.update();
 
@@ -160,9 +162,9 @@ int main(int argc, char *argv[])
 
                         // Make the flux relative to the mesh motion
                         fvc::makeRelative(phi, U);
-                    }
 
-                    mixture.correct();
+                        mixture.correct();
+                    }
 
                     if (checkMeshCourantNo)
                     {
@@ -175,6 +177,11 @@ int main(int argc, char *argv[])
             #include "alphaEqnSubCycle.H"
 
             mixture.correct();
+
+            if (pimple.frozenFlow())
+            {
+                continue;
+            }
 
             #include "UEqn.H"
 
@@ -198,9 +205,7 @@ int main(int argc, char *argv[])
             porosityIndex.write();
         }
 
-        Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
-            << "  ClockTime = " << runTime.elapsedClockTime() << " s"
-            << nl << endl;
+        runTime.printExecutionTime(Info);
     }
 
     Info<< "End\n" << endl;

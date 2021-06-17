@@ -10,7 +10,7 @@ if (nAlphaSubCycles > 1)
             mesh
         ),
         mesh,
-        dimensionedScalar(rhoPhi.dimensions(), 0)
+        dimensionedScalar(rhoPhi.dimensions(), Zero)
     );
 
     tmp<volScalarField> trSubDeltaT;

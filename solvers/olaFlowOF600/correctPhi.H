@@ -5,8 +5,7 @@ CorrectPhi
     p_rgh,
     surfaceScalarField("rAUf", fvc::interpolate(rAU())),
     geometricZeroField(),
-    pimple,
-    true
+    pimple
 );
 
 #include "continuityErrs.H"

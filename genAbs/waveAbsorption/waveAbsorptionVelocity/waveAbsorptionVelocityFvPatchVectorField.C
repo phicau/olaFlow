@@ -90,7 +90,7 @@ waveAbsorptionVelocityFvPatchVectorField
 :
     fixedValueFvPatchField<vector>(p, iF, dict),
     AWADictName_(dict.lookupOrDefault<word>("AWADictName", "")),
-    AWADict_(dict.subOrEmptyDict("AWADict", false)),
+    AWADict_(dict.subOrEmptyDict("AWADict")),
     allCheck_(dict.lookupOrDefault<bool>("allCheck", false ))
 {
     if (!dict.isDict("AWADict"))

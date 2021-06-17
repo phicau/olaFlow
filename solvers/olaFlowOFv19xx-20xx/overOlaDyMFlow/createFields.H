@@ -1,6 +1,5 @@
-#include "createPorosity.H"
-
 #include "createRDeltaT.H"
+#include "createPorosity.H"
 
 Info<< "Reading field p_rgh\n" << endl;
 volScalarField p_rgh
@@ -31,6 +30,38 @@ volVectorField U
 );
 
 #include "createPhi.H"
+
+
+
+    //- Overset specific
+
+    // Add solver-specific interpolations
+    {
+        dictionary oversetDict;
+        oversetDict.add("U", true);
+        oversetDict.add("p", true);
+        oversetDict.add("HbyA", true);
+        oversetDict.add("p_rgh", true);
+        oversetDict.add("alpha1", true);
+        oversetDict.add("minGradP", true);
+
+        const_cast<dictionary&>
+        (
+            mesh.schemesDict()
+        ).add
+        (
+            "oversetInterpolationRequired",
+            oversetDict,
+            true
+        );
+    }
+
+    // Mask field for zeroing out contributions on hole cells
+    #include "createCellMask.H"
+
+    // Create bool field with interpolated cells
+    #include "createInterpolatedCells.H"
+
 
 
 Info<< "Reading transportProperties\n" << endl;
@@ -74,9 +105,9 @@ surfaceScalarField rhoPhi
 
 
 // Construct incompressible turbulence model
-autoPtr<incompressible::momentumTransportModel> turbulence
+autoPtr<incompressible::turbulenceModel> turbulence
 (
-    incompressible::momentumTransportModel::New(U, phi, mixture)
+    incompressible::turbulenceModel::New(U, phi, mixture)
 );
 
 
@@ -123,5 +154,19 @@ if (p_rgh.needReference())
 mesh.setFluxRequired(p_rgh.name());
 mesh.setFluxRequired(alpha1.name());
 
+// MULES compressed flux is registered in case scalarTransport FO needs it.
+surfaceScalarField alphaPhiUn
+(
+    IOobject
+    (
+        "alphaPhiUn",
+        runTime.timeName(),
+        mesh,
+        IOobject::NO_READ,
+        IOobject::NO_WRITE
+    ),
+    mesh,
+    dimensionedScalar(phi.dimensions(), Zero)
+);
+
 #include "createMRF.H"
-#include "createFvOptions.H"
