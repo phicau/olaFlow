@@ -229,6 +229,8 @@ waveVelocityFvPatchVectorField
 }
 
 
+#if OFFLAVOUR == 3 && OFVERSION >= 900
+#else
 Foam::
 waveVelocityFvPatchVectorField::
 waveVelocityFvPatchVectorField
@@ -330,6 +332,7 @@ waveVelocityFvPatchVectorField
     paddleVelocityW_(ptf.paddleVelocityW_),
     paddleEta_(ptf.paddleEta_)
 {}
+#endif
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

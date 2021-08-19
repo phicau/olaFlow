@@ -1,7 +1,6 @@
 static const wordHashSet compressionSchemes
 {
     "interfaceCompression",
-    "noInterfaceCompression",
     "PLIC",
     "PLICU",
     "MPLIC",

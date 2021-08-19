@@ -24,7 +24,7 @@ startTime       0;
 
 stopAt          endTime;
 
-endTime         1;
+endTime         30;
 
 deltaT          0.001;
 
@@ -63,7 +63,7 @@ functions
         writeInterval   1;
         setFormat       raw;
         surfaceFormat   raw;
-        interpolationScheme cellPoint;
+        interpolationScheme cell;
         fields          ( alpha.water );
         sets
         (

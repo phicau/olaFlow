@@ -205,6 +205,8 @@ wavemakerMovement
 {}
 
 
+#if OFFLAVOUR == 3 && OFVERSION >= 900
+#else
 wavemakerMovement::
 wavemakerMovement
 (
@@ -280,6 +282,7 @@ wavemakerMovement
     tuningFactor_(ptf.tuningFactor_),
     allCheck_(ptf.allCheck_)
 {}
+#endif
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //

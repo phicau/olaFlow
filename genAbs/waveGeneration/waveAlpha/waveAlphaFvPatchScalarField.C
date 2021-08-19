@@ -224,6 +224,8 @@ waveAlphaFvPatchScalarField
 }
 
 
+#if OFFLAVOUR == 3 && OFVERSION >= 900
+#else
 Foam::
 waveAlphaFvPatchScalarField::
 waveAlphaFvPatchScalarField
@@ -321,6 +323,7 @@ waveAlphaFvPatchScalarField
     paddleVelocityW_(ptf.paddleVelocityW_),
     paddleEta_(ptf.paddleEta_)
 {}
+#endif
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

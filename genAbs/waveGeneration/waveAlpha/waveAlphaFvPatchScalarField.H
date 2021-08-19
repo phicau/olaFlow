@@ -243,6 +243,8 @@ public:
             const fvPatchFieldMapper&
         );
 
+        #if OFFLAVOUR == 3 && OFVERSION >= 900
+        #else
         //- Construct as copy
         waveAlphaFvPatchScalarField
         (
@@ -276,6 +278,7 @@ public:
                 new waveAlphaFvPatchScalarField(*this, iF)
             );
         }
+        #endif
 
 
     // Member functions

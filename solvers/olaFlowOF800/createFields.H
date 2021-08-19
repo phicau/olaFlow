@@ -36,11 +36,6 @@ volVectorField U
 Info<< "Reading transportProperties\n" << endl;
 immiscibleIncompressibleTwoPhaseMixture mixture(U, phi);
 
-autoPtr<twoPhaseChangeModel> phaseChangePtr
-(
-    twoPhaseChangeModel::New(mixture)
-);
-
 volScalarField& alpha1(mixture.alpha1());
 volScalarField& alpha2(mixture.alpha2());
 
@@ -61,6 +56,21 @@ volScalarField rho
     alpha1*rho1 + alpha2*rho2
 );
 rho.oldTime();
+
+
+// Mass flux
+surfaceScalarField rhoPhi
+(
+    IOobject
+    (
+        "rhoPhi",
+        runTime.timeName(),
+        mesh,
+        IOobject::NO_READ,
+        IOobject::NO_WRITE
+    ),
+    fvc::interpolate(rho)*phi
+);
 
 
 // Construct incompressible turbulence model
@@ -88,7 +98,16 @@ volScalarField p
     p_rgh + rho*gh
 );
 
-pressureReference pressureReference(p, p_rgh, pimple.dict());
+label pRefCell = 0;
+scalar pRefValue = 0.0;
+setRefCell
+(
+    p,
+    p_rgh,
+    pimple.dict(),
+    pRefCell,
+    pRefValue
+);
 
 if (p_rgh.needReference())
 {
@@ -96,8 +115,7 @@ if (p_rgh.needReference())
     (
         "p",
         p.dimensions(),
-        pressureReference.refValue()
-      - getRefCellValue(p, pressureReference.refCell())
+        pRefValue - getRefCellValue(p, pRefCell)
     );
     p_rgh = p - rho*gh;
 }
@@ -106,5 +124,4 @@ mesh.setFluxRequired(p_rgh.name());
 mesh.setFluxRequired(alpha1.name());
 
 #include "createMRF.H"
-#include "createFvModels.H"
-#include "createFvConstraints.H"
+#include "createFvOptions.H"

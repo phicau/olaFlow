@@ -197,6 +197,8 @@ public:
             #endif
         );
 
+        #if OFFLAVOUR == 3 && OFVERSION >= 900
+        #else
         //- Construct as copy
         wavemakerMovement
         (
@@ -230,6 +232,7 @@ public:
                 new wavemakerMovement(*this, iF)
             );
         }
+        #endif
 
 
     //- Destructor

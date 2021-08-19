@@ -1,0 +1,18 @@
+#!/bin/bash
+
+wclean all > /dev/null
+
+wmake all
+
+if (( $? )) ; then 
+    echo "olaFlow solvers compilation failed"
+    exit; else
+    echo -e "\n\nolaFlow solvers compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";
+
+    # Create symbolic link if olaDyMFlow does not exist (OF-dev, OFv1806)
+    if [ ! -f $FOAM_USER_APPBIN/olaDyMFlow ]; then
+        ln -s $FOAM_USER_APPBIN/olaFlow $FOAM_USER_APPBIN/olaDyMFlow
+    fi
+fi
+
+wclean all > /dev/null

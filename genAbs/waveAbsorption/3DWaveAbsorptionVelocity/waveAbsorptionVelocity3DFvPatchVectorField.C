@@ -118,6 +118,8 @@ waveAbsorptionVelocity3DFvPatchVectorField
 }
 
 
+#if OFFLAVOUR == 3 && OFVERSION >= 900
+#else
 Foam::
 waveAbsorptionVelocity3DFvPatchVectorField::
 waveAbsorptionVelocity3DFvPatchVectorField
@@ -153,6 +155,7 @@ waveAbsorptionVelocity3DFvPatchVectorField
     nEdgeMax_(ptf.nEdgeMax_),
     allCheck_(ptf.allCheck_)
 {}
+#endif
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
