@@ -70,7 +70,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "dynamicFvMesh.H"
+#include "interfaceCompression.H"
 #include "CMULES.H"
 #include "EulerDdtScheme.H"
 #include "localEulerDdtScheme.H"
@@ -78,7 +78,7 @@ Description
 #include "subCycle.H"
 #include "immiscibleIncompressibleTwoPhaseMixture.H"
 #include "noPhaseChange.H"
-#include "kinematicMomentumTransportModel.H"
+#include "incompressibleInterPhaseTransportModel.H"
 #include "pimpleControl.H"
 #include "pressureReference.H"
 #include "fvModels.H"
@@ -94,16 +94,13 @@ int main(int argc, char *argv[])
 
     #include "setRootCaseLists.H"
     #include "createTime.H"
-    #include "createDynamicFvMesh.H"
+    #include "createMesh.H"
     #include "initContinuityErrs.H"
     #include "createDyMControls.H"
     #include "createFields.H"
     #include "createFieldRefs.H"
-    #include "createAlphaFluxes.H"
     #include "initCorrectPhi.H"
     #include "createUfIfPresent.H"
-
-    turbulence->validate();
 
     if (!LTS)
     {
@@ -129,27 +126,55 @@ int main(int argc, char *argv[])
             #include "setDeltaT.H"
         }
 
+        fvModels.preUpdateMesh();
+
+        // Store divU from the previous mesh so that it can be mapped
+        // and used in correctPhi to ensure the corrected phi has the
+        // same divergence
+        tmp<volScalarField> divU;
+
+        if
+        (
+            correctPhi
+         && !isType<twoPhaseChangeModels::noPhaseChange>(phaseChange)
+         && mesh.topoChanged()
+        )
+        {
+            // Construct and register divU for correctPhi
+            divU = new volScalarField
+            (
+                "divU0",
+                fvc::div(fvc::absolute(phi, U))
+            );
+        }
+
+        // Update the mesh for topology change, mesh to mesh mapping
+        bool topoChanged = mesh.update();
+
+        // Do not apply previous time-step mesh compression flux
+        // if the mesh topology changed
+        if (topoChanged)
+        {
+            talphaPhi1Corr0.clear();
+        }
+
         runTime++;
 
-        Info<< "Time = " << runTime.timeName() << nl << endl;
+        Info<< "Time = " << runTime.userTimeName() << nl << endl;
 
         // --- Pressure-velocity PIMPLE corrector loop
         while (pimple.loop())
         {
             if (pimple.firstPimpleIter() || moveMeshOuterCorrectors)
             {
-                // Store divU from the previous mesh so that it can be mapped
-                // and used in correctPhi to ensure the corrected phi has the
-                // same divergence
-                tmp<volScalarField> divU;
-
                 if
                 (
                     correctPhi
                  && !isType<twoPhaseChangeModels::noPhaseChange>(phaseChange)
+                 && !divU.valid()
                 )
                 {
-                    // Construct and register divU for mapping
+                    // Construct and register divU for correctPhi
                     divU = new volScalarField
                     (
                         "divU0",
@@ -157,19 +182,11 @@ int main(int argc, char *argv[])
                     );
                 }
 
-                fvModels.preUpdateMesh();
-
-                mesh.update();
+                // Move the mesh
+                mesh.move();
 
                 if (mesh.changing())
                 {
-                    // Do not apply previous time-step mesh compression flux
-                    // if the mesh topology changed
-                    if (mesh.topoChanging())
-                    {
-                        talphaPhi1Corr0.clear();
-                    }
-
                     gh = (g & mesh.C()) - ghRef;
                     ghf = (g & mesh.Cf()) - ghRef;
 
@@ -220,7 +237,7 @@ int main(int argc, char *argv[])
 
             if (pimple.turbCorr())
             {
-                turbulence->correct();
+                turbulence.correct();
             }
         }
 

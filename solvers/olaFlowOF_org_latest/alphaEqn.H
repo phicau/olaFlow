@@ -9,7 +9,7 @@
             fv::ddtScheme<scalar>::New
             (
                 mesh,
-                mesh.ddtScheme("ddt(alpha)")
+                mesh.schemes().ddt("ddt(alpha)")
             )
         );
         const fv::ddtScheme<scalar>& ddtAlpha = tddtAlpha();
@@ -106,7 +106,7 @@
             << endl;
 
         tmp<surfaceScalarField> talphaPhi1UD(alpha1Eqn.flux());
-        alphaPhi10 = talphaPhi1UD();
+        alphaPhi1 = talphaPhi1UD();
 
         if (alphaApplyPrevCorr && talphaPhi1Corr0.valid())
         {
@@ -115,13 +115,13 @@
             (
                 geometricOneField(),
                 alpha1,
-                alphaPhi10,
+                alphaPhi1,
                 talphaPhi1Corr0.ref(),
                 oneField(),
                 zeroField()
             );
 
-            alphaPhi10 += talphaPhi1Corr0();
+            alphaPhi1 += talphaPhi1Corr0();
         }
 
         // Cache the upwind-flux
@@ -147,7 +147,7 @@
 
         if (MULESCorr)
         {
-            tmp<surfaceScalarField> talphaPhi1Corr(talphaPhi1Un() - alphaPhi10);
+            tmp<surfaceScalarField> talphaPhi1Corr(talphaPhi1Un() - alphaPhi1);
             volScalarField alpha10("alpha10", alpha1);
 
             if (divU.valid())
@@ -180,17 +180,17 @@
             // Under-relax the correction for all but the 1st corrector
             if (aCorr == 0)
             {
-                alphaPhi10 += talphaPhi1Corr();
+                alphaPhi1 += talphaPhi1Corr();
             }
             else
             {
                 alpha1 = 0.5*alpha1 + 0.5*alpha10;
-                alphaPhi10 += 0.5*talphaPhi1Corr();
+                alphaPhi1 += 0.5*talphaPhi1Corr();
             }
         }
         else
         {
-            alphaPhi10 = talphaPhi1Un;
+            alphaPhi1 = talphaPhi1Un;
 
             if (divU.valid())
             {
@@ -199,7 +199,7 @@
                     porosity,
                     alpha1,
                     phiCN,
-                    alphaPhi10,
+                    alphaPhi1,
                     Sp(),
                     (Su() + divU()*min(alpha1(), scalar(1)))(),
                     oneField(),
@@ -213,7 +213,7 @@
                     porosity,
                     alpha1,
                     phiCN,
-                    alphaPhi10,
+                    alphaPhi1,
                     oneField(),
                     zeroField()
                 );
@@ -227,7 +227,7 @@
 
     if (alphaApplyPrevCorr && MULESCorr)
     {
-        talphaPhi1Corr0 = alphaPhi10 - talphaPhi1Corr0;
+        talphaPhi1Corr0 = alphaPhi1 - talphaPhi1Corr0;
         talphaPhi1Corr0.ref().rename("alphaPhi1Corr0");
     }
     else
@@ -239,25 +239,25 @@
 
     if
     (
-        word(mesh.ddtScheme("ddt(rho,U)"))
+        word(mesh.schemes().ddt("ddt(rho,U)"))
      == fv::EulerDdtScheme<vector>::typeName
-     || word(mesh.ddtScheme("ddt(rho,U)"))
+     || word(mesh.schemes().ddt("ddt(rho,U)"))
      == fv::localEulerDdtScheme<vector>::typeName
     )
     {
-        rhoPhi = alphaPhi10*(rho1f - rho2f) + phiCN*rho2f;
+        rhoPhi = alphaPhi1*(rho1f - rho2f) + phiCN*rho2f;
     }
     else
     {
         if (ocCoeff > 0)
         {
             // Calculate the end-of-time-step alpha flux
-            alphaPhi10 =
-                (alphaPhi10 - (1.0 - cnCoeff)*alphaPhi10.oldTime())/cnCoeff;
+            alphaPhi1 =
+                (alphaPhi1 - (1.0 - cnCoeff)*alphaPhi1.oldTime())/cnCoeff;
         }
 
         // Calculate the end-of-time-step mass flux
-        rhoPhi = alphaPhi10*(rho1f - rho2f) + phi*rho2f;
+        rhoPhi = alphaPhi1*(rho1f - rho2f) + phi*rho2f;
     }
 
     Info<< "Phase-1 volume fraction = "

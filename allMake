@@ -28,17 +28,23 @@ else
         elif [ $OF_VERSION -lt 1900 ]; then
             export OF_SOLVER=olaFlowOFv18xx
         else
-            export OF_SOLVER=olaFlowOFv19xx-21xx
+            export OF_SOLVER=olaFlowOFv_com_latest
         fi
     else
         # OpenFOAM (.org) - OF_FLAVOUR=3
-        export OF_VERSION=`echo $WM_PROJECT_VERSION"-00" | sed -e 's/v//' -e 's/+//' -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -3 | tr -d '\n' | head -c3`
+        OF_VERSION=`echo $WM_PROJECT_VERSION"-00" | sed -e 's/v//' -e 's/+//' -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -1`
+        if [ $OF_VERSION -lt 10 ]; then
+            export OF_VERSION=`echo $WM_PROJECT_VERSION"-00" | sed -e 's/v//' -e 's/+//' -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -3 | tr -d '\n' | head -c3`
+        else
+            export OF_VERSION=`echo $WM_PROJECT_VERSION"-00" | sed -e 's/v//' -e 's/+//' -e 's/\.x/-9/' -e 's/\./\'$'\n/g' -e 's/-/\'$'\n/g' | grep "[0-9]" | head -3 | tr -d '\n' | head -c4`
+        fi
+        
         export OF_FLAVOUR=3
-        export LATEST_SOLVER=olaFlowOFdev
+        export LATEST_SOLVER=olaFlowOF_org_latest
 
         if [ $OF_VERSION -lt 1 ]; then
             # Dev version
-            export OF_SOLVER=olaFlowOFdev
+            export OF_SOLVER=$LATEST_SOLVER
             export OF_VERSION=9999
         elif [ $OF_VERSION -lt 170 ]; then
             export OF_SOLVER=olaFlowOF16ext
@@ -91,23 +97,7 @@ fi
 
 # Solver
 cd solvers/$OF_SOLVER
-
-wclean all > /dev/null
-
-wmake all
-
-if (( $? )) ; then 
-    echo "olaFlow solvers compilation failed"
-    exit; else
-    echo -e "\n\nolaFlow solvers compiled successfully for $WM_PROJECT $WM_PROJECT_VERSION\n\n\n";
-
-    # Create symbolic link if olaDyMFlow does not exist (OF-dev, OFv1806)
-    if [ ! -f $FOAM_USER_APPBIN/olaDyMFlow ]; then
-        ln -s $FOAM_USER_APPBIN/olaFlow $FOAM_USER_APPBIN/olaDyMFlow
-    fi
-fi
-
-wclean all > /dev/null
+source allMake
 
 cd -
 

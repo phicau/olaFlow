@@ -2,6 +2,9 @@
 
 wclean all > /dev/null
 
+wmake libso incompressibleInterPhaseTransportModel
+wmake libso VoFTurbulenceDamping
+
 wmake all
 
 if (( $? )) ; then 

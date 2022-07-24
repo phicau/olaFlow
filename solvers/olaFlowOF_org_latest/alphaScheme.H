@@ -1,21 +1,11 @@
-static const wordHashSet compressionSchemes
-{
-    "interfaceCompression",
-    "noInterfaceCompression",
-    "PLIC",
-    "PLICU",
-    "MPLIC",
-    "MPLICU"
-};
-
 static const word divAlphaName("div(phi,alpha)");
 
-const word alphaScheme(mesh.divScheme(divAlphaName)[1].wordToken());
+const word alphaScheme(mesh.schemes().div(divAlphaName)[1].wordToken());
 
 ITstream compressionScheme
 (
     compressionSchemes.found(alphaScheme)
-  ? mesh.divScheme(divAlphaName)
+  ? mesh.schemes().div(divAlphaName)
   : ITstream
     (
         divAlphaName,

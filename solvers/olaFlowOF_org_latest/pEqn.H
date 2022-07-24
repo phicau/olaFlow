@@ -1,5 +1,5 @@
 {
-    if (correctPhi)
+    if (rAU.valid())
     {
         rAU.ref() = 1.0/UEqn.A();
     }
@@ -72,7 +72,7 @@
     #include "continuityErrs.H"
 
     // Correct Uf if the mesh is moving
-    fvc::correctUf(Uf, U, phi);
+    fvc::correctUf(Uf, U, phi, MRF);
 
     // Make the fluxes relative to the mesh motion
     fvc::makeRelative(phi, U);
