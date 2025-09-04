@@ -70,6 +70,8 @@ else
             export OF_SOLVER=olaFlowOF700
         elif [ $OF_VERSION -lt 900 ]; then
             export OF_SOLVER=olaFlowOF800
+        elif [ $OF_VERSION -lt 1000 ]; then
+            export OF_SOLVER=olaFlowOF900
         else
             export OF_SOLVER=$LATEST_SOLVER
         fi
