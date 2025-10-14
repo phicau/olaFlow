@@ -2,10 +2,8 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | www.openfoam.com
-     \\/     M anipulation  |
--------------------------------------------------------------------------------
-    Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+     \\/     M anipulation  | Copyright (C) 2016 OpenCFD Ltd.
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -24,38 +22,27 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Global
-    alphaCourantNo
+    continuityErrs
 
 Description
-    Calculates and outputs the mean and maximum Courant Numbers.
+    Calculates and prints the continuity errors.
 
 \*---------------------------------------------------------------------------*/
 
-scalar maxAlphaCo
-(
-    runTime.controlDict().get<scalar>("maxAlphaCo")
-);
-
-scalar alphaCoNum = 0.0;
-scalar meanAlphaCoNum = 0.0;
-
-if (mesh.nInternalFaces())
 {
-    surfaceScalarField phiMask(localMin<scalar>(mesh).interpolate(cellMask));
+    volScalarField contErr(interpolatedCells*cellMask*fvc::div(phi));
 
-    scalarField sumPhi
-    (
-        mixture.nearInterface()().internalField()
-       *fvc::surfaceSum(mag(phiMask*phi))().internalField()
-    );
+    scalar sumLocalContErr = runTime.deltaTValue()*
+        mag(contErr)().weightedAverage(mesh.V()).value();
 
-    alphaCoNum = 0.5*gMax(sumPhi/mesh.V().field())*runTime.deltaTValue();
+    scalar globalContErr = runTime.deltaTValue()*
+        contErr.weightedAverage(mesh.V()).value();
+    cumulativeContErr += globalContErr;
 
-    meanAlphaCoNum =
-        0.5*(gSum(sumPhi)/gSum(mesh.V().field()))*runTime.deltaTValue();
+    Info<< "time step continuity errors : sum local = " << sumLocalContErr
+        << ", global = " << globalContErr
+        << ", cumulative = " << cumulativeContErr
+        << endl;
 }
-
-Info<< "Interface Courant Number mean: " << meanAlphaCoNum
-    << " max: " << alphaCoNum << endl;
 
 // ************************************************************************* //

@@ -2,10 +2,8 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | www.openfoam.com
+    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
      \\/     M anipulation  |
--------------------------------------------------------------------------------
-    Copyright (C) 2011-2014 OpenFOAM Foundation
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -24,20 +22,15 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Global
-    alphaCourantNo
+    CourantNo
 
 Description
     Calculates and outputs the mean and maximum Courant Numbers.
 
 \*---------------------------------------------------------------------------*/
 
-scalar maxAlphaCo
-(
-    runTime.controlDict().get<scalar>("maxAlphaCo")
-);
-
-scalar alphaCoNum = 0.0;
-scalar meanAlphaCoNum = 0.0;
+scalar CoNum = 0.0;
+scalar meanCoNum = 0.0;
 
 if (mesh.nInternalFaces())
 {
@@ -45,17 +38,16 @@ if (mesh.nInternalFaces())
 
     scalarField sumPhi
     (
-        mixture.nearInterface()().internalField()
-       *fvc::surfaceSum(mag(phiMask*phi))().internalField()
+        fvc::surfaceSum(mag(phiMask*phi))().internalField()
     );
 
-    alphaCoNum = 0.5*gMax(sumPhi/mesh.V().field())*runTime.deltaTValue();
+    CoNum = 0.5*gMax(sumPhi/mesh.V().field())*runTime.deltaTValue();
 
-    meanAlphaCoNum =
+    meanCoNum =
         0.5*(gSum(sumPhi)/gSum(mesh.V().field()))*runTime.deltaTValue();
 }
 
-Info<< "Interface Courant Number mean: " << meanAlphaCoNum
-    << " max: " << alphaCoNum << endl;
+Info<< "Courant Number mean: " << meanCoNum
+    << " max: " << CoNum << endl;
 
 // ************************************************************************* //

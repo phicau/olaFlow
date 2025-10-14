@@ -2,10 +2,8 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | www.openfoam.com
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
--------------------------------------------------------------------------------
-    Copyright (C) 2011-2014 OpenFOAM Foundation
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -33,7 +31,7 @@ Description
 
 scalar maxAlphaCo
 (
-    runTime.controlDict().get<scalar>("maxAlphaCo")
+    readScalar(runTime.controlDict().lookup("maxAlphaCo"))
 );
 
 scalar alphaCoNum = 0.0;
@@ -41,12 +39,10 @@ scalar meanAlphaCoNum = 0.0;
 
 if (mesh.nInternalFaces())
 {
-    surfaceScalarField phiMask(localMin<scalar>(mesh).interpolate(cellMask));
-
     scalarField sumPhi
     (
-        mixture.nearInterface()().internalField()
-       *fvc::surfaceSum(mag(phiMask*phi))().internalField()
+        mixture.nearInterface()().primitiveField()
+       *fvc::surfaceSum(mag(phi))().primitiveField()
     );
 
     alphaCoNum = 0.5*gMax(sumPhi/mesh.V().field())*runTime.deltaTValue();

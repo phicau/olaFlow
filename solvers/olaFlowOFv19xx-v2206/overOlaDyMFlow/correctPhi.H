@@ -110,7 +110,7 @@
             pcorrEqn.setReferences
             (
                 validCells,
-                scalar(0),
+                scalar(0.0),
                 true
             );
         }
@@ -132,4 +132,10 @@
             phi -= pcorrEqn.flux();
         }
     }
+
+    //if (runTime.outputTime())
+    //{
+    //    volScalarField("contPhiPcorr", fvc::div(phi)).write();
+    //    pcorr.write();
+    //}
 }

@@ -2,10 +2,8 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | www.openfoam.com
+    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
      \\/     M anipulation  |
--------------------------------------------------------------------------------
-    Copyright (C) 2011-2014 OpenFOAM Foundation
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -33,7 +31,7 @@ Description
 
 scalar maxAlphaCo
 (
-    runTime.controlDict().get<scalar>("maxAlphaCo")
+    readScalar(runTime.controlDict().lookup("maxAlphaCo"))
 );
 
 scalar alphaCoNum = 0.0;

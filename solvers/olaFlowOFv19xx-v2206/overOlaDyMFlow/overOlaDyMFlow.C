@@ -2,11 +2,8 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | www.openfoam.com
-     \\/     M anipulation  |
--------------------------------------------------------------------------------
-    Copyright (C) 2011-2014 OpenFOAM Foundation
-    Copyright (C) 2016-2021 OpenCFD Ltd.
+    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+     \\/     M anipulation  | Copyright (C) 2016-2017 OpenCFD Ltd.
 -------------------------------------------------------------------------------
 License
     This file is a derivative work of OpenFOAM.
@@ -32,7 +29,7 @@ Group
     grpMultiphaseSolvers grpMovingMeshSolvers
 
 Description
-    Solver for two incompressible, isothermal immiscible fluids using a VOF
+    Solver for 2 incompressible, isothermal immiscible fluids using a VOF
     (volume of fluid) phase-fraction based interface capturing approach,
     with optional mesh motion and mesh topology changes including adaptive
     re-meshing.
@@ -86,31 +83,27 @@ Description
 #include "turbulentTransportModel.H"
 #include "pimpleControl.H"
 #include "fvOptions.H"
+#include "CorrectPhi.H"
 #include "fvcSmooth.H"
 #include "cellCellStencilObject.H"
 #include "localMin.H"
+#include "interpolationCellPoint.H"
+#include "transform.H"
+#include "fvMeshSubset.H"
 #include "oversetAdjustPhi.H"
-#include "oversetPatchPhiErr.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 int main(int argc, char *argv[])
 {
-    argList::addNote
-    (
-        "Solver for two incompressible, isothermal immiscible fluids using"
-        " VOF phase-fraction based interface capturing\n"
-        "With optional mesh motion and mesh topology changes including"
-        " adaptive re-meshing."
-    );
-
     #include "postProcess.H"
 
-    #include "setRootCaseLists.H"
+    #include "setRootCase.H"
     #include "createTime.H"
     #include "createDynamicFvMesh.H"
     #include "initContinuityErrs.H"
-
+    pimpleControl pimple(mesh);
+    #include "createTimeControls.H"
     #include "createDyMControls.H"
     #include "createFields.H"
     #include "createAlphaFluxes.H"
@@ -130,11 +123,8 @@ int main(int argc, char *argv[])
         dimensionedScalar("rAUf", dimTime/rho.dimensions(), 1.0)
     );
 
+    #include "correctPhi.H"
     #include "createUf.H"
-    #include "createControls.H"
-
-    #include "setCellMask.H"
-    #include "setInterpolatedCells.H"
 
     turbulence->validate();
 
@@ -144,13 +134,15 @@ int main(int argc, char *argv[])
         #include "setInitialDeltaT.H"
     }
 
+    #include "setCellMask.H"
+    #include "setInterpolatedCells.H"
+
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     Info<< "\nStarting time loop\n" << endl;
 
     while (runTime.run())
     {
-        #include "readDyMControls.H"
-        #include "readOversetDyMControls.H"
+        #include "readControls.H"
 
         if (LTS)
         {
@@ -163,7 +155,7 @@ int main(int argc, char *argv[])
             #include "setDeltaT.H"
         }
 
-        ++runTime;
+        runTime++;
 
         Info<< "Time = " << runTime.timeName() << nl << endl;
 
@@ -189,20 +181,29 @@ int main(int argc, char *argv[])
                         talphaPhi1Corr0.clear();
                     }
 
-                    // Update cellMask field for blocking out hole cells
-                    #include "setCellMask.H"
-                    #include "setInterpolatedCells.H"
-                    #include "correctPhiFaceMask.H"
-
                     gh = (g & mesh.C()) - ghRef;
                     ghf = (g & mesh.Cf()) - ghRef;
 
+                    // Update cellMask field for blocking out hole cells
+                    #include "setCellMask.H"
+                    #include "setInterpolatedCells.H"
+                }
 
-                    mixture.correct();
+                if ((mesh.changing() && correctPhi) || mesh.topoChanging())
+                {
+                    // Calculate absolute flux from the mapped surface velocity
+                    // Note: temporary fix until mapped Uf is assessed
+                    Uf = fvc::interpolate(U);
+
+                    // Calculate absolute flux from the mapped surface velocity
+                    phi = mesh.Sf() & Uf;
+
+                    #include "correctPhi.H"
 
                     // Make the flux relative to the mesh motion
                     fvc::makeRelative(phi, U);
 
+                    mixture.correct();
                 }
 
                 if (mesh.changing() && checkMeshCourantNo)
@@ -211,15 +212,8 @@ int main(int argc, char *argv[])
                 }
             }
 
-            if (adjustFringe)
-            {
-                oversetAdjustPhi(phi, U, zoneIdMass);
-            }
-
             #include "alphaControls.H"
             #include "alphaEqnSubCycle.H"
-
-            rhoPhi *= faceMask;
 
             mixture.correct();
 

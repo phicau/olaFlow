@@ -1,31 +1,56 @@
 {
     rAU = 1.0/UEqn.A();
+    surfaceScalarField faceMask(localMin<scalar>(mesh).interpolate(cellMask));
 
     surfaceScalarField rAUf("rAUf", fvc::interpolate(rAU));
 
-    volVectorField H("H", UEqn.H());
-
     volVectorField HbyA("HbyA", U);
+    //HbyA = rAU*UEqn.H();
+    HbyA = constrainHbyA(rAU*UEqn.H(), U, p_rgh);
 
-    HbyA = constrainHbyA(rAU*H, U, p_rgh);
+    if (massFluxInterpolation)
+    {
+        #include "interpolatedFaces.H"
+    }
 
     surfaceScalarField phiHbyA("phiHbyA", fvc::flux(HbyA));
 
+    if (ddtCorr)
+    {
+        phiHbyA += fvc::interpolate(rho*rAU)*fvc::ddtCorr(U, Uf);
+    }
     MRF.makeRelative(phiHbyA);
+
+    if (p_rgh.needReference())
+    {
+        fvc::makeRelative(phiHbyA, U);
+        adjustPhi(phiHbyA, U, p_rgh);
+        fvc::makeAbsolute(phiHbyA, U);
+    }
+
+    if (adjustFringe)
+    {
+        fvc::makeRelative(phiHbyA, U);
+        oversetAdjustPhi(phiHbyA, U);
+        fvc::makeAbsolute(phiHbyA, U);
+    }
+
 
     surfaceScalarField phig
     (
         (
             mixture.surfaceTensionForce()
-          - ghf*fvc::snGrad(cellMask*rho)
-        )*rAUf*faceMask*mesh.magSf()
+          - ghf*fvc::snGrad(rho)
+        )*faceMask*rAUf*mesh.magSf()
     );
 
     phiHbyA += phig;
 
     if (adjustFringe)
     {
-        oversetAdjustPhi(phiHbyA, U, zoneIdMass);
+        fvc::makeRelative(phiHbyA, U);
+        oversetAdjustPhi(phiHbyA, U);
+        fvc::makeAbsolute(phiHbyA, U);
     }
 
     // Update the pressure BCs to ensure flux consistency
@@ -35,7 +60,7 @@
     {
         fvScalarMatrix p_rghEqn
         (
-            fvm::laplacian(rAUf, p_rgh) == fvc::div(phiHbyA)
+            fvm::laplacian(faceMask*rAUf, p_rgh) == fvc::div(phiHbyA)
         );
 
         p_rghEqn.setReference(pRefCell, getRefCellValue(p_rgh, pRefCell));
@@ -48,18 +73,16 @@
 
             p_rgh.relax();
 
-            U =
-                cellMask*
-                (
-                   HbyA + rAU*fvc::reconstruct((phig - p_rghEqn.flux())/rAUf)
-                );
-
+            // Reconstruct body forces (-grad(p) and gh etc)
+            volVectorField minGradP
+            (
+                "minGradP",
+                fvc::reconstruct((phig - p_rghEqn.flux())/rAUf)
+            );
+            //U = HbyA + rAU*cellMask*minGradP;
+            U = fvc::reconstruct(phi);
             U.correctBoundaryConditions();
             fvOptions.correct(U);
-        }
-        if (oversetPatchErrOutput)
-        {
-            oversetPatchPhiErr(p_rghEqn, phiHbyA);
         }
     }
 
@@ -74,19 +97,16 @@
     // Make the fluxes relative to the mesh motion
     fvc::makeRelative(phi, U);
 
-    // Zero faces H-I for transport Eq after pEq
-    phi *= faceMask;
-
     p == p_rgh + rho*gh;
 
     if (p_rgh.needReference())
     {
-        p_rgh += dimensionedScalar
+        p += dimensionedScalar
         (
-            "p_rgh",
+            "p",
             p.dimensions(),
-            pRefValue - getRefCellValue(p_rgh, pRefCell)
+            pRefValue - getRefCellValue(p, pRefCell)
         );
-        p == p_rgh + rho*gh;
+        p_rgh = p - rho*gh;
     }
 }

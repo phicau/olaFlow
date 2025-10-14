@@ -31,35 +31,37 @@ volVectorField U
 
 #include "createPhi.H"
 
-//- Overset specific
-
-// Add solver-specific interpolations
-{
-    wordHashSet& nonInt =
-        const_cast<wordHashSet&>(Stencil::New(mesh).nonInterpolatedFields());
-
-    nonInt.insert("HbyA");
-    nonInt.insert("grad(p_rgh)");
-    nonInt.insert("nHat");
-    nonInt.insert("surfaceIntegrate(nHatf)");
-    nonInt.insert("surfaceIntegrate(phi+meshPhi)");
-    nonInt.insert("surfaceIntegrate(phi)");
-    nonInt.insert("surfaceIntegrate(phiHbyA)");
-    nonInt.insert("surfaceSum(((S|magSf)*S)");
-    nonInt.insert("surfaceIntegrate(((rAUf*magSf)*snGradCorr(p_rgh)))");
-    nonInt.insert("cellMask");
-    nonInt.insert("cellDisplacement");
-    nonInt.insert("interpolatedCells");
-    nonInt.insert("cellInterpolationWeight");
-    nonInt.insert("pcorr");
-}
 
 
-// Mask field for zeroing out contributions on hole cells
-#include "createCellMask.H"
+    //- Overset specific
 
-// Create bool field with interpolated cells
-#include "createInterpolatedCells.H"
+    // Add solver-specific interpolations
+    {
+        dictionary oversetDict;
+        oversetDict.add("U", true);
+        oversetDict.add("p", true);
+        oversetDict.add("HbyA", true);
+        oversetDict.add("p_rgh", true);
+        oversetDict.add("alpha1", true);
+        oversetDict.add("minGradP", true);
+
+        const_cast<dictionary&>
+        (
+            mesh.schemesDict()
+        ).add
+        (
+            "oversetInterpolationRequired",
+            oversetDict,
+            true
+        );
+    }
+
+    // Mask field for zeroing out contributions on hole cells
+    #include "createCellMask.H"
+
+    // Create bool field with interpolated cells
+    #include "createInterpolatedCells.H"
+
 
 
 Info<< "Reading transportProperties\n" << endl;
@@ -151,5 +153,20 @@ if (p_rgh.needReference())
 
 mesh.setFluxRequired(p_rgh.name());
 mesh.setFluxRequired(alpha1.name());
+
+// MULES compressed flux is registered in case scalarTransport FO needs it.
+surfaceScalarField alphaPhiUn
+(
+    IOobject
+    (
+        "alphaPhiUn",
+        runTime.timeName(),
+        mesh,
+        IOobject::NO_READ,
+        IOobject::NO_WRITE
+    ),
+    mesh,
+    dimensionedScalar(phi.dimensions(), Zero)
+);
 
 #include "createMRF.H"

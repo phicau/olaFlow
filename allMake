@@ -27,6 +27,8 @@ else
             export OF_SOLVER=olaFlowOFv17xx
         elif [ $OF_VERSION -lt 1900 ]; then
             export OF_SOLVER=olaFlowOFv18xx
+        elif [ $OF_VERSION -lt 2212 ]; then
+            export OF_SOLVER=olaFlowOFv19xx-v2206
         else
             export OF_SOLVER=olaFlowOFv_com_latest
         fi
