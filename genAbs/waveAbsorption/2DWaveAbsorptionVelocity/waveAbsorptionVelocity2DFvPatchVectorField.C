@@ -352,11 +352,22 @@ void Foam::waveAbsorptionVelocity2DFvPatchVectorField::
 write(Ostream& os) const
 {
     fvPatchField<vector>::write(os);
-    #if OFFLAVOUR == 3 && OFVERSION >= 700
-        #include "newWriting.H"
-    #else
-        #include "classicWriting.H"
-    #endif
+
+    os.writeKeyword("absorptionDir") << absorptionDir_ <<
+        token::END_STATEMENT << nl;
+    os.writeKeyword("nPaddles") << nPaddles_ << token::END_STATEMENT << nl;
+
+    OFCompat::writeListEntry(os, "initialWaterDepths", initialWaterDepths_);
+    OFCompat::writeListEntry(os, "meanAngles", meanAngles_);
+    OFCompat::writeListEntry(os, "zSpanL", zSpanL_);
+
+    OFCompat::writeEntryIfDifferent<vector>(os, "uCurrent", vector::zero, uCurrent_);
+    OFCompat::writeEntryIfDifferent<label>(os, "nEdgeMin", 0, nEdgeMin_);
+    OFCompat::writeEntryIfDifferent<label>(os, "nEdgeMax", 0, nEdgeMax_);
+
+    os.writeKeyword("allCheck") << allCheck_ << token::END_STATEMENT << nl;
+
+    OFCompat::writeListEntry(os, "value", *this);
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

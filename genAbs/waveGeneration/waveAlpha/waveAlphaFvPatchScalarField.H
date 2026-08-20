@@ -79,6 +79,7 @@ SourceFiles
 
 #include "fixedValueFvPatchFields.H"
 #include "mathematicalConstants.H"
+#include "OFCompat.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

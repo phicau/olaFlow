@@ -67,7 +67,7 @@ Description
 | - Three-dimensional interaction of waves and porous coastal structures      |
 |    using OpenFOAM. Part II: Application.                                    |
 |    Higuera, P., Lara, J.L. and Losada, I.J. (2014)                          |
-|    Coastal Engineering, Vol. 83, 259–270.                                   |
+|    Coastal Engineering, Vol. 83, 259-270.                                   |
 |    http://dx.doi.org/10.1016/j.coastaleng.2013.09.002                       |
 |                                                                             |
 \*---------------------------------------------------------------------------*/
@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
 
         runTime.write();
         // Write Porous Variables
-        if( activePorosity && runTime.outputTime() ) 
+        if( activePorosity && runTime.outputTime() )
         {
             porosity.write();
             porosityIndex.write();

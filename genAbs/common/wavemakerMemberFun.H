@@ -1,23 +1,13 @@
 //- Return Pi
 virtual scalar PI() const
 {
-    #if OFVERSION >= 200
-        const scalar PI = constant::mathematical::pi;
-    #else
-        const scalar PI = mathematicalConstant::pi;
-    #endif
-    return PI;
+    return OFCompat::pi();
 }
 
 //- Return alphaName
 virtual word alphaName() const
 {
-    #if OFVERSION >= 230
-        const word an = "alpha.water";
-    #else
-        const word an = "alpha1";
-    #endif
-    return an;
+    return OFCompat::alphaName();
 }
 
 //- Degree to Rad conversion

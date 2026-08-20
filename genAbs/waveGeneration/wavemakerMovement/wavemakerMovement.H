@@ -65,6 +65,7 @@ SourceFiles
 
 #include "mathematicalConstants.H"
 #include "fixedValueFvPatchFields.H"
+#include "OFCompat.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -73,18 +74,7 @@ namespace Foam
 
 class wavemakerMovement
 :
-    #if OFFLAVOUR == 1
-        public FixedValuePointPatchField
-        <
-            pointPatchField,
-            pointMesh,
-            pointPatch,
-            DummyMatrix,
-            vector
-        >
-    #else
-        public fixedValuePointPatchField<vector>
-    #endif
+    public OFCompat::FixedValuePointPatch<vector>
 {
     // Private data
 
@@ -160,6 +150,22 @@ class wavemakerMovement
         //- BC has been checked for first time
         bool allCheck_;
 
+    // Private member functions
+
+        //- First-call initialisation: reads wavemakerMovementDict, sets all
+        //  wavemaker members, validates inputs, and allocates per-paddle state.
+        //  The reread/IO-write logic remains in updateCoeffs().
+        void initialiseFromDict
+        (
+            const dictionary& wavemakerMovementDict,
+            const scalarField& cellSurface,
+            const scalarField& alphaCell,
+            scalar zSpan,
+            scalar zMax,
+            scalar zMin,
+            const vectorField& cellVector
+        );
+
 public:
 
     //- Runtime type information
@@ -190,11 +196,7 @@ public:
             const wavemakerMovement&,
             const pointPatch&,
             const DimensionedField<vector, pointMesh>&,
-            #if OFFLAVOUR == 1
-                const PointPatchFieldMapper&
-            #else
-                const pointPatchFieldMapper&
-            #endif
+            const OFCompat::PointPatchMapper&
         );
 
         #if OFFLAVOUR == 3 && OFVERSION >= 900

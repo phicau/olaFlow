@@ -28,15 +28,15 @@
 \*---------------------------------------------------------------------------*/
 
 #include "waveFun.H"
+#include "waveConstants.H"
 #include <math.h>
 #include <limits>
 #include <iostream>
 
 namespace otherFun
 {
-    #define PII 3.1415926535897932384626433832795028
-    #define grav 9.81
-
+    using olaFlow::PI;
+    using olaFlow::G;
     double interpolation (double x1, double x2, double y1, double y2, double xInt)
     {
 
@@ -48,17 +48,16 @@ namespace otherFun
 
 namespace StokesIFun
 {
-    #define PII 3.1415926535897932384626433832795028
-    #define G 9.81
-
+    using olaFlow::PI;
+    using olaFlow::G;
     double waveLength (double h, double T)
     {
-        double L0 = G*T*T/(2.0*PII);
+        double L0 = G*T*T/(2.0*PI);
         double L = L0;
 
         for(int i=1; i<=100; i++)
         {
-            L = L0*tanh(2.0*PII*h/L);
+            L = L0*tanh(2.0*PI*h/L);
         }
 
         return L;
@@ -96,17 +95,16 @@ namespace StokesIFun
 
 namespace StokesIIFun
 {
-    #define PII 3.1415926535897932384626433832795028
-    #define G 9.81 
-
+    using olaFlow::PI;
+    using olaFlow::G;
     double waveLength (double h, double T)
     {
-        double L0 = G*T*T/(2.0*PII);
+        double L0 = G*T*T/(2.0*PI);
         double L = L0;
 
         for(int i=1; i<=100; i++)
         {
-            L = L0*tanh(2.0*PII*h/L);
+            L = L0*tanh(2.0*PI*h/L);
         }
 
         return L;
@@ -145,7 +143,7 @@ namespace StokesIIFun
     
     double timeLag (double H, double h, double Kx, double x, double Ky, double y, double T, double phase)
     {
-        double omega = 2.0*PII/T;
+        double omega = 2.0*PI/T;
         
         double lagIncrement = 0.001;
 
@@ -206,21 +204,21 @@ namespace StokesIIFun
             }
         }
 
-        if ( phase >= 0.0 && phase < PII/2.0 )
+        if ( phase >= 0.0 && phase < PI/2.0 )
         {
-            lag += otherFun::interpolation(0.0, PII/2.0, lags[0], lags[1], phase);
+            lag += otherFun::interpolation(0.0, PI/2.0, lags[0], lags[1], phase);
         }
-        else if ( phase >= PII/2.0 && phase < PII )
+        else if ( phase >= PI/2.0 && phase < PI )
         {
-            lag += otherFun::interpolation(PII/2.0, PII, lags[1], lags[2], phase);
+            lag += otherFun::interpolation(PI/2.0, PI, lags[1], lags[2], phase);
         }
-        else if ( phase >= PII && phase < 3.0*PII/2.0 )
+        else if ( phase >= PI && phase < 3.0*PI/2.0 )
         {
-            lag += otherFun::interpolation(PII, 3.0*PII/2.0, lags[2], lags[3], phase);
+            lag += otherFun::interpolation(PI, 3.0*PI/2.0, lags[2], lags[3], phase);
         }
-        else if ( phase >= 3.0*PII/2.0 && phase < 2.0*PII )
+        else if ( phase >= 3.0*PI/2.0 && phase < 2.0*PI )
         {
-            lag += otherFun::interpolation(3.0*PII/2.0, 2.0*PII, lags[3], lags[4], phase);
+            lag += otherFun::interpolation(3.0*PI/2.0, 2.0*PI, lags[3], lags[4], phase);
         }
 
         return lag;
@@ -229,13 +227,12 @@ namespace StokesIIFun
 
 namespace StokesIIIFun
 {
-    #define PII 3.1415926535897932384626433832795028
-    #define G 9.81 
-    
+    using olaFlow::PI;
+    using olaFlow::G;
     bool initialise (double H, double h, double T, double* aE, double* klE)
     {
         // Calculates Stokes III parameters with Newton's method
-        std::cout << "Solving Stokes III parameters..." << std::endl;
+        std::cerr << "Solving Stokes III parameters..." << std::endl;
         double eps = 1e-6;
 
         int i = 1;
@@ -248,7 +245,7 @@ namespace StokesIIIFun
             double a = 1, aN = 10;
             double kl = 1, klN = 10;
             
-            std::cout << "Relaxation factor: " << relax << std::endl;
+            std::cerr << "Relaxation factor: " << relax << std::endl;
 
             for(i=1; i<=5e6; i++)
             {
@@ -302,14 +299,14 @@ namespace StokesIIIFun
     double waveLength (double T, double aE, double klE)
     {
         double L = 
-            tanh(klE)/(2*PII)*(1 + pow(aE,2)*(cosh(4*klE) + 2*cosh(2*klE) + 6)
+            tanh(klE)/(2*PI)*(1 + pow(aE,2)*(cosh(4*klE) + 2*cosh(2*klE) + 6)
             /(4*(cosh(2*klE) - 1)))*G*pow(T,2);
         return L;
     }
 
     double dEq (double h, double T, double a, double kl)
     {
-        double aux = tanh(kl)/(4*pow(PII,2))*(kl + pow(a,2)/4.*(sinh(2*kl)
+        double aux = tanh(kl)/(4*pow(PI,2))*(kl + pow(a,2)/4.*(sinh(2*kl)
             + kl*(cosh(4*kl) + 2*cosh(2*kl) + 6)/(cosh(2*kl)-1)))
             - h/(G*pow(T,2));
         return aux;
@@ -317,7 +314,7 @@ namespace StokesIIIFun
 
     double HEq (double H, double T, double a, double kl)
     {
-        double aux = a*tanh(kl)/(2*pow(PII,2))*(sinh(kl) + pow(a,2)/8.
+        double aux = a*tanh(kl)/(2*pow(PI,2))*(sinh(kl) + pow(a,2)/8.
             *(sinh(kl)*(2*cosh(4*kl) + 3*cosh(2*kl) + 10)/(cosh(2*kl) - 1)
             + sinh(3*kl)/2.*( 3*cosh(4*kl) + 4*cosh(2*kl) + 2)
             /pow(cosh(2*kl) - 1,2))) - H/(G*pow(T,2));
@@ -328,12 +325,12 @@ namespace StokesIIIFun
     double eta (double H, double h, double Kx, double x, double Ky, double y, double omega, double t, double phase, double a, double kl)
     {
         double k = sqrt(Kx*Kx + Ky*Ky);
-        double L = 2*PII/k;
+        double L = 2*PI/k;
         double faseTot = Kx*x + Ky*y - omega*t + phase;
 
-        double eta1 = L*a/(2*PII)*( sinh(kl) + pow(a,2)/64.*(9*sinh(5*kl) + 15*sinh(3*kl) + 6*sinh(kl))/(cosh(2*kl) - 1) );
-        double eta2 = L*pow(a,2)/(16*PII)*(sinh(4*kl) + 4*sinh(2*kl))/(cosh(2*kl) - 1);
-        double eta3 = L*pow(a,3)/(256*PII)*(3*sinh(7*kl) + 15*sinh(5*kl) + 27*sinh(3*kl) + 39*sinh(kl))/pow(cosh(2*kl) - 1,2);
+        double eta1 = L*a/(2*PI)*( sinh(kl) + pow(a,2)/64.*(9*sinh(5*kl) + 15*sinh(3*kl) + 6*sinh(kl))/(cosh(2*kl) - 1) );
+        double eta2 = L*pow(a,2)/(16*PI)*(sinh(4*kl) + 4*sinh(2*kl))/(cosh(2*kl) - 1);
+        double eta3 = L*pow(a,3)/(256*PI)*(3*sinh(7*kl) + 15*sinh(5*kl) + 27*sinh(3*kl) + 39*sinh(kl))/pow(cosh(2*kl) - 1,2);
         
         double sup = eta1*cos(faseTot) + eta2*cos(2*faseTot) + eta3*cos(3*faseTot);
         return sup;
@@ -342,8 +339,8 @@ namespace StokesIIIFun
     double U (double H, double h, double Kx, double x, double Ky, double y, double omega, double t, double phase, double z, double a, double kl)
     {
         double k = sqrt(Kx*Kx + Ky*Ky);
-        double L = 2*PII/k;
-        double T = 2*PII/omega;
+        double L = 2*PI/k;
+        double T = 2*PI/omega;
         double faseTot = Kx*x + Ky*y - omega*t + phase;
 
         double v1 = L*a/T;
@@ -361,8 +358,8 @@ namespace StokesIIIFun
     double W (double H, double h, double Kx, double x, double Ky, double y, double omega, double t, double phase, double z, double a, double kl)
     {
         double k = sqrt(Kx*Kx + Ky*Ky);
-        double L = 2*PII/k;
-        double T = 2*PII/omega;
+        double L = 2*PI/k;
+        double T = 2*PI/omega;
         double faseTot = Kx*x + Ky*y - omega*t + phase;
 
         double v1 = L*a/T;
@@ -380,7 +377,7 @@ namespace StokesIIIFun
 
 namespace Elliptic
 {
-    #define PII 3.1415926535897932384626433832795028
+    using olaFlow::PI;
     #define ITER 50
     #define TOL std::numeric_limits<long double>::digits10
 
@@ -390,8 +387,8 @@ namespace Elliptic
 
         if ( m == 0.0 ) 
         {
-            *K = PII/2.;
-            *E = PII/2.;
+            *K = PI/2.;
+            *E = PI/2.;
             return;
         }
 
@@ -417,8 +414,8 @@ namespace Elliptic
             g = sqrt(g);
         }
 
-        *K = (double) (PII/2./a);
-        *E = (double) (PII/4./a * sum);
+        *K = (double) (PI/2./a);
+        *E = (double) (PI/4./a * sum);
         return;
     }
 
@@ -437,7 +434,7 @@ namespace Elliptic
         
         if ( m == 1. ) 
         {
-            return 2. * atan( exp(u) ) - PII/2.;
+            return 2. * atan( exp(u) ) - PI/2.;
         }
 
         a[0] = 1.0L;
@@ -483,15 +480,14 @@ namespace Elliptic
 
 namespace cnoidalFun
 {
-    #define PII 3.1415926535897932384626433832795028
-    #define G 9.81
-
+    using olaFlow::PI;
+    using olaFlow::G;
     double eta (double H, double m, double kx, double ky, double T, double x, double y, double t)
     {
         double K, E;
         Elliptic::ellipticIntegralsKE(m, &K, &E);
 
-        double uCnoidal = K/PII*(kx*x + ky*y - 2.0*PII*t/T);
+        double uCnoidal = K/PI*(kx*x + ky*y - 2.0*PI*t/T);
 
         double sn, cn, dn;
         Elliptic::JacobiSnCnDn(uCnoidal, m, &sn, &cn, &dn);
@@ -640,21 +636,21 @@ namespace cnoidalFun
             }
         }
 
-        if ( phase >= 0.0 && phase < PII/2.0 )
+        if ( phase >= 0.0 && phase < PI/2.0 )
         {
-            lag += otherFun::interpolation(0.0, PII/2.0, lags[0], lags[1], phase);
+            lag += otherFun::interpolation(0.0, PI/2.0, lags[0], lags[1], phase);
         }
-        else if ( phase >= PII/2.0 && phase < PII )
+        else if ( phase >= PI/2.0 && phase < PI )
         {
-            lag += otherFun::interpolation(PII/2.0, PII, lags[1], lags[2], phase);
+            lag += otherFun::interpolation(PI/2.0, PI, lags[1], lags[2], phase);
         }
-        else if ( phase >= PII && phase < 3.0*PII/2.0 )
+        else if ( phase >= PI && phase < 3.0*PI/2.0 )
         {
-            lag += otherFun::interpolation(PII, 3.0*PII/2.0, lags[2], lags[3], phase);
+            lag += otherFun::interpolation(PI, 3.0*PI/2.0, lags[2], lags[3], phase);
         }
-        else if ( phase >= 3.0*PII/2.0 && phase < 2.0*PII )
+        else if ( phase >= 3.0*PI/2.0 && phase < 2.0*PI )
         {
-            lag += otherFun::interpolation(3.0*PII/2.0, 2.0*PII, lags[3], lags[4], phase);
+            lag += otherFun::interpolation(3.0*PI/2.0, 2.0*PI, lags[3], lags[4], phase);
         }
 
         return lag;
@@ -756,9 +752,9 @@ namespace cnoidalFun
         double K, E;
         Elliptic::ellipticIntegralsKE(m, &K, &E);
 
-        double uCnoidal = K/PII*(kx*x + ky*y - 2.0*PII*t/T);
+        double uCnoidal = K/PI*(kx*x + ky*y - 2.0*PI*t/T);
         double k = sqrt(kx*kx + ky*ky);
-        double L = 2.0*PII/k;
+        double L = 2.0*PI/k;
         double c = L/T;
 
         double etaCN = eta(H, m, kx, ky, T, x, y, t);
@@ -775,9 +771,9 @@ namespace cnoidalFun
         double K, E;
         Elliptic::ellipticIntegralsKE(m, &K, &E);
 
-        double uCnoidal = K/PII*(kx*x + ky*y - 2.0*PII*t/T);
+        double uCnoidal = K/PI*(kx*x + ky*y - 2.0*PI*t/T);
         double k = sqrt(kx*kx + ky*ky);
-        double L = 2.0*PII/k;
+        double L = 2.0*PI/k;
         double c = L/T;
 
         double etaCN = eta(H, m, kx, ky, T, x, y, t);
@@ -794,9 +790,8 @@ namespace stokesVFun
 {
     // Skjelbreia 1960
     
-    #define PII 3.1415926535897932384626433832795028
-    #define G 9.81
-
+    using olaFlow::PI;
+    using olaFlow::G;
     double A11 (double h, double k)
     {
         double s = sinh(k*h);
@@ -1152,14 +1147,14 @@ namespace stokesVFun
         // Two nonlinear algebriac equations (nonlinear wave
         // Lambdalitude equation (f1) and dispersion relationship (f2)).
 
-        // f1=PII*H/d-2*PII/(k*d)*(Lambda+Lambda**3*b33+Lambda**5*(b35+b55))
-        // f2=(2*PII*d)/(-gy*xxt**2)
-        //	-k*d/(2*PII)*dtanh(k*d)*(1+Lambda**2*c1+Lambda**4*c2)
+        // f1=PI*H/d-2*PI/(k*d)*(Lambda+Lambda**3*b33+Lambda**5*(b35+b55))
+        // f2=(2*PI*d)/(-gy*xxt**2)
+        //	-k*d/(2*PI)*dtanh(k*d)*(1+Lambda**2*c1+Lambda**4*c2)
 
         double f1 = 1;
         double f2 = 1;
 
-        double k = 2.0*PII/(sqrt(G*d)*T);
+        double k = 2.0*PI/(sqrt(G*d)*T);
         double Lambda = H/2.0*k;
 
         double Bmat11, Bmat12, Bmat21, Bmat22;
@@ -1186,25 +1181,25 @@ namespace stokesVFun
             c2k = C2k(d, k);
 
             // d f1 / d k
-            Bmat11 = 2.0*PII/(pow(k,2)*d)*(Lambda+pow(Lambda,3)*b33+pow(Lambda,5)*(b35+b55))
-                    -2.0*PII/(k*d)*(pow(Lambda,3)*b33k+pow(Lambda,5)*(b35k+b55k));
+            Bmat11 = 2.0*PI/(pow(k,2)*d)*(Lambda+pow(Lambda,3)*b33+pow(Lambda,5)*(b35+b55))
+                    -2.0*PI/(k*d)*(pow(Lambda,3)*b33k+pow(Lambda,5)*(b35k+b55k));
             // d f1 / d Lambda
-            Bmat12 = -2.0*PII/(k*d)*
+            Bmat12 = -2.0*PI/(k*d)*
                      (1.0+3.0*pow(Lambda,2)*b33+5.0*pow(Lambda,4)*(b35+b55));
             // d f2 / d k
-            Bmat21 = -d/(2.0*PII)*tanh(k*d)*(1.0+pow(Lambda,2)*c1+pow(Lambda,4)*c2)
-                    -k*d/(2.0*PII)*(1.0-pow((tanh(k*d)),2))*d*
+            Bmat21 = -d/(2.0*PI)*tanh(k*d)*(1.0+pow(Lambda,2)*c1+pow(Lambda,4)*c2)
+                    -k*d/(2.0*PI)*(1.0-pow((tanh(k*d)),2))*d*
                     (1.0+pow(Lambda,2)*c1+pow(Lambda,4)*c2)
-                    -k*d/(2.0*PII)*tanh(k*d)
+                    -k*d/(2.0*PI)*tanh(k*d)
                     *(pow(Lambda,2)*c1k+pow(Lambda,4)*c2k);
             // d f2 / d Lambda
-            Bmat22 = -k*d/(2.0*PII)*tanh(k*d)
+            Bmat22 = -k*d/(2.0*PI)*tanh(k*d)
                      *(2.0*Lambda*c1+4.0*pow(Lambda,3)*c2);
 
             // Calculate f1 and f2
-            f1 = PII*H/d-2.0*PII/(k*d)*(Lambda+pow(Lambda,3)*b33+pow(Lambda,5)*(b35+b55));
+            f1 = PI*H/d-2.0*PI/(k*d)*(Lambda+pow(Lambda,3)*b33+pow(Lambda,5)*(b35+b55));
 
-            f2 = (2.0*PII*d)/(G*pow(T,2))-k*d/(2.0*PII)*tanh(k*d)
+            f2 = (2.0*PI*d)/(G*pow(T,2))-k*d/(2.0*PI)*tanh(k*d)
                 *(1.0+pow(Lambda,2)*c1+pow(Lambda,4)*c2);
             // Solve the two-equation system Bx=-F
             // b(1,1)*L + b(1,2)*La = -f1
@@ -1234,8 +1229,8 @@ namespace stokesVFun
         double c1, c2;
         double Aeq, Beq, Ceq;
 
-        double L0 = G*T*T/(2.0*PII); // L deep water
-        double Lred = L0*PII/10.0; // L limit shallow water 
+        double L0 = G*T*T/(2.0*PI); // L deep water
+        double Lred = L0*PI/10.0; // L limit shallow water 
 
         double k = 0.0;
         double Lambda = 0.0;
@@ -1250,7 +1245,7 @@ namespace stokesVFun
         for(int i = 0; i<=1000; i++)
         {
             Ltest = L0 - i*(L0-Lred)/1000;
-            ktest = 2.0*PII/Ltest;
+            ktest = 2.0*PI/Ltest;
 
             b33 = B33(d, ktest);
             b35 = B35(d, ktest);
@@ -1271,7 +1266,7 @@ namespace stokesVFun
                     LambdaTest = sqrt( (-Beq + sqrt(Beq*Beq-4.0*Aeq*Ceq))/(2.0*Aeq) );
 
                     // Second equation
-                    LambdaCalc = PII*H/(Ltest*(1 + b33*Lambda*Lambda + (b35+b55)*pow(Lambda, 4) ));
+                    LambdaCalc = PI*H/(Ltest*(1 + b33*Lambda*Lambda + (b35+b55)*pow(Lambda, 4) ));
 
                     // Calculate difference (error)
                     LambdaErr = fabs(LambdaTest-LambdaCalc);
@@ -1311,7 +1306,7 @@ namespace stokesVFun
         double amp4 = b44*pow(lambda,4)/k;
         double amp5 = b55*pow(lambda,5)/k;
 
-        double theta = kx*x + ky*y - 2.0*PII/T*t + phase;
+        double theta = kx*x + ky*y - 2.0*PI/T*t + phase;
 
         double C = 
             amp1*cos(theta) + amp2*cos(2*theta)
@@ -1382,21 +1377,21 @@ namespace stokesVFun
             }
         }
 
-        if ( phase >= 0.0 && phase < PII/2.0 )
+        if ( phase >= 0.0 && phase < PI/2.0 )
         {
-            lag += otherFun::interpolation(0.0, PII/2.0, lags[0], lags[1], phase);
+            lag += otherFun::interpolation(0.0, PI/2.0, lags[0], lags[1], phase);
         }
-        else if ( phase >= PII/2.0 && phase < PII )
+        else if ( phase >= PI/2.0 && phase < PI )
         {
-            lag += otherFun::interpolation(PII/2.0, PII, lags[1], lags[2], phase);
+            lag += otherFun::interpolation(PI/2.0, PI, lags[1], lags[2], phase);
         }
-        else if ( phase >= PII && phase < 3.0*PII/2.0 )
+        else if ( phase >= PI && phase < 3.0*PI/2.0 )
         {
-            lag += otherFun::interpolation(PII, 3.0*PII/2.0, lags[2], lags[3], phase);
+            lag += otherFun::interpolation(PI, 3.0*PI/2.0, lags[2], lags[3], phase);
         }
-        else if ( phase >= 3.0*PII/2.0 && phase < 2.0*PII )
+        else if ( phase >= 3.0*PI/2.0 && phase < 2.0*PI )
         {
-            lag += otherFun::interpolation(3.0*PII/2.0, 2.0*PII, lags[3], lags[4], phase);
+            lag += otherFun::interpolation(3.0*PI/2.0, 2.0*PI, lags[3], lags[4], phase);
         }
 
         return lag;
@@ -1443,15 +1438,15 @@ namespace stokesVFun
         double a44 = A44(d, k);
         double a55 = A55(d, k);
 
-        double a1u=2.0*PII/T/k*(lambda*a11+pow(lambda,3)*a13+pow(lambda,5)*a15);
-        double a2u=2.0*2.0*PII/T/k*(pow(lambda,2)*a22+pow(lambda,4)*a24);
-        double a3u=3.0*2.0*PII/T/k*(pow(lambda,3)*a33+pow(lambda,5)*a35);
-        double a4u=4.0*2.0*PII/T/k*(pow(lambda,4)*a44);
-        double a5u=5.0*2.0*PII/T/k*(pow(lambda,5)*a55);
+        double a1u=2.0*PI/T/k*(lambda*a11+pow(lambda,3)*a13+pow(lambda,5)*a15);
+        double a2u=2.0*2.0*PI/T/k*(pow(lambda,2)*a22+pow(lambda,4)*a24);
+        double a3u=3.0*2.0*PI/T/k*(pow(lambda,3)*a33+pow(lambda,5)*a35);
+        double a4u=4.0*2.0*PI/T/k*(pow(lambda,4)*a44);
+        double a5u=5.0*2.0*PI/T/k*(pow(lambda,5)*a55);
 
         double velU = 0;
 
-        double theta = kx*x + ky*y - 2.0*PII/T*t + phase;
+        double theta = kx*x + ky*y - 2.0*PI/T*t + phase;
 
         velU = a1u*cosh(k*z)*cos(theta)
                  + a2u*cosh(2.0*k*z)*cos(2.0*(theta))
@@ -1477,15 +1472,15 @@ namespace stokesVFun
         double a44 = A44(d, k);
         double a55 = A55(d, k);
 
-        double a1u=2.0*PII/T/k*(lambda*a11+pow(lambda,3)*a13+pow(lambda,5)*a15);
-        double a2u=2.0*2.0*PII/T/k*(pow(lambda,2)*a22+pow(lambda,4)*a24);
-        double a3u=3.0*2.0*PII/T/k*(pow(lambda,3)*a33+pow(lambda,5)*a35);
-        double a4u=4.0*2.0*PII/T/k*(pow(lambda,4)*a44);
-        double a5u=5.0*2.0*PII/T/k*(pow(lambda,5)*a55);
+        double a1u=2.0*PI/T/k*(lambda*a11+pow(lambda,3)*a13+pow(lambda,5)*a15);
+        double a2u=2.0*2.0*PI/T/k*(pow(lambda,2)*a22+pow(lambda,4)*a24);
+        double a3u=3.0*2.0*PI/T/k*(pow(lambda,3)*a33+pow(lambda,5)*a35);
+        double a4u=4.0*2.0*PI/T/k*(pow(lambda,4)*a44);
+        double a5u=5.0*2.0*PI/T/k*(pow(lambda,5)*a55);
 
         double velV = 0;
 
-        double theta = kx*x+ky*y-2.0*PII/T*t+phase;
+        double theta = kx*x+ky*y-2.0*PI/T*t+phase;
 
         velV = a1u*sinh(k*z)*sin(theta)
                 + a2u*sinh(2.0*k*z)*sin(2.0*(theta))
@@ -1501,9 +1496,8 @@ namespace stokesVFentonFun
 {
     // Fenton 1985
     
-    #define PII 3.1415926535897932384626433832795028
-    #define G 9.81
-
+    using olaFlow::PI;
+    using olaFlow::G;
     double C0 (double h, double k)
     {
         double C = sqrt( tanh(k*h) );
@@ -1561,7 +1555,7 @@ namespace stokesVFentonFun
         double eps = k*H/2.0;
         double kd = k*h;
 
-        double err = -2.0*PII/T/sqrt(G*k) + c0 + eps*eps*(c2+d2/kd) + pow(eps, 4)*(c4+d4/kd);
+        double err = -2.0*PI/T/sqrt(G*k) + c0 + eps*eps*(c2+d2/kd) + pow(eps, 4)*(c4+d4/kd);
 
         return err;
     }
@@ -1569,16 +1563,39 @@ namespace stokesVFentonFun
     int StokesSolver (double H, double d, double T, double* kOut, double* errorOut )
     {
         double tolerance = 0.0000000001;
-        double ErrI = 9999.0;
+
+        // The Stokes-V (Fenton 1985) dispersion correction shifts k slightly
+        // below the linear (Stokes I) value, so the root lies in [k_small, k_stokesI].
+        // Use a small positive lower bound and k_stokesI as the upper bound.
+        double KD = 2.0*PI/StokesIFun::waveLength(d, T); // upper bound (linear k)
+        double KI = 1e-6;                                  // lower bound (near zero)
+        double Kmid = (KI+KD)/2.0;
+
+        double ErrI = error(H, d, KI, T);
         double ErrM = 9999.0;
 
-        double KI = 2.0*PII/StokesIFun::waveLength(d, T);
-        double KD = 40*KI;
-        double Kmid = (KI+KD)/2.0;
+        // If the root is not bracketed in [KI, KD], fall back to [KD, 40*KD]
+        double ErrD = error(H, d, KD, T);
+        if (ErrI * ErrD > 0)
+        {
+            // root not in [1e-6, k_linear]; try [k_linear, 40*k_linear]
+            KI = KD;
+            KD = 40.0*KI;
+            ErrI = ErrD;
+        }
+
+        int iter = 0;
+        const int maxIter = 10000;
 
         while ( fabs(ErrM) > tolerance )
         {
-            ErrI = error(H, d, KI, T);
+            if (iter++ >= maxIter)
+            {
+                *kOut = Kmid;
+                *errorOut = ErrM;
+                return 1; // failed to converge
+            }
+
             Kmid = (KI+KD)/2.0;
             ErrM = error(H, d, Kmid, T);
 
@@ -1596,7 +1613,7 @@ namespace stokesVFentonFun
         *kOut = Kmid;
         *errorOut = ErrM;
 
-        return 1;
+        return 0; // success
     }
 
     double B22 (double h, double k)
@@ -1681,7 +1698,7 @@ namespace stokesVFentonFun
         double b53 = B53(d, k);
         double b55 = B55(d, k);
 
-        double theta = kx*x+ky*y-2.0*PII/T*t+phase;
+        double theta = kx*x+ky*y-2.0*PI/T*t+phase;
 
         double freeS = 0;        
         
@@ -1698,9 +1715,8 @@ namespace stokesVFentonFun
 
 namespace secondOrderFun
 {
-    #define PII 3.1415926535897932384626433832795028
-    #define grav 9.81
-
+    using olaFlow::PI;
+    using olaFlow::G;
     double C (double sigma1, double sigma2, double alphaSO1, double alphaSO2)
     {
         double denom = pow(sigma1, 2)*(pow(alphaSO1, 2)-1.0)-2.0*sigma1*sigma2*(alphaSO1*alphaSO2-1.0) + pow(sigma2, 2)*(pow(alphaSO2, 2)-1.0);
@@ -1748,7 +1764,7 @@ namespace secondOrderFun
 
         double CSO = C(sigma1, sigma2, alphaSO1, alphaSO2);
 
-        double eta = H1/2.0*H2/2.0/(2.0*grav)*CSO*cos(fullPhase1-fullPhase2);
+        double eta = H1/2.0*H2/2.0/(2.0*G)*CSO*cos(fullPhase1-fullPhase2);
 
         return eta;
     }
@@ -1768,7 +1784,7 @@ namespace secondOrderFun
 
         double diff = sigma1-sigma2;
 
-        double U = ESO*cosh((k1-k2)*(z))*cos(fullPhase1-fullPhase2)*(k1-k2)/(grav*(k1-k2)*sinh((k1-k2)*h)-pow(diff,2)*cosh((k1-k2)*h));
+        double U = ESO*cosh((k1-k2)*(z))*cos(fullPhase1-fullPhase2)*(k1-k2)/(G*(k1-k2)*sinh((k1-k2)*h)-pow(diff,2)*cosh((k1-k2)*h));
 
         return U;
     }
@@ -1788,7 +1804,7 @@ namespace secondOrderFun
 
         double diff = sigma1-sigma2;
 
-        double W = ESO*sinh((k1-k2)*(z))*sin(fullPhase1-fullPhase2)*(k1-k2)/(grav*(k1-k2)*sinh((k1-k2)*h)-pow(diff,2)*cosh((k1-k2)*h));
+        double W = ESO*sinh((k1-k2)*(z))*sin(fullPhase1-fullPhase2)*(k1-k2)/(G*(k1-k2)*sinh((k1-k2)*h)-pow(diff,2)*cosh((k1-k2)*h));
 
         return W;
     }
@@ -1796,9 +1812,8 @@ namespace secondOrderFun
 
 namespace BoussinesqFun
 {
-    #define PII 3.1415926535897932384626433832795028
-    #define G 9.81
-
+    using olaFlow::PI;
+    using olaFlow::G;
     double sech (double a)
     {
         return 1.0/cosh(a);
@@ -1811,7 +1826,7 @@ namespace BoussinesqFun
 
     double waveLength (double H, double h)
     {
-        return 4.0*PII/sqrt(3)*h/sqrt(H/h);
+        return 4.0*PI/sqrt(3)*h/sqrt(H/h);
     }
 
     double wavePeriod (double H, double h)
@@ -1901,9 +1916,7 @@ namespace BoussinesqFun
 
 namespace McCowanFun
 {
-    #define PII 3.1415926535897932384626433832795028
-    #define G 9.81
-
+    using olaFlow::G;
     double Mcalc (double H, double h)
     {
         // Bisection method
@@ -2038,9 +2051,7 @@ namespace McCowanFun
 
 namespace GrimshawFun
 {
-    #define PII 3.1415926535897932384626433832795028
-    #define G 9.81
-
+    using olaFlow::G;
     double celerity (double H, double h)
     {
         double epsilon = H/h;
